@@ -398,7 +398,45 @@ class ct06_pengeluaran_list extends ct06_pengeluaran {
 		// 
 		// Security = null;
 		// 
+		// Get export parameters
 
+		$custom = "";
+		if (@$_GET["export"] <> "") {
+			$this->Export = $_GET["export"];
+			$custom = @$_GET["custom"];
+		} elseif (@$_POST["export"] <> "") {
+			$this->Export = $_POST["export"];
+			$custom = @$_POST["custom"];
+		} elseif (ew_IsPost()) {
+			if (@$_POST["exporttype"] <> "")
+				$this->Export = $_POST["exporttype"];
+			$custom = @$_POST["custom"];
+		} elseif (@$_GET["cmd"] == "json") {
+			$this->Export = $_GET["cmd"];
+		} else {
+			$this->setExportReturnUrl(ew_CurrentUrl());
+		}
+		$gsExportFile = $this->TableVar; // Get export file, used in header
+
+		// Get custom export parameters
+		if ($this->Export <> "" && $custom <> "") {
+			$this->CustomExport = $this->Export;
+			$this->Export = "print";
+		}
+		$gsCustomExport = $this->CustomExport;
+		$gsExport = $this->Export; // Get export parameter, used in header
+
+		// Update Export URLs
+		if (defined("EW_USE_PHPEXCEL"))
+			$this->ExportExcelCustom = FALSE;
+		if ($this->ExportExcelCustom)
+			$this->ExportExcelUrl .= "&amp;custom=1";
+		if (defined("EW_USE_PHPWORD"))
+			$this->ExportWordCustom = FALSE;
+		if ($this->ExportWordCustom)
+			$this->ExportWordUrl .= "&amp;custom=1";
+		if ($this->ExportPdfCustom)
+			$this->ExportPdfUrl .= "&amp;custom=1";
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 
 		// Get grid add count
@@ -408,6 +446,9 @@ class ct06_pengeluaran_list extends ct06_pengeluaran {
 
 		// Set up list options
 		$this->SetupListOptions();
+
+		// Setup export options
+		$this->SetupExportOptions();
 		$this->id->SetVisibility();
 		if ($this->IsAdd() || $this->IsCopy() || $this->IsGridAdd())
 			$this->id->Visible = FALSE;
@@ -679,6 +720,13 @@ class ct06_pengeluaran_list extends ct06_pengeluaran {
 		} else {
 			$this->setSessionWhere($sFilter);
 			$this->CurrentFilter = "";
+		}
+
+		// Export data only
+		if ($this->CustomExport == "" && in_array($this->Export, array_keys($EW_EXPORT))) {
+			$this->ExportData();
+			$this->Page_Terminate(); // Terminate response
+			exit();
 		}
 
 		// Load record count first
@@ -1024,20 +1072,23 @@ class ct06_pengeluaran_list extends ct06_pengeluaran {
 	// Set up sort parameters
 	function SetupSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = @$_GET["order"];
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id); // id
-			$this->UpdateSort($this->supplier_id); // supplier_id
-			$this->UpdateSort($this->Tanggal); // Tanggal
-			$this->UpdateSort($this->NoNota); // NoNota
-			$this->UpdateSort($this->barang_id); // barang_id
-			$this->UpdateSort($this->Banyaknya); // Banyaknya
-			$this->UpdateSort($this->Harga); // Harga
-			$this->UpdateSort($this->Jumlah); // Jumlah
-			$this->UpdateSort($this->maingroup_id); // maingroup_id
-			$this->UpdateSort($this->subgroup_id); // subgroup_id
+			$this->UpdateSort($this->id, $bCtrl); // id
+			$this->UpdateSort($this->supplier_id, $bCtrl); // supplier_id
+			$this->UpdateSort($this->Tanggal, $bCtrl); // Tanggal
+			$this->UpdateSort($this->NoNota, $bCtrl); // NoNota
+			$this->UpdateSort($this->barang_id, $bCtrl); // barang_id
+			$this->UpdateSort($this->Banyaknya, $bCtrl); // Banyaknya
+			$this->UpdateSort($this->Harga, $bCtrl); // Harga
+			$this->UpdateSort($this->Jumlah, $bCtrl); // Jumlah
+			$this->UpdateSort($this->maingroup_id, $bCtrl); // maingroup_id
+			$this->UpdateSort($this->subgroup_id, $bCtrl); // subgroup_id
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1095,46 +1146,41 @@ class ct06_pengeluaran_list extends ct06_pengeluaran {
 		// Add group option item
 		$item = &$this->ListOptions->Add($this->ListOptions->GroupOptionName);
 		$item->Body = "";
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 		$item->Visible = FALSE;
 
 		// "view"
 		$item = &$this->ListOptions->Add("view");
 		$item->CssClass = "text-nowrap";
 		$item->Visible = $Security->CanView();
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssClass = "text-nowrap";
 		$item->Visible = $Security->CanEdit();
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 
 		// "copy"
 		$item = &$this->ListOptions->Add("copy");
 		$item->CssClass = "text-nowrap";
 		$item->Visible = $Security->CanAdd();
-		$item->OnLeft = FALSE;
-
-		// "delete"
-		$item = &$this->ListOptions->Add("delete");
-		$item->CssClass = "text-nowrap";
-		$item->Visible = $Security->CanDelete();
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 
 		// List actions
 		$item = &$this->ListOptions->Add("listactions");
 		$item->CssClass = "text-nowrap";
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 		$item->Visible = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 		$item->ShowInDropDown = FALSE;
 
 		// "checkbox"
 		$item = &$this->ListOptions->Add("checkbox");
-		$item->Visible = FALSE;
-		$item->OnLeft = FALSE;
+		$item->Visible = $Security->CanDelete();
+		$item->OnLeft = TRUE;
 		$item->Header = "<input type=\"checkbox\" name=\"key\" id=\"key\" onclick=\"ew_SelectAllKey(this);\">";
+		$item->MoveTo(0);
 		$item->ShowInDropDown = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 
@@ -1189,13 +1235,6 @@ class ct06_pengeluaran_list extends ct06_pengeluaran {
 			$oListOpt->Body = "";
 		}
 
-		// "delete"
-		$oListOpt = &$this->ListOptions->Items["delete"];
-		if ($Security->CanDelete())
-			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
-		else
-			$oListOpt->Body = "";
-
 		// Set up list action buttons
 		$oListOpt = &$this->ListOptions->GetItem("listactions");
 		if ($oListOpt && $this->Export == "" && $this->CurrentAction == "") {
@@ -1246,6 +1285,11 @@ class ct06_pengeluaran_list extends ct06_pengeluaran {
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
 		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 		$option = $options["action"];
+
+		// Add multi delete
+		$item = &$option->Add("multidelete");
+		$item->Body = "<a class=\"ewAction ewMultiDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" href=\"\" onclick=\"ew_SubmitAction(event,{f:document.ft06_pengeluaranlist,url:'" . $this->MultiDeleteUrl . "'});return false;\">" . $Language->Phrase("DeleteSelectedLink") . "</a>";
+		$item->Visible = ($Security->CanDelete());
 
 		// Set up options default
 		foreach ($options as &$option) {
@@ -1738,6 +1782,271 @@ class ct06_pengeluaran_list extends ct06_pengeluaran {
 			$this->Row_Rendered();
 	}
 
+	// Set up export options
+	function SetupExportOptions() {
+		global $Language;
+
+		// Printer friendly
+		$item = &$this->ExportOptions->Add("print");
+		$item->Body = "<a href=\"" . $this->ExportPrintUrl . "\" class=\"ewExportLink ewPrint\" title=\"" . ew_HtmlEncode($Language->Phrase("PrinterFriendlyText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("PrinterFriendlyText")) . "\">" . $Language->Phrase("PrinterFriendly") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Excel
+		$item = &$this->ExportOptions->Add("excel");
+		$item->Body = "<a href=\"" . $this->ExportExcelUrl . "\" class=\"ewExportLink ewExcel\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToExcelText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToExcelText")) . "\">" . $Language->Phrase("ExportToExcel") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Word
+		$item = &$this->ExportOptions->Add("word");
+		$item->Body = "<a href=\"" . $this->ExportWordUrl . "\" class=\"ewExportLink ewWord\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToWordText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToWordText")) . "\">" . $Language->Phrase("ExportToWord") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Html
+		$item = &$this->ExportOptions->Add("html");
+		$item->Body = "<a href=\"" . $this->ExportHtmlUrl . "\" class=\"ewExportLink ewHtml\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToHtmlText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToHtmlText")) . "\">" . $Language->Phrase("ExportToHtml") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Xml
+		$item = &$this->ExportOptions->Add("xml");
+		$item->Body = "<a href=\"" . $this->ExportXmlUrl . "\" class=\"ewExportLink ewXml\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToXmlText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToXmlText")) . "\">" . $Language->Phrase("ExportToXml") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Csv
+		$item = &$this->ExportOptions->Add("csv");
+		$item->Body = "<a href=\"" . $this->ExportCsvUrl . "\" class=\"ewExportLink ewCsv\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToCsvText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToCsvText")) . "\">" . $Language->Phrase("ExportToCsv") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Pdf
+		$item = &$this->ExportOptions->Add("pdf");
+		$item->Body = "<a href=\"" . $this->ExportPdfUrl . "\" class=\"ewExportLink ewPdf\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToPDFText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToPDFText")) . "\">" . $Language->Phrase("ExportToPDF") . "</a>";
+		$item->Visible = FALSE;
+
+		// Export to Email
+		$item = &$this->ExportOptions->Add("email");
+		$url = "";
+		$item->Body = "<button id=\"emf_t06_pengeluaran\" class=\"ewExportLink ewEmail\" title=\"" . $Language->Phrase("ExportToEmailText") . "\" data-caption=\"" . $Language->Phrase("ExportToEmailText") . "\" onclick=\"ew_EmailDialogShow({lnk:'emf_t06_pengeluaran',hdr:ewLanguage.Phrase('ExportToEmailText'),f:document.ft06_pengeluaranlist,sel:false" . $url . "});\">" . $Language->Phrase("ExportToEmail") . "</button>";
+		$item->Visible = TRUE;
+
+		// Drop down button for export
+		$this->ExportOptions->UseButtonGroup = TRUE;
+		$this->ExportOptions->UseImageAndText = TRUE;
+		$this->ExportOptions->UseDropDownButton = TRUE;
+		if ($this->ExportOptions->UseButtonGroup && ew_IsMobile())
+			$this->ExportOptions->UseDropDownButton = TRUE;
+		$this->ExportOptions->DropDownButtonPhrase = $Language->Phrase("ButtonExport");
+
+		// Add group option item
+		$item = &$this->ExportOptions->Add($this->ExportOptions->GroupOptionName);
+		$item->Body = "";
+		$item->Visible = FALSE;
+	}
+
+	// Export data in HTML/CSV/Word/Excel/XML/Email/PDF format
+	function ExportData() {
+		$utf8 = (strtolower(EW_CHARSET) == "utf-8");
+		$bSelectLimit = $this->UseSelectLimit;
+
+		// Load recordset
+		if ($bSelectLimit) {
+			$this->TotalRecs = $this->ListRecordCount();
+		} else {
+			if (!$this->Recordset)
+				$this->Recordset = $this->LoadRecordset();
+			$rs = &$this->Recordset;
+			if ($rs)
+				$this->TotalRecs = $rs->RecordCount();
+		}
+		$this->StartRec = 1;
+
+		// Export all
+		if ($this->ExportAll) {
+			set_time_limit(EW_EXPORT_ALL_TIME_LIMIT);
+			$this->DisplayRecs = $this->TotalRecs;
+			$this->StopRec = $this->TotalRecs;
+		} else { // Export one page only
+			$this->SetupStartRec(); // Set up start record position
+
+			// Set the last record to display
+			if ($this->DisplayRecs <= 0) {
+				$this->StopRec = $this->TotalRecs;
+			} else {
+				$this->StopRec = $this->StartRec + $this->DisplayRecs - 1;
+			}
+		}
+		if ($bSelectLimit)
+			$rs = $this->LoadRecordset($this->StartRec-1, $this->DisplayRecs <= 0 ? $this->TotalRecs : $this->DisplayRecs);
+		if (!$rs) {
+			header("Content-Type:"); // Remove header
+			header("Content-Disposition:");
+			$this->ShowMessage();
+			return;
+		}
+		$this->ExportDoc = ew_ExportDocument($this, "h");
+		$Doc = &$this->ExportDoc;
+		if ($bSelectLimit) {
+			$this->StartRec = 1;
+			$this->StopRec = $this->DisplayRecs <= 0 ? $this->TotalRecs : $this->DisplayRecs;
+		} else {
+
+			//$this->StartRec = $this->StartRec;
+			//$this->StopRec = $this->StopRec;
+
+		}
+
+		// Call Page Exporting server event
+		$this->ExportDoc->ExportCustom = !$this->Page_Exporting();
+		$ParentTable = "";
+		$sHeader = $this->PageHeader;
+		$this->Page_DataRendering($sHeader);
+		$Doc->Text .= $sHeader;
+		$this->ExportDocument($Doc, $rs, $this->StartRec, $this->StopRec, "");
+		$sFooter = $this->PageFooter;
+		$this->Page_DataRendered($sFooter);
+		$Doc->Text .= $sFooter;
+
+		// Close recordset
+		$rs->Close();
+
+		// Call Page Exported server event
+		$this->Page_Exported();
+
+		// Export header and footer
+		$Doc->ExportHeaderAndFooter();
+
+		// Clean output buffer
+		if (!EW_DEBUG_ENABLED && ob_get_length())
+			ob_end_clean();
+
+		// Write debug message if enabled
+		if (EW_DEBUG_ENABLED && $this->Export <> "pdf")
+			echo ew_DebugMsg();
+
+		// Output data
+		if ($this->Export == "email") {
+			echo $this->ExportEmail($Doc->Text);
+		} else {
+			$Doc->Export();
+		}
+	}
+
+	// Export email
+	function ExportEmail($EmailContent) {
+		global $gTmpImages, $Language;
+		$sSender = @$_POST["sender"];
+		$sRecipient = @$_POST["recipient"];
+		$sCc = @$_POST["cc"];
+		$sBcc = @$_POST["bcc"];
+
+		// Subject
+		$sSubject = @$_POST["subject"];
+		$sEmailSubject = $sSubject;
+
+		// Message
+		$sContent = @$_POST["message"];
+		$sEmailMessage = $sContent;
+
+		// Check sender
+		if ($sSender == "") {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterSenderEmail") . "</p>";
+		}
+		if (!ew_CheckEmail($sSender)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperSenderEmail") . "</p>";
+		}
+
+		// Check recipient
+		if (!ew_CheckEmailList($sRecipient, EW_MAX_EMAIL_RECIPIENT)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperRecipientEmail") . "</p>";
+		}
+
+		// Check cc
+		if (!ew_CheckEmailList($sCc, EW_MAX_EMAIL_RECIPIENT)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperCcEmail") . "</p>";
+		}
+
+		// Check bcc
+		if (!ew_CheckEmailList($sBcc, EW_MAX_EMAIL_RECIPIENT)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperBccEmail") . "</p>";
+		}
+
+		// Check email sent count
+		if (!isset($_SESSION[EW_EXPORT_EMAIL_COUNTER]))
+			$_SESSION[EW_EXPORT_EMAIL_COUNTER] = 0;
+		if (intval($_SESSION[EW_EXPORT_EMAIL_COUNTER]) > EW_MAX_EMAIL_SENT_COUNT) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("ExceedMaxEmailExport") . "</p>";
+		}
+
+		// Send email
+		$Email = new cEmail();
+		$Email->Sender = $sSender; // Sender
+		$Email->Recipient = $sRecipient; // Recipient
+		$Email->Cc = $sCc; // Cc
+		$Email->Bcc = $sBcc; // Bcc
+		$Email->Subject = $sEmailSubject; // Subject
+		$Email->Format = "html";
+		if ($sEmailMessage <> "")
+			$sEmailMessage = ew_RemoveXSS($sEmailMessage) . "<br><br>";
+		foreach ($gTmpImages as $tmpimage)
+			$Email->AddEmbeddedImage($tmpimage);
+		$Email->Content = $sEmailMessage . ew_CleanEmailContent($EmailContent); // Content
+		$EventArgs = array();
+		if ($this->Recordset) {
+			$this->RecCnt = $this->StartRec - 1;
+			$this->Recordset->MoveFirst();
+			if ($this->StartRec > 1)
+				$this->Recordset->Move($this->StartRec - 1);
+			$EventArgs["rs"] = &$this->Recordset;
+		}
+		$bEmailSent = FALSE;
+		if ($this->Email_Sending($Email, $EventArgs))
+			$bEmailSent = $Email->Send();
+
+		// Check email sent status
+		if ($bEmailSent) {
+
+			// Update email sent count
+			$_SESSION[EW_EXPORT_EMAIL_COUNTER]++;
+
+			// Sent email success
+			return "<p class=\"text-success\">" . $Language->Phrase("SendEmailSuccess") . "</p>"; // Set up success message
+		} else {
+
+			// Sent email failure
+			return "<p class=\"text-danger\">" . $Email->SendErrDescription . "</p>";
+		}
+	}
+
+	// Export QueryString
+	function ExportQueryString() {
+
+		// Initialize
+		$sQry = "export=html";
+
+		// Build QueryString for search
+		if ($this->BasicSearch->getKeyword() <> "") {
+			$sQry .= "&" . EW_TABLE_BASIC_SEARCH . "=" . urlencode($this->BasicSearch->getKeyword()) . "&" . EW_TABLE_BASIC_SEARCH_TYPE . "=" . urlencode($this->BasicSearch->getType());
+		}
+
+		// Build QueryString for pager
+		$sQry .= "&" . EW_TABLE_REC_PER_PAGE . "=" . urlencode($this->getRecordsPerPage()) . "&" . EW_TABLE_START_REC . "=" . urlencode($this->getStartRecordNumber());
+		return $sQry;
+	}
+
+	// Add search QueryString
+	function AddSearchQueryString(&$Qry, &$Fld) {
+		$FldSearchValue = $Fld->AdvancedSearch->getValue("x");
+		$FldParm = substr($Fld->FldVar,2);
+		if (strval($FldSearchValue) <> "") {
+			$Qry .= "&x_" . $FldParm . "=" . urlencode($FldSearchValue) .
+				"&z_" . $FldParm . "=" . urlencode($Fld->AdvancedSearch->getValue("z"));
+		}
+		$FldSearchValue2 = $Fld->AdvancedSearch->getValue("y");
+		if (strval($FldSearchValue2) <> "") {
+			$Qry .= "&v_" . $FldParm . "=" . urlencode($Fld->AdvancedSearch->getValue("v")) .
+				"&y_" . $FldParm . "=" . urlencode($FldSearchValue2) .
+				"&w_" . $FldParm . "=" . urlencode($Fld->AdvancedSearch->getValue("w"));
+		}
+	}
+
 	// Set up Breadcrumb
 	function SetupBreadcrumb() {
 		global $Breadcrumb, $Language;
@@ -1911,6 +2220,7 @@ Page_Rendering();
 $t06_pengeluaran_list->Page_Render();
 ?>
 <?php include_once "header.php" ?>
+<?php if ($t06_pengeluaran->Export == "") { ?>
 <script type="text/javascript">
 
 // Form object
@@ -1938,6 +2248,8 @@ var CurrentSearchForm = ft06_pengeluaranlistsrch = new ew_Form("ft06_pengeluaran
 
 // Write your client script here, no need to add script tags.
 </script>
+<?php } ?>
+<?php if ($t06_pengeluaran->Export == "") { ?>
 <div class="ewToolbar">
 <?php if ($t06_pengeluaran_list->TotalRecs > 0 && $t06_pengeluaran_list->ExportOptions->Visible()) { ?>
 <?php $t06_pengeluaran_list->ExportOptions->Render("body") ?>
@@ -1950,6 +2262,7 @@ var CurrentSearchForm = ft06_pengeluaranlistsrch = new ew_Form("ft06_pengeluaran
 <?php } ?>
 <div class="clearfix"></div>
 </div>
+<?php } ?>
 <?php
 	$bSelectLimit = $t06_pengeluaran_list->UseSelectLimit;
 	if ($bSelectLimit) {
@@ -2013,6 +2326,66 @@ $t06_pengeluaran_list->ShowMessage();
 ?>
 <?php if ($t06_pengeluaran_list->TotalRecs > 0 || $t06_pengeluaran->CurrentAction <> "") { ?>
 <div class="box ewBox ewGrid<?php if ($t06_pengeluaran_list->IsAddOrEdit()) { ?> ewGridAddEdit<?php } ?> t06_pengeluaran">
+<?php if ($t06_pengeluaran->Export == "") { ?>
+<div class="box-header ewGridUpperPanel">
+<?php if ($t06_pengeluaran->CurrentAction <> "gridadd" && $t06_pengeluaran->CurrentAction <> "gridedit") { ?>
+<form name="ewPagerForm" class="form-inline ewForm ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
+<?php if (!isset($t06_pengeluaran_list->Pager)) $t06_pengeluaran_list->Pager = new cPrevNextPager($t06_pengeluaran_list->StartRec, $t06_pengeluaran_list->DisplayRecs, $t06_pengeluaran_list->TotalRecs, $t06_pengeluaran_list->AutoHidePager) ?>
+<?php if ($t06_pengeluaran_list->Pager->RecordCount > 0 && $t06_pengeluaran_list->Pager->Visible) { ?>
+<div class="ewPager">
+<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
+<div class="ewPrevNext"><div class="input-group">
+<div class="input-group-btn">
+<!--first page button-->
+	<?php if ($t06_pengeluaran_list->Pager->FirstButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t06_pengeluaran_list->PageUrl() ?>start=<?php echo $t06_pengeluaran_list->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } ?>
+<!--previous page button-->
+	<?php if ($t06_pengeluaran_list->Pager->PrevButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t06_pengeluaran_list->PageUrl() ?>start=<?php echo $t06_pengeluaran_list->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } ?>
+</div>
+<!--current page number-->
+	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t06_pengeluaran_list->Pager->CurrentPage ?>">
+<div class="input-group-btn">
+<!--next page button-->
+	<?php if ($t06_pengeluaran_list->Pager->NextButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t06_pengeluaran_list->PageUrl() ?>start=<?php echo $t06_pengeluaran_list->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } ?>
+<!--last page button-->
+	<?php if ($t06_pengeluaran_list->Pager->LastButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t06_pengeluaran_list->PageUrl() ?>start=<?php echo $t06_pengeluaran_list->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } ?>
+</div>
+</div>
+</div>
+<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t06_pengeluaran_list->Pager->PageCount ?></span>
+</div>
+<?php } ?>
+<?php if ($t06_pengeluaran_list->Pager->RecordCount > 0) { ?>
+<div class="ewPager ewRec">
+	<span><?php echo $Language->Phrase("Record") ?>&nbsp;<?php echo $t06_pengeluaran_list->Pager->FromIndex ?>&nbsp;<?php echo $Language->Phrase("To") ?>&nbsp;<?php echo $t06_pengeluaran_list->Pager->ToIndex ?>&nbsp;<?php echo $Language->Phrase("Of") ?>&nbsp;<?php echo $t06_pengeluaran_list->Pager->RecordCount ?></span>
+</div>
+<?php } ?>
+</form>
+<?php } ?>
+<div class="ewListOtherOptions">
+<?php
+	foreach ($t06_pengeluaran_list->OtherOptions as &$option)
+		$option->Render("body");
+?>
+</div>
+<div class="clearfix"></div>
+</div>
+<?php } ?>
 <form name="ft06_pengeluaranlist" id="ft06_pengeluaranlist" class="form-inline ewForm ewListForm" action="<?php echo ew_CurrentPage() ?>" method="post">
 <?php if ($t06_pengeluaran_list->CheckToken) { ?>
 <input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t06_pengeluaran_list->Token ?>">
@@ -2038,7 +2411,7 @@ $t06_pengeluaran_list->ListOptions->Render("header", "left");
 	<?php if ($t06_pengeluaran->SortUrl($t06_pengeluaran->id) == "") { ?>
 		<th data-name="id" class="<?php echo $t06_pengeluaran->id->HeaderCellClass() ?>"><div id="elh_t06_pengeluaran_id" class="t06_pengeluaran_id"><div class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="id" class="<?php echo $t06_pengeluaran->id->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->id) ?>',1);"><div id="elh_t06_pengeluaran_id" class="t06_pengeluaran_id">
+		<th data-name="id" class="<?php echo $t06_pengeluaran->id->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->id) ?>',2);"><div id="elh_t06_pengeluaran_id" class="t06_pengeluaran_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t06_pengeluaran->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t06_pengeluaran->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2047,7 +2420,7 @@ $t06_pengeluaran_list->ListOptions->Render("header", "left");
 	<?php if ($t06_pengeluaran->SortUrl($t06_pengeluaran->supplier_id) == "") { ?>
 		<th data-name="supplier_id" class="<?php echo $t06_pengeluaran->supplier_id->HeaderCellClass() ?>"><div id="elh_t06_pengeluaran_supplier_id" class="t06_pengeluaran_supplier_id"><div class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->supplier_id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="supplier_id" class="<?php echo $t06_pengeluaran->supplier_id->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->supplier_id) ?>',1);"><div id="elh_t06_pengeluaran_supplier_id" class="t06_pengeluaran_supplier_id">
+		<th data-name="supplier_id" class="<?php echo $t06_pengeluaran->supplier_id->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->supplier_id) ?>',2);"><div id="elh_t06_pengeluaran_supplier_id" class="t06_pengeluaran_supplier_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->supplier_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t06_pengeluaran->supplier_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t06_pengeluaran->supplier_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2056,7 +2429,7 @@ $t06_pengeluaran_list->ListOptions->Render("header", "left");
 	<?php if ($t06_pengeluaran->SortUrl($t06_pengeluaran->Tanggal) == "") { ?>
 		<th data-name="Tanggal" class="<?php echo $t06_pengeluaran->Tanggal->HeaderCellClass() ?>"><div id="elh_t06_pengeluaran_Tanggal" class="t06_pengeluaran_Tanggal"><div class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->Tanggal->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Tanggal" class="<?php echo $t06_pengeluaran->Tanggal->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->Tanggal) ?>',1);"><div id="elh_t06_pengeluaran_Tanggal" class="t06_pengeluaran_Tanggal">
+		<th data-name="Tanggal" class="<?php echo $t06_pengeluaran->Tanggal->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->Tanggal) ?>',2);"><div id="elh_t06_pengeluaran_Tanggal" class="t06_pengeluaran_Tanggal">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->Tanggal->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t06_pengeluaran->Tanggal->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t06_pengeluaran->Tanggal->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2065,7 +2438,7 @@ $t06_pengeluaran_list->ListOptions->Render("header", "left");
 	<?php if ($t06_pengeluaran->SortUrl($t06_pengeluaran->NoNota) == "") { ?>
 		<th data-name="NoNota" class="<?php echo $t06_pengeluaran->NoNota->HeaderCellClass() ?>"><div id="elh_t06_pengeluaran_NoNota" class="t06_pengeluaran_NoNota"><div class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->NoNota->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="NoNota" class="<?php echo $t06_pengeluaran->NoNota->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->NoNota) ?>',1);"><div id="elh_t06_pengeluaran_NoNota" class="t06_pengeluaran_NoNota">
+		<th data-name="NoNota" class="<?php echo $t06_pengeluaran->NoNota->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->NoNota) ?>',2);"><div id="elh_t06_pengeluaran_NoNota" class="t06_pengeluaran_NoNota">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->NoNota->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t06_pengeluaran->NoNota->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t06_pengeluaran->NoNota->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2074,7 +2447,7 @@ $t06_pengeluaran_list->ListOptions->Render("header", "left");
 	<?php if ($t06_pengeluaran->SortUrl($t06_pengeluaran->barang_id) == "") { ?>
 		<th data-name="barang_id" class="<?php echo $t06_pengeluaran->barang_id->HeaderCellClass() ?>"><div id="elh_t06_pengeluaran_barang_id" class="t06_pengeluaran_barang_id"><div class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->barang_id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="barang_id" class="<?php echo $t06_pengeluaran->barang_id->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->barang_id) ?>',1);"><div id="elh_t06_pengeluaran_barang_id" class="t06_pengeluaran_barang_id">
+		<th data-name="barang_id" class="<?php echo $t06_pengeluaran->barang_id->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->barang_id) ?>',2);"><div id="elh_t06_pengeluaran_barang_id" class="t06_pengeluaran_barang_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->barang_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t06_pengeluaran->barang_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t06_pengeluaran->barang_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2083,7 +2456,7 @@ $t06_pengeluaran_list->ListOptions->Render("header", "left");
 	<?php if ($t06_pengeluaran->SortUrl($t06_pengeluaran->Banyaknya) == "") { ?>
 		<th data-name="Banyaknya" class="<?php echo $t06_pengeluaran->Banyaknya->HeaderCellClass() ?>"><div id="elh_t06_pengeluaran_Banyaknya" class="t06_pengeluaran_Banyaknya"><div class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->Banyaknya->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Banyaknya" class="<?php echo $t06_pengeluaran->Banyaknya->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->Banyaknya) ?>',1);"><div id="elh_t06_pengeluaran_Banyaknya" class="t06_pengeluaran_Banyaknya">
+		<th data-name="Banyaknya" class="<?php echo $t06_pengeluaran->Banyaknya->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->Banyaknya) ?>',2);"><div id="elh_t06_pengeluaran_Banyaknya" class="t06_pengeluaran_Banyaknya">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->Banyaknya->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t06_pengeluaran->Banyaknya->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t06_pengeluaran->Banyaknya->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2092,7 +2465,7 @@ $t06_pengeluaran_list->ListOptions->Render("header", "left");
 	<?php if ($t06_pengeluaran->SortUrl($t06_pengeluaran->Harga) == "") { ?>
 		<th data-name="Harga" class="<?php echo $t06_pengeluaran->Harga->HeaderCellClass() ?>"><div id="elh_t06_pengeluaran_Harga" class="t06_pengeluaran_Harga"><div class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->Harga->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Harga" class="<?php echo $t06_pengeluaran->Harga->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->Harga) ?>',1);"><div id="elh_t06_pengeluaran_Harga" class="t06_pengeluaran_Harga">
+		<th data-name="Harga" class="<?php echo $t06_pengeluaran->Harga->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->Harga) ?>',2);"><div id="elh_t06_pengeluaran_Harga" class="t06_pengeluaran_Harga">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->Harga->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t06_pengeluaran->Harga->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t06_pengeluaran->Harga->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2101,7 +2474,7 @@ $t06_pengeluaran_list->ListOptions->Render("header", "left");
 	<?php if ($t06_pengeluaran->SortUrl($t06_pengeluaran->Jumlah) == "") { ?>
 		<th data-name="Jumlah" class="<?php echo $t06_pengeluaran->Jumlah->HeaderCellClass() ?>"><div id="elh_t06_pengeluaran_Jumlah" class="t06_pengeluaran_Jumlah"><div class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->Jumlah->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Jumlah" class="<?php echo $t06_pengeluaran->Jumlah->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->Jumlah) ?>',1);"><div id="elh_t06_pengeluaran_Jumlah" class="t06_pengeluaran_Jumlah">
+		<th data-name="Jumlah" class="<?php echo $t06_pengeluaran->Jumlah->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->Jumlah) ?>',2);"><div id="elh_t06_pengeluaran_Jumlah" class="t06_pengeluaran_Jumlah">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->Jumlah->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t06_pengeluaran->Jumlah->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t06_pengeluaran->Jumlah->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2110,7 +2483,7 @@ $t06_pengeluaran_list->ListOptions->Render("header", "left");
 	<?php if ($t06_pengeluaran->SortUrl($t06_pengeluaran->maingroup_id) == "") { ?>
 		<th data-name="maingroup_id" class="<?php echo $t06_pengeluaran->maingroup_id->HeaderCellClass() ?>"><div id="elh_t06_pengeluaran_maingroup_id" class="t06_pengeluaran_maingroup_id"><div class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->maingroup_id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="maingroup_id" class="<?php echo $t06_pengeluaran->maingroup_id->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->maingroup_id) ?>',1);"><div id="elh_t06_pengeluaran_maingroup_id" class="t06_pengeluaran_maingroup_id">
+		<th data-name="maingroup_id" class="<?php echo $t06_pengeluaran->maingroup_id->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->maingroup_id) ?>',2);"><div id="elh_t06_pengeluaran_maingroup_id" class="t06_pengeluaran_maingroup_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->maingroup_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t06_pengeluaran->maingroup_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t06_pengeluaran->maingroup_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2119,7 +2492,7 @@ $t06_pengeluaran_list->ListOptions->Render("header", "left");
 	<?php if ($t06_pengeluaran->SortUrl($t06_pengeluaran->subgroup_id) == "") { ?>
 		<th data-name="subgroup_id" class="<?php echo $t06_pengeluaran->subgroup_id->HeaderCellClass() ?>"><div id="elh_t06_pengeluaran_subgroup_id" class="t06_pengeluaran_subgroup_id"><div class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->subgroup_id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="subgroup_id" class="<?php echo $t06_pengeluaran->subgroup_id->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->subgroup_id) ?>',1);"><div id="elh_t06_pengeluaran_subgroup_id" class="t06_pengeluaran_subgroup_id">
+		<th data-name="subgroup_id" class="<?php echo $t06_pengeluaran->subgroup_id->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t06_pengeluaran->SortUrl($t06_pengeluaran->subgroup_id) ?>',2);"><div id="elh_t06_pengeluaran_subgroup_id" class="t06_pengeluaran_subgroup_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t06_pengeluaran->subgroup_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t06_pengeluaran->subgroup_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t06_pengeluaran->subgroup_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2295,6 +2668,7 @@ $t06_pengeluaran_list->ListOptions->Render("body", "right", $t06_pengeluaran_lis
 if ($t06_pengeluaran_list->Recordset)
 	$t06_pengeluaran_list->Recordset->Close();
 ?>
+<?php if ($t06_pengeluaran->Export == "") { ?>
 <div class="box-footer ewGridLowerPanel">
 <?php if ($t06_pengeluaran->CurrentAction <> "gridadd" && $t06_pengeluaran->CurrentAction <> "gridedit") { ?>
 <form name="ewPagerForm" class="ewForm form-inline ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
@@ -2353,6 +2727,7 @@ if ($t06_pengeluaran_list->Recordset)
 </div>
 <div class="clearfix"></div>
 </div>
+<?php } ?>
 </div>
 <?php } ?>
 <?php if ($t06_pengeluaran_list->TotalRecs == 0 && $t06_pengeluaran->CurrentAction == "") { // Show other options ?>
@@ -2366,22 +2741,26 @@ if ($t06_pengeluaran_list->Recordset)
 </div>
 <div class="clearfix"></div>
 <?php } ?>
+<?php if ($t06_pengeluaran->Export == "") { ?>
 <script type="text/javascript">
 ft06_pengeluaranlistsrch.FilterList = <?php echo $t06_pengeluaran_list->GetFilterList() ?>;
 ft06_pengeluaranlistsrch.Init();
 ft06_pengeluaranlist.Init();
 </script>
+<?php } ?>
 <?php
 $t06_pengeluaran_list->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
+<?php if ($t06_pengeluaran->Export == "") { ?>
 <script type="text/javascript">
 
 // Write your table-specific startup script here
 // document.write("page loaded");
 
 </script>
+<?php } ?>
 <?php include_once "footer.php" ?>
 <?php
 $t06_pengeluaran_list->Page_Terminate();

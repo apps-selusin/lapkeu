@@ -592,6 +592,11 @@ class ct03_barang_add extends ct03_barang {
 		$this->id->setDbValue($row['id']);
 		$this->Nama->setDbValue($row['Nama']);
 		$this->satuan_id->setDbValue($row['satuan_id']);
+		if (array_key_exists('EV__satuan_id', $rs->fields)) {
+			$this->satuan_id->VirtualValue = $rs->fields('EV__satuan_id'); // Set up virtual field value
+		} else {
+			$this->satuan_id->VirtualValue = ""; // Clear value
+		}
 	}
 
 	// Return a row with default values
@@ -661,7 +666,31 @@ class ct03_barang_add extends ct03_barang {
 		$this->Nama->ViewCustomAttributes = "";
 
 		// satuan_id
-		$this->satuan_id->ViewValue = $this->satuan_id->CurrentValue;
+		if ($this->satuan_id->VirtualValue <> "") {
+			$this->satuan_id->ViewValue = $this->satuan_id->VirtualValue;
+		} else {
+		if (strval($this->satuan_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->satuan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_satuan`";
+		$sWhereWrk = "";
+		$this->satuan_id->LookupFilters = array("dx1" => '`Nama`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->satuan_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+		$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->satuan_id->ViewValue = $this->satuan_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->satuan_id->ViewValue = $this->satuan_id->CurrentValue;
+			}
+		} else {
+			$this->satuan_id->ViewValue = NULL;
+		}
+		}
 		$this->satuan_id->ViewCustomAttributes = "";
 
 			// Nama
@@ -682,10 +711,30 @@ class ct03_barang_add extends ct03_barang {
 			$this->Nama->PlaceHolder = ew_RemoveHtml($this->Nama->FldCaption());
 
 			// satuan_id
-			$this->satuan_id->EditAttrs["class"] = "form-control";
 			$this->satuan_id->EditCustomAttributes = "";
-			$this->satuan_id->EditValue = ew_HtmlEncode($this->satuan_id->CurrentValue);
-			$this->satuan_id->PlaceHolder = ew_RemoveHtml($this->satuan_id->FldCaption());
+			if (trim(strval($this->satuan_id->CurrentValue)) == "") {
+				$sFilterWrk = "0=1";
+			} else {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->satuan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			}
+			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, '' AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t02_satuan`";
+			$sWhereWrk = "";
+			$this->satuan_id->LookupFilters = array("dx1" => '`Nama`');
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->satuan_id, $sWhereWrk); // Call Lookup Selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = ew_HtmlEncode($rswrk->fields('DispFld'));
+				$this->satuan_id->ViewValue = $this->satuan_id->DisplayValue($arwrk);
+			} else {
+				$this->satuan_id->ViewValue = $Language->Phrase("PleaseSelect");
+			}
+			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
+			if ($rswrk) $rswrk->Close();
+			$this->satuan_id->EditValue = $arwrk;
 
 			// Add refer script
 			// Nama
@@ -720,9 +769,6 @@ class ct03_barang_add extends ct03_barang {
 		}
 		if (!$this->satuan_id->FldIsDetailKey && !is_null($this->satuan_id->FormValue) && $this->satuan_id->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->satuan_id->FldCaption(), $this->satuan_id->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->satuan_id->FormValue)) {
-			ew_AddMessage($gsFormError, $this->satuan_id->FldErrMsg());
 		}
 
 		// Return validate result
@@ -799,6 +845,19 @@ class ct03_barang_add extends ct03_barang {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
+		case "x_satuan_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_satuan`";
+			$sWhereWrk = "{filter}";
+			$fld->LookupFilters = array("dx1" => '`Nama`');
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` IN ({filter_value})', "t0" => "3", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->satuan_id, $sWhereWrk); // Call Lookup Selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " ORDER BY `Nama` ASC";
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 		}
 	}
 
@@ -924,9 +983,6 @@ ft03_barangadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_satuan_id");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t03_barang->satuan_id->FldCaption(), $t03_barang->satuan_id->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_satuan_id");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t03_barang->satuan_id->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -956,8 +1012,10 @@ ft03_barangadd.Form_CustomValidate =
 ft03_barangadd.ValidateRequired = <?php echo json_encode(EW_CLIENT_VALIDATE) ?>;
 
 // Dynamic selection lists
-// Form object for search
+ft03_barangadd.Lists["x_satuan_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t02_satuan"};
+ft03_barangadd.Lists["x_satuan_id"].Data = "<?php echo $t03_barang_add->satuan_id->LookupFilterQuery(FALSE, "add") ?>";
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
@@ -990,7 +1048,14 @@ $t03_barang_add->ShowMessage();
 		<label id="elh_t03_barang_satuan_id" for="x_satuan_id" class="<?php echo $t03_barang_add->LeftColumnClass ?>"><?php echo $t03_barang->satuan_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="<?php echo $t03_barang_add->RightColumnClass ?>"><div<?php echo $t03_barang->satuan_id->CellAttributes() ?>>
 <span id="el_t03_barang_satuan_id">
-<input type="text" data-table="t03_barang" data-field="x_satuan_id" name="x_satuan_id" id="x_satuan_id" size="30" placeholder="<?php echo ew_HtmlEncode($t03_barang->satuan_id->getPlaceHolder()) ?>" value="<?php echo $t03_barang->satuan_id->EditValue ?>"<?php echo $t03_barang->satuan_id->EditAttributes() ?>>
+<span class="ewLookupList">
+	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_satuan_id"><?php echo (strval($t03_barang->satuan_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t03_barang->satuan_id->ViewValue); ?></span>
+</span>
+<button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t03_barang->satuan_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x_satuan_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"<?php echo (($t03_barang->satuan_id->ReadOnly || $t03_barang->satuan_id->Disabled) ? " disabled" : "")?>><span class="glyphicon glyphicon-search ewIcon"></span></button>
+<input type="hidden" data-table="t03_barang" data-field="x_satuan_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t03_barang->satuan_id->DisplayValueSeparatorAttribute() ?>" name="x_satuan_id" id="x_satuan_id" value="<?php echo $t03_barang->satuan_id->CurrentValue ?>"<?php echo $t03_barang->satuan_id->EditAttributes() ?>>
+<?php if (AllowAdd(CurrentProjectID() . "t02_satuan") && !$t03_barang->satuan_id->ReadOnly) { ?>
+<button type="button" title="<?php echo ew_HtmlTitle($Language->Phrase("AddLink")) . "&nbsp;" . $t03_barang->satuan_id->FldCaption() ?>" onclick="ew_AddOptDialogShow({lnk:this,el:'x_satuan_id',url:'t02_satuanaddopt.php'});" class="ewAddOptBtn btn btn-default btn-sm" id="aol_x_satuan_id"><span class="glyphicon glyphicon-plus ewIcon"></span><span class="hide"><?php echo $Language->Phrase("AddLink") ?>&nbsp;<?php echo $t03_barang->satuan_id->FldCaption() ?></span></button>
+<?php } ?>
 </span>
 <?php echo $t03_barang->satuan_id->CustomMsg ?></div></div>
 	</div>

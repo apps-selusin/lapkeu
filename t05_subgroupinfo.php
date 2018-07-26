@@ -81,8 +81,8 @@ class ct05_subgroup extends cTable {
 		}
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -92,10 +92,68 @@ class ct05_subgroup extends cTable {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ctrl) {
+				$sOrderBy = $this->getSessionOrderBy();
+				if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+					$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+				} else {
+					if ($sOrderBy <> "") $sOrderBy .= ", ";
+					$sOrderBy .= $sSortField . " " . $sThisSort;
+				}
+				$this->setSessionOrderBy($sOrderBy); // Save to Session
+			} else {
+				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			}
 		} else {
-			$ofld->setSort("");
+			if (!$ctrl) $ofld->setSort("");
 		}
+	}
+
+	// Current master table name
+	function getCurrentMasterTable() {
+		return @$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_MASTER_TABLE];
+	}
+
+	function setCurrentMasterTable($v) {
+		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_MASTER_TABLE] = $v;
+	}
+
+	// Session master WHERE clause
+	function GetMasterFilter() {
+
+		// Master filter
+		$sMasterFilter = "";
+		if ($this->getCurrentMasterTable() == "t04_maingroup") {
+			if ($this->maingroup_id->getSessionValue() <> "")
+				$sMasterFilter .= "`id`=" . ew_QuotedValue($this->maingroup_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
+			else
+				return "";
+		}
+		return $sMasterFilter;
+	}
+
+	// Session detail WHERE clause
+	function GetDetailFilter() {
+
+		// Detail filter
+		$sDetailFilter = "";
+		if ($this->getCurrentMasterTable() == "t04_maingroup") {
+			if ($this->maingroup_id->getSessionValue() <> "")
+				$sDetailFilter .= "`maingroup_id`=" . ew_QuotedValue($this->maingroup_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
+			else
+				return "";
+		}
+		return $sDetailFilter;
+	}
+
+	// Master filter
+	function SqlMasterFilter_t04_maingroup() {
+		return "`id`=@id@";
+	}
+
+	// Detail filter
+	function SqlDetailFilter_t04_maingroup() {
+		return "`maingroup_id`=@maingroup_id@";
 	}
 
 	// Table level SQL
@@ -490,6 +548,10 @@ class ct05_subgroup extends cTable {
 
 	// Add master url
 	function AddMasterUrl($url) {
+		if ($this->getCurrentMasterTable() == "t04_maingroup" && strpos($url, EW_TABLE_SHOW_MASTER . "=") === FALSE) {
+			$url .= (strpos($url, "?") !== FALSE ? "&" : "?") . EW_TABLE_SHOW_MASTER . "=" . $this->getCurrentMasterTable();
+			$url .= "&fk_id=" . urlencode($this->maingroup_id->CurrentValue);
+		}
 		return $url;
 	}
 
@@ -609,6 +671,26 @@ class ct05_subgroup extends cTable {
 
 		// maingroup_id
 		$this->maingroup_id->ViewValue = $this->maingroup_id->CurrentValue;
+		if (strval($this->maingroup_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->maingroup_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t04_maingroup`";
+		$sWhereWrk = "";
+		$this->maingroup_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->maingroup_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->maingroup_id->ViewValue = $this->maingroup_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->maingroup_id->ViewValue = $this->maingroup_id->CurrentValue;
+			}
+		} else {
+			$this->maingroup_id->ViewValue = NULL;
+		}
 		$this->maingroup_id->ViewCustomAttributes = "";
 
 		// Nama
@@ -653,8 +735,34 @@ class ct05_subgroup extends cTable {
 		// maingroup_id
 		$this->maingroup_id->EditAttrs["class"] = "form-control";
 		$this->maingroup_id->EditCustomAttributes = "";
+		if ($this->maingroup_id->getSessionValue() <> "") {
+			$this->maingroup_id->CurrentValue = $this->maingroup_id->getSessionValue();
+		$this->maingroup_id->ViewValue = $this->maingroup_id->CurrentValue;
+		if (strval($this->maingroup_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->maingroup_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t04_maingroup`";
+		$sWhereWrk = "";
+		$this->maingroup_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->maingroup_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->maingroup_id->ViewValue = $this->maingroup_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->maingroup_id->ViewValue = $this->maingroup_id->CurrentValue;
+			}
+		} else {
+			$this->maingroup_id->ViewValue = NULL;
+		}
+		$this->maingroup_id->ViewCustomAttributes = "";
+		} else {
 		$this->maingroup_id->EditValue = $this->maingroup_id->CurrentValue;
 		$this->maingroup_id->PlaceHolder = ew_RemoveHtml($this->maingroup_id->FldCaption());
+		}
 
 		// Nama
 		$this->Nama->EditAttrs["class"] = "form-control";
@@ -689,8 +797,6 @@ class ct05_subgroup extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
-					if ($this->maingroup_id->Exportable) $Doc->ExportCaption($this->maingroup_id);
 					if ($this->Nama->Exportable) $Doc->ExportCaption($this->Nama);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
@@ -727,8 +833,6 @@ class ct05_subgroup extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
-						if ($this->maingroup_id->Exportable) $Doc->ExportField($this->maingroup_id);
 						if ($this->Nama->Exportable) $Doc->ExportField($this->Nama);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);

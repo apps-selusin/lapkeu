@@ -320,9 +320,6 @@ class ct03_barang_delete extends ct03_barang {
 		// 
 
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		if ($this->IsAdd() || $this->IsCopy() || $this->IsGridAdd())
-			$this->id->Visible = FALSE;
 		$this->Nama->SetVisibility();
 		$this->satuan_id->SetVisibility();
 
@@ -457,7 +454,7 @@ class ct03_barang_delete extends ct03_barang {
 		if ($this->UseSelectLimit) {
 			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
 			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderByList())));
 			} else {
 				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
 			}
@@ -507,6 +504,11 @@ class ct03_barang_delete extends ct03_barang {
 		$this->id->setDbValue($row['id']);
 		$this->Nama->setDbValue($row['Nama']);
 		$this->satuan_id->setDbValue($row['satuan_id']);
+		if (array_key_exists('EV__satuan_id', $rs->fields)) {
+			$this->satuan_id->VirtualValue = $rs->fields('EV__satuan_id'); // Set up virtual field value
+		} else {
+			$this->satuan_id->VirtualValue = ""; // Clear value
+		}
 	}
 
 	// Return a row with default values
@@ -553,13 +555,32 @@ class ct03_barang_delete extends ct03_barang {
 		$this->Nama->ViewCustomAttributes = "";
 
 		// satuan_id
-		$this->satuan_id->ViewValue = $this->satuan_id->CurrentValue;
+		if ($this->satuan_id->VirtualValue <> "") {
+			$this->satuan_id->ViewValue = $this->satuan_id->VirtualValue;
+		} else {
+		if (strval($this->satuan_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->satuan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_satuan`";
+		$sWhereWrk = "";
+		$this->satuan_id->LookupFilters = array("dx1" => '`Nama`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->satuan_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+		$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->satuan_id->ViewValue = $this->satuan_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->satuan_id->ViewValue = $this->satuan_id->CurrentValue;
+			}
+		} else {
+			$this->satuan_id->ViewValue = NULL;
+		}
+		}
 		$this->satuan_id->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
 
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
@@ -781,8 +802,10 @@ ft03_barangdelete.Form_CustomValidate =
 ft03_barangdelete.ValidateRequired = <?php echo json_encode(EW_CLIENT_VALIDATE) ?>;
 
 // Dynamic selection lists
-// Form object for search
+ft03_barangdelete.Lists["x_satuan_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t02_satuan"};
+ft03_barangdelete.Lists["x_satuan_id"].Data = "<?php echo $t03_barang_delete->satuan_id->LookupFilterQuery(FALSE, "delete") ?>";
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
@@ -807,9 +830,6 @@ $t03_barang_delete->ShowMessage();
 <table class="table ewTable">
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t03_barang->id->Visible) { // id ?>
-		<th class="<?php echo $t03_barang->id->HeaderCellClass() ?>"><span id="elh_t03_barang_id" class="t03_barang_id"><?php echo $t03_barang->id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t03_barang->Nama->Visible) { // Nama ?>
 		<th class="<?php echo $t03_barang->Nama->HeaderCellClass() ?>"><span id="elh_t03_barang_Nama" class="t03_barang_Nama"><?php echo $t03_barang->Nama->FldCaption() ?></span></th>
 <?php } ?>
@@ -837,14 +857,6 @@ while (!$t03_barang_delete->Recordset->EOF) {
 	$t03_barang_delete->RenderRow();
 ?>
 	<tr<?php echo $t03_barang->RowAttributes() ?>>
-<?php if ($t03_barang->id->Visible) { // id ?>
-		<td<?php echo $t03_barang->id->CellAttributes() ?>>
-<span id="el<?php echo $t03_barang_delete->RowCnt ?>_t03_barang_id" class="t03_barang_id">
-<span<?php echo $t03_barang->id->ViewAttributes() ?>>
-<?php echo $t03_barang->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t03_barang->Nama->Visible) { // Nama ?>
 		<td<?php echo $t03_barang->Nama->CellAttributes() ?>>
 <span id="el<?php echo $t03_barang_delete->RowCnt ?>_t03_barang_Nama" class="t03_barang_Nama">

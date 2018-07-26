@@ -398,7 +398,45 @@ class ct99_audittrail_list extends ct99_audittrail {
 		// 
 		// Security = null;
 		// 
+		// Get export parameters
 
+		$custom = "";
+		if (@$_GET["export"] <> "") {
+			$this->Export = $_GET["export"];
+			$custom = @$_GET["custom"];
+		} elseif (@$_POST["export"] <> "") {
+			$this->Export = $_POST["export"];
+			$custom = @$_POST["custom"];
+		} elseif (ew_IsPost()) {
+			if (@$_POST["exporttype"] <> "")
+				$this->Export = $_POST["exporttype"];
+			$custom = @$_POST["custom"];
+		} elseif (@$_GET["cmd"] == "json") {
+			$this->Export = $_GET["cmd"];
+		} else {
+			$this->setExportReturnUrl(ew_CurrentUrl());
+		}
+		$gsExportFile = $this->TableVar; // Get export file, used in header
+
+		// Get custom export parameters
+		if ($this->Export <> "" && $custom <> "") {
+			$this->CustomExport = $this->Export;
+			$this->Export = "print";
+		}
+		$gsCustomExport = $this->CustomExport;
+		$gsExport = $this->Export; // Get export parameter, used in header
+
+		// Update Export URLs
+		if (defined("EW_USE_PHPEXCEL"))
+			$this->ExportExcelCustom = FALSE;
+		if ($this->ExportExcelCustom)
+			$this->ExportExcelUrl .= "&amp;custom=1";
+		if (defined("EW_USE_PHPWORD"))
+			$this->ExportWordCustom = FALSE;
+		if ($this->ExportWordCustom)
+			$this->ExportWordUrl .= "&amp;custom=1";
+		if ($this->ExportPdfCustom)
+			$this->ExportPdfUrl .= "&amp;custom=1";
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 
 		// Get grid add count
@@ -408,6 +446,9 @@ class ct99_audittrail_list extends ct99_audittrail {
 
 		// Set up list options
 		$this->SetupListOptions();
+
+		// Setup export options
+		$this->SetupExportOptions();
 		$this->id->SetVisibility();
 		if ($this->IsAdd() || $this->IsCopy() || $this->IsGridAdd())
 			$this->id->Visible = FALSE;
@@ -676,6 +717,13 @@ class ct99_audittrail_list extends ct99_audittrail {
 		} else {
 			$this->setSessionWhere($sFilter);
 			$this->CurrentFilter = "";
+		}
+
+		// Export data only
+		if ($this->CustomExport == "" && in_array($this->Export, array_keys($EW_EXPORT))) {
+			$this->ExportData();
+			$this->Page_Terminate(); // Terminate response
+			exit();
 		}
 
 		// Load record count first
@@ -1028,17 +1076,20 @@ class ct99_audittrail_list extends ct99_audittrail {
 	// Set up sort parameters
 	function SetupSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = @$_GET["order"];
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id); // id
-			$this->UpdateSort($this->datetime); // datetime
-			$this->UpdateSort($this->script); // script
-			$this->UpdateSort($this->user); // user
-			$this->UpdateSort($this->action); // action
-			$this->UpdateSort($this->_table); // table
-			$this->UpdateSort($this->_field); // field
+			$this->UpdateSort($this->id, $bCtrl); // id
+			$this->UpdateSort($this->datetime, $bCtrl); // datetime
+			$this->UpdateSort($this->script, $bCtrl); // script
+			$this->UpdateSort($this->user, $bCtrl); // user
+			$this->UpdateSort($this->action, $bCtrl); // action
+			$this->UpdateSort($this->_table, $bCtrl); // table
+			$this->UpdateSort($this->_field, $bCtrl); // field
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1093,46 +1144,41 @@ class ct99_audittrail_list extends ct99_audittrail {
 		// Add group option item
 		$item = &$this->ListOptions->Add($this->ListOptions->GroupOptionName);
 		$item->Body = "";
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 		$item->Visible = FALSE;
 
 		// "view"
 		$item = &$this->ListOptions->Add("view");
 		$item->CssClass = "text-nowrap";
 		$item->Visible = $Security->CanView();
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssClass = "text-nowrap";
 		$item->Visible = $Security->CanEdit();
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 
 		// "copy"
 		$item = &$this->ListOptions->Add("copy");
 		$item->CssClass = "text-nowrap";
 		$item->Visible = $Security->CanAdd();
-		$item->OnLeft = FALSE;
-
-		// "delete"
-		$item = &$this->ListOptions->Add("delete");
-		$item->CssClass = "text-nowrap";
-		$item->Visible = $Security->CanDelete();
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 
 		// List actions
 		$item = &$this->ListOptions->Add("listactions");
 		$item->CssClass = "text-nowrap";
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 		$item->Visible = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 		$item->ShowInDropDown = FALSE;
 
 		// "checkbox"
 		$item = &$this->ListOptions->Add("checkbox");
-		$item->Visible = FALSE;
-		$item->OnLeft = FALSE;
+		$item->Visible = $Security->CanDelete();
+		$item->OnLeft = TRUE;
 		$item->Header = "<input type=\"checkbox\" name=\"key\" id=\"key\" onclick=\"ew_SelectAllKey(this);\">";
+		$item->MoveTo(0);
 		$item->ShowInDropDown = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 
@@ -1187,13 +1233,6 @@ class ct99_audittrail_list extends ct99_audittrail {
 			$oListOpt->Body = "";
 		}
 
-		// "delete"
-		$oListOpt = &$this->ListOptions->Items["delete"];
-		if ($Security->CanDelete())
-			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
-		else
-			$oListOpt->Body = "";
-
 		// Set up list action buttons
 		$oListOpt = &$this->ListOptions->GetItem("listactions");
 		if ($oListOpt && $this->Export == "" && $this->CurrentAction == "") {
@@ -1244,6 +1283,11 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
 		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 		$option = $options["action"];
+
+		// Add multi delete
+		$item = &$option->Add("multidelete");
+		$item->Body = "<a class=\"ewAction ewMultiDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" href=\"\" onclick=\"ew_SubmitAction(event,{f:document.ft99_audittraillist,url:'" . $this->MultiDeleteUrl . "'});return false;\">" . $Language->Phrase("DeleteSelectedLink") . "</a>";
+		$item->Visible = ($Security->CanDelete());
 
 		// Set up options default
 		foreach ($options as &$option) {
@@ -1697,6 +1741,271 @@ class ct99_audittrail_list extends ct99_audittrail {
 			$this->Row_Rendered();
 	}
 
+	// Set up export options
+	function SetupExportOptions() {
+		global $Language;
+
+		// Printer friendly
+		$item = &$this->ExportOptions->Add("print");
+		$item->Body = "<a href=\"" . $this->ExportPrintUrl . "\" class=\"ewExportLink ewPrint\" title=\"" . ew_HtmlEncode($Language->Phrase("PrinterFriendlyText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("PrinterFriendlyText")) . "\">" . $Language->Phrase("PrinterFriendly") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Excel
+		$item = &$this->ExportOptions->Add("excel");
+		$item->Body = "<a href=\"" . $this->ExportExcelUrl . "\" class=\"ewExportLink ewExcel\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToExcelText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToExcelText")) . "\">" . $Language->Phrase("ExportToExcel") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Word
+		$item = &$this->ExportOptions->Add("word");
+		$item->Body = "<a href=\"" . $this->ExportWordUrl . "\" class=\"ewExportLink ewWord\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToWordText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToWordText")) . "\">" . $Language->Phrase("ExportToWord") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Html
+		$item = &$this->ExportOptions->Add("html");
+		$item->Body = "<a href=\"" . $this->ExportHtmlUrl . "\" class=\"ewExportLink ewHtml\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToHtmlText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToHtmlText")) . "\">" . $Language->Phrase("ExportToHtml") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Xml
+		$item = &$this->ExportOptions->Add("xml");
+		$item->Body = "<a href=\"" . $this->ExportXmlUrl . "\" class=\"ewExportLink ewXml\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToXmlText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToXmlText")) . "\">" . $Language->Phrase("ExportToXml") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Csv
+		$item = &$this->ExportOptions->Add("csv");
+		$item->Body = "<a href=\"" . $this->ExportCsvUrl . "\" class=\"ewExportLink ewCsv\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToCsvText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToCsvText")) . "\">" . $Language->Phrase("ExportToCsv") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Pdf
+		$item = &$this->ExportOptions->Add("pdf");
+		$item->Body = "<a href=\"" . $this->ExportPdfUrl . "\" class=\"ewExportLink ewPdf\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToPDFText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToPDFText")) . "\">" . $Language->Phrase("ExportToPDF") . "</a>";
+		$item->Visible = FALSE;
+
+		// Export to Email
+		$item = &$this->ExportOptions->Add("email");
+		$url = "";
+		$item->Body = "<button id=\"emf_t99_audittrail\" class=\"ewExportLink ewEmail\" title=\"" . $Language->Phrase("ExportToEmailText") . "\" data-caption=\"" . $Language->Phrase("ExportToEmailText") . "\" onclick=\"ew_EmailDialogShow({lnk:'emf_t99_audittrail',hdr:ewLanguage.Phrase('ExportToEmailText'),f:document.ft99_audittraillist,sel:false" . $url . "});\">" . $Language->Phrase("ExportToEmail") . "</button>";
+		$item->Visible = TRUE;
+
+		// Drop down button for export
+		$this->ExportOptions->UseButtonGroup = TRUE;
+		$this->ExportOptions->UseImageAndText = TRUE;
+		$this->ExportOptions->UseDropDownButton = TRUE;
+		if ($this->ExportOptions->UseButtonGroup && ew_IsMobile())
+			$this->ExportOptions->UseDropDownButton = TRUE;
+		$this->ExportOptions->DropDownButtonPhrase = $Language->Phrase("ButtonExport");
+
+		// Add group option item
+		$item = &$this->ExportOptions->Add($this->ExportOptions->GroupOptionName);
+		$item->Body = "";
+		$item->Visible = FALSE;
+	}
+
+	// Export data in HTML/CSV/Word/Excel/XML/Email/PDF format
+	function ExportData() {
+		$utf8 = (strtolower(EW_CHARSET) == "utf-8");
+		$bSelectLimit = $this->UseSelectLimit;
+
+		// Load recordset
+		if ($bSelectLimit) {
+			$this->TotalRecs = $this->ListRecordCount();
+		} else {
+			if (!$this->Recordset)
+				$this->Recordset = $this->LoadRecordset();
+			$rs = &$this->Recordset;
+			if ($rs)
+				$this->TotalRecs = $rs->RecordCount();
+		}
+		$this->StartRec = 1;
+
+		// Export all
+		if ($this->ExportAll) {
+			set_time_limit(EW_EXPORT_ALL_TIME_LIMIT);
+			$this->DisplayRecs = $this->TotalRecs;
+			$this->StopRec = $this->TotalRecs;
+		} else { // Export one page only
+			$this->SetupStartRec(); // Set up start record position
+
+			// Set the last record to display
+			if ($this->DisplayRecs <= 0) {
+				$this->StopRec = $this->TotalRecs;
+			} else {
+				$this->StopRec = $this->StartRec + $this->DisplayRecs - 1;
+			}
+		}
+		if ($bSelectLimit)
+			$rs = $this->LoadRecordset($this->StartRec-1, $this->DisplayRecs <= 0 ? $this->TotalRecs : $this->DisplayRecs);
+		if (!$rs) {
+			header("Content-Type:"); // Remove header
+			header("Content-Disposition:");
+			$this->ShowMessage();
+			return;
+		}
+		$this->ExportDoc = ew_ExportDocument($this, "h");
+		$Doc = &$this->ExportDoc;
+		if ($bSelectLimit) {
+			$this->StartRec = 1;
+			$this->StopRec = $this->DisplayRecs <= 0 ? $this->TotalRecs : $this->DisplayRecs;
+		} else {
+
+			//$this->StartRec = $this->StartRec;
+			//$this->StopRec = $this->StopRec;
+
+		}
+
+		// Call Page Exporting server event
+		$this->ExportDoc->ExportCustom = !$this->Page_Exporting();
+		$ParentTable = "";
+		$sHeader = $this->PageHeader;
+		$this->Page_DataRendering($sHeader);
+		$Doc->Text .= $sHeader;
+		$this->ExportDocument($Doc, $rs, $this->StartRec, $this->StopRec, "");
+		$sFooter = $this->PageFooter;
+		$this->Page_DataRendered($sFooter);
+		$Doc->Text .= $sFooter;
+
+		// Close recordset
+		$rs->Close();
+
+		// Call Page Exported server event
+		$this->Page_Exported();
+
+		// Export header and footer
+		$Doc->ExportHeaderAndFooter();
+
+		// Clean output buffer
+		if (!EW_DEBUG_ENABLED && ob_get_length())
+			ob_end_clean();
+
+		// Write debug message if enabled
+		if (EW_DEBUG_ENABLED && $this->Export <> "pdf")
+			echo ew_DebugMsg();
+
+		// Output data
+		if ($this->Export == "email") {
+			echo $this->ExportEmail($Doc->Text);
+		} else {
+			$Doc->Export();
+		}
+	}
+
+	// Export email
+	function ExportEmail($EmailContent) {
+		global $gTmpImages, $Language;
+		$sSender = @$_POST["sender"];
+		$sRecipient = @$_POST["recipient"];
+		$sCc = @$_POST["cc"];
+		$sBcc = @$_POST["bcc"];
+
+		// Subject
+		$sSubject = @$_POST["subject"];
+		$sEmailSubject = $sSubject;
+
+		// Message
+		$sContent = @$_POST["message"];
+		$sEmailMessage = $sContent;
+
+		// Check sender
+		if ($sSender == "") {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterSenderEmail") . "</p>";
+		}
+		if (!ew_CheckEmail($sSender)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperSenderEmail") . "</p>";
+		}
+
+		// Check recipient
+		if (!ew_CheckEmailList($sRecipient, EW_MAX_EMAIL_RECIPIENT)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperRecipientEmail") . "</p>";
+		}
+
+		// Check cc
+		if (!ew_CheckEmailList($sCc, EW_MAX_EMAIL_RECIPIENT)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperCcEmail") . "</p>";
+		}
+
+		// Check bcc
+		if (!ew_CheckEmailList($sBcc, EW_MAX_EMAIL_RECIPIENT)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperBccEmail") . "</p>";
+		}
+
+		// Check email sent count
+		if (!isset($_SESSION[EW_EXPORT_EMAIL_COUNTER]))
+			$_SESSION[EW_EXPORT_EMAIL_COUNTER] = 0;
+		if (intval($_SESSION[EW_EXPORT_EMAIL_COUNTER]) > EW_MAX_EMAIL_SENT_COUNT) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("ExceedMaxEmailExport") . "</p>";
+		}
+
+		// Send email
+		$Email = new cEmail();
+		$Email->Sender = $sSender; // Sender
+		$Email->Recipient = $sRecipient; // Recipient
+		$Email->Cc = $sCc; // Cc
+		$Email->Bcc = $sBcc; // Bcc
+		$Email->Subject = $sEmailSubject; // Subject
+		$Email->Format = "html";
+		if ($sEmailMessage <> "")
+			$sEmailMessage = ew_RemoveXSS($sEmailMessage) . "<br><br>";
+		foreach ($gTmpImages as $tmpimage)
+			$Email->AddEmbeddedImage($tmpimage);
+		$Email->Content = $sEmailMessage . ew_CleanEmailContent($EmailContent); // Content
+		$EventArgs = array();
+		if ($this->Recordset) {
+			$this->RecCnt = $this->StartRec - 1;
+			$this->Recordset->MoveFirst();
+			if ($this->StartRec > 1)
+				$this->Recordset->Move($this->StartRec - 1);
+			$EventArgs["rs"] = &$this->Recordset;
+		}
+		$bEmailSent = FALSE;
+		if ($this->Email_Sending($Email, $EventArgs))
+			$bEmailSent = $Email->Send();
+
+		// Check email sent status
+		if ($bEmailSent) {
+
+			// Update email sent count
+			$_SESSION[EW_EXPORT_EMAIL_COUNTER]++;
+
+			// Sent email success
+			return "<p class=\"text-success\">" . $Language->Phrase("SendEmailSuccess") . "</p>"; // Set up success message
+		} else {
+
+			// Sent email failure
+			return "<p class=\"text-danger\">" . $Email->SendErrDescription . "</p>";
+		}
+	}
+
+	// Export QueryString
+	function ExportQueryString() {
+
+		// Initialize
+		$sQry = "export=html";
+
+		// Build QueryString for search
+		if ($this->BasicSearch->getKeyword() <> "") {
+			$sQry .= "&" . EW_TABLE_BASIC_SEARCH . "=" . urlencode($this->BasicSearch->getKeyword()) . "&" . EW_TABLE_BASIC_SEARCH_TYPE . "=" . urlencode($this->BasicSearch->getType());
+		}
+
+		// Build QueryString for pager
+		$sQry .= "&" . EW_TABLE_REC_PER_PAGE . "=" . urlencode($this->getRecordsPerPage()) . "&" . EW_TABLE_START_REC . "=" . urlencode($this->getStartRecordNumber());
+		return $sQry;
+	}
+
+	// Add search QueryString
+	function AddSearchQueryString(&$Qry, &$Fld) {
+		$FldSearchValue = $Fld->AdvancedSearch->getValue("x");
+		$FldParm = substr($Fld->FldVar,2);
+		if (strval($FldSearchValue) <> "") {
+			$Qry .= "&x_" . $FldParm . "=" . urlencode($FldSearchValue) .
+				"&z_" . $FldParm . "=" . urlencode($Fld->AdvancedSearch->getValue("z"));
+		}
+		$FldSearchValue2 = $Fld->AdvancedSearch->getValue("y");
+		if (strval($FldSearchValue2) <> "") {
+			$Qry .= "&v_" . $FldParm . "=" . urlencode($Fld->AdvancedSearch->getValue("v")) .
+				"&y_" . $FldParm . "=" . urlencode($FldSearchValue2) .
+				"&w_" . $FldParm . "=" . urlencode($Fld->AdvancedSearch->getValue("w"));
+		}
+	}
+
 	// Set up Breadcrumb
 	function SetupBreadcrumb() {
 		global $Breadcrumb, $Language;
@@ -1870,6 +2179,7 @@ Page_Rendering();
 $t99_audittrail_list->Page_Render();
 ?>
 <?php include_once "header.php" ?>
+<?php if ($t99_audittrail->Export == "") { ?>
 <script type="text/javascript">
 
 // Form object
@@ -1897,6 +2207,8 @@ var CurrentSearchForm = ft99_audittraillistsrch = new ew_Form("ft99_audittrailli
 
 // Write your client script here, no need to add script tags.
 </script>
+<?php } ?>
+<?php if ($t99_audittrail->Export == "") { ?>
 <div class="ewToolbar">
 <?php if ($t99_audittrail_list->TotalRecs > 0 && $t99_audittrail_list->ExportOptions->Visible()) { ?>
 <?php $t99_audittrail_list->ExportOptions->Render("body") ?>
@@ -1909,6 +2221,7 @@ var CurrentSearchForm = ft99_audittraillistsrch = new ew_Form("ft99_audittrailli
 <?php } ?>
 <div class="clearfix"></div>
 </div>
+<?php } ?>
 <?php
 	$bSelectLimit = $t99_audittrail_list->UseSelectLimit;
 	if ($bSelectLimit) {
@@ -1972,6 +2285,66 @@ $t99_audittrail_list->ShowMessage();
 ?>
 <?php if ($t99_audittrail_list->TotalRecs > 0 || $t99_audittrail->CurrentAction <> "") { ?>
 <div class="box ewBox ewGrid<?php if ($t99_audittrail_list->IsAddOrEdit()) { ?> ewGridAddEdit<?php } ?> t99_audittrail">
+<?php if ($t99_audittrail->Export == "") { ?>
+<div class="box-header ewGridUpperPanel">
+<?php if ($t99_audittrail->CurrentAction <> "gridadd" && $t99_audittrail->CurrentAction <> "gridedit") { ?>
+<form name="ewPagerForm" class="form-inline ewForm ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
+<?php if (!isset($t99_audittrail_list->Pager)) $t99_audittrail_list->Pager = new cPrevNextPager($t99_audittrail_list->StartRec, $t99_audittrail_list->DisplayRecs, $t99_audittrail_list->TotalRecs, $t99_audittrail_list->AutoHidePager) ?>
+<?php if ($t99_audittrail_list->Pager->RecordCount > 0 && $t99_audittrail_list->Pager->Visible) { ?>
+<div class="ewPager">
+<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
+<div class="ewPrevNext"><div class="input-group">
+<div class="input-group-btn">
+<!--first page button-->
+	<?php if ($t99_audittrail_list->Pager->FirstButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t99_audittrail_list->PageUrl() ?>start=<?php echo $t99_audittrail_list->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } ?>
+<!--previous page button-->
+	<?php if ($t99_audittrail_list->Pager->PrevButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t99_audittrail_list->PageUrl() ?>start=<?php echo $t99_audittrail_list->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } ?>
+</div>
+<!--current page number-->
+	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t99_audittrail_list->Pager->CurrentPage ?>">
+<div class="input-group-btn">
+<!--next page button-->
+	<?php if ($t99_audittrail_list->Pager->NextButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t99_audittrail_list->PageUrl() ?>start=<?php echo $t99_audittrail_list->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } ?>
+<!--last page button-->
+	<?php if ($t99_audittrail_list->Pager->LastButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t99_audittrail_list->PageUrl() ?>start=<?php echo $t99_audittrail_list->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } ?>
+</div>
+</div>
+</div>
+<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t99_audittrail_list->Pager->PageCount ?></span>
+</div>
+<?php } ?>
+<?php if ($t99_audittrail_list->Pager->RecordCount > 0) { ?>
+<div class="ewPager ewRec">
+	<span><?php echo $Language->Phrase("Record") ?>&nbsp;<?php echo $t99_audittrail_list->Pager->FromIndex ?>&nbsp;<?php echo $Language->Phrase("To") ?>&nbsp;<?php echo $t99_audittrail_list->Pager->ToIndex ?>&nbsp;<?php echo $Language->Phrase("Of") ?>&nbsp;<?php echo $t99_audittrail_list->Pager->RecordCount ?></span>
+</div>
+<?php } ?>
+</form>
+<?php } ?>
+<div class="ewListOtherOptions">
+<?php
+	foreach ($t99_audittrail_list->OtherOptions as &$option)
+		$option->Render("body");
+?>
+</div>
+<div class="clearfix"></div>
+</div>
+<?php } ?>
 <form name="ft99_audittraillist" id="ft99_audittraillist" class="form-inline ewForm ewListForm" action="<?php echo ew_CurrentPage() ?>" method="post">
 <?php if ($t99_audittrail_list->CheckToken) { ?>
 <input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t99_audittrail_list->Token ?>">
@@ -1997,7 +2370,7 @@ $t99_audittrail_list->ListOptions->Render("header", "left");
 	<?php if ($t99_audittrail->SortUrl($t99_audittrail->id) == "") { ?>
 		<th data-name="id" class="<?php echo $t99_audittrail->id->HeaderCellClass() ?>"><div id="elh_t99_audittrail_id" class="t99_audittrail_id"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="id" class="<?php echo $t99_audittrail->id->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->id) ?>',1);"><div id="elh_t99_audittrail_id" class="t99_audittrail_id">
+		<th data-name="id" class="<?php echo $t99_audittrail->id->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->id) ?>',2);"><div id="elh_t99_audittrail_id" class="t99_audittrail_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2006,7 +2379,7 @@ $t99_audittrail_list->ListOptions->Render("header", "left");
 	<?php if ($t99_audittrail->SortUrl($t99_audittrail->datetime) == "") { ?>
 		<th data-name="datetime" class="<?php echo $t99_audittrail->datetime->HeaderCellClass() ?>"><div id="elh_t99_audittrail_datetime" class="t99_audittrail_datetime"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->datetime->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="datetime" class="<?php echo $t99_audittrail->datetime->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->datetime) ?>',1);"><div id="elh_t99_audittrail_datetime" class="t99_audittrail_datetime">
+		<th data-name="datetime" class="<?php echo $t99_audittrail->datetime->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->datetime) ?>',2);"><div id="elh_t99_audittrail_datetime" class="t99_audittrail_datetime">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->datetime->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->datetime->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->datetime->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2015,7 +2388,7 @@ $t99_audittrail_list->ListOptions->Render("header", "left");
 	<?php if ($t99_audittrail->SortUrl($t99_audittrail->script) == "") { ?>
 		<th data-name="script" class="<?php echo $t99_audittrail->script->HeaderCellClass() ?>"><div id="elh_t99_audittrail_script" class="t99_audittrail_script"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->script->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="script" class="<?php echo $t99_audittrail->script->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->script) ?>',1);"><div id="elh_t99_audittrail_script" class="t99_audittrail_script">
+		<th data-name="script" class="<?php echo $t99_audittrail->script->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->script) ?>',2);"><div id="elh_t99_audittrail_script" class="t99_audittrail_script">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->script->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->script->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->script->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2024,7 +2397,7 @@ $t99_audittrail_list->ListOptions->Render("header", "left");
 	<?php if ($t99_audittrail->SortUrl($t99_audittrail->user) == "") { ?>
 		<th data-name="user" class="<?php echo $t99_audittrail->user->HeaderCellClass() ?>"><div id="elh_t99_audittrail_user" class="t99_audittrail_user"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->user->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="user" class="<?php echo $t99_audittrail->user->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->user) ?>',1);"><div id="elh_t99_audittrail_user" class="t99_audittrail_user">
+		<th data-name="user" class="<?php echo $t99_audittrail->user->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->user) ?>',2);"><div id="elh_t99_audittrail_user" class="t99_audittrail_user">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->user->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->user->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->user->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2033,7 +2406,7 @@ $t99_audittrail_list->ListOptions->Render("header", "left");
 	<?php if ($t99_audittrail->SortUrl($t99_audittrail->action) == "") { ?>
 		<th data-name="action" class="<?php echo $t99_audittrail->action->HeaderCellClass() ?>"><div id="elh_t99_audittrail_action" class="t99_audittrail_action"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->action->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="action" class="<?php echo $t99_audittrail->action->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->action) ?>',1);"><div id="elh_t99_audittrail_action" class="t99_audittrail_action">
+		<th data-name="action" class="<?php echo $t99_audittrail->action->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->action) ?>',2);"><div id="elh_t99_audittrail_action" class="t99_audittrail_action">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->action->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->action->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->action->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2042,7 +2415,7 @@ $t99_audittrail_list->ListOptions->Render("header", "left");
 	<?php if ($t99_audittrail->SortUrl($t99_audittrail->_table) == "") { ?>
 		<th data-name="_table" class="<?php echo $t99_audittrail->_table->HeaderCellClass() ?>"><div id="elh_t99_audittrail__table" class="t99_audittrail__table"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->_table->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="_table" class="<?php echo $t99_audittrail->_table->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->_table) ?>',1);"><div id="elh_t99_audittrail__table" class="t99_audittrail__table">
+		<th data-name="_table" class="<?php echo $t99_audittrail->_table->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->_table) ?>',2);"><div id="elh_t99_audittrail__table" class="t99_audittrail__table">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->_table->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->_table->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->_table->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2051,7 +2424,7 @@ $t99_audittrail_list->ListOptions->Render("header", "left");
 	<?php if ($t99_audittrail->SortUrl($t99_audittrail->_field) == "") { ?>
 		<th data-name="_field" class="<?php echo $t99_audittrail->_field->HeaderCellClass() ?>"><div id="elh_t99_audittrail__field" class="t99_audittrail__field"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->_field->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="_field" class="<?php echo $t99_audittrail->_field->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->_field) ?>',1);"><div id="elh_t99_audittrail__field" class="t99_audittrail__field">
+		<th data-name="_field" class="<?php echo $t99_audittrail->_field->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->_field) ?>',2);"><div id="elh_t99_audittrail__field" class="t99_audittrail__field">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->_field->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->_field->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->_field->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -2203,6 +2576,7 @@ $t99_audittrail_list->ListOptions->Render("body", "right", $t99_audittrail_list-
 if ($t99_audittrail_list->Recordset)
 	$t99_audittrail_list->Recordset->Close();
 ?>
+<?php if ($t99_audittrail->Export == "") { ?>
 <div class="box-footer ewGridLowerPanel">
 <?php if ($t99_audittrail->CurrentAction <> "gridadd" && $t99_audittrail->CurrentAction <> "gridedit") { ?>
 <form name="ewPagerForm" class="ewForm form-inline ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
@@ -2261,6 +2635,7 @@ if ($t99_audittrail_list->Recordset)
 </div>
 <div class="clearfix"></div>
 </div>
+<?php } ?>
 </div>
 <?php } ?>
 <?php if ($t99_audittrail_list->TotalRecs == 0 && $t99_audittrail->CurrentAction == "") { // Show other options ?>
@@ -2274,22 +2649,26 @@ if ($t99_audittrail_list->Recordset)
 </div>
 <div class="clearfix"></div>
 <?php } ?>
+<?php if ($t99_audittrail->Export == "") { ?>
 <script type="text/javascript">
 ft99_audittraillistsrch.FilterList = <?php echo $t99_audittrail_list->GetFilterList() ?>;
 ft99_audittraillistsrch.Init();
 ft99_audittraillist.Init();
 </script>
+<?php } ?>
 <?php
 $t99_audittrail_list->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
+<?php if ($t99_audittrail->Export == "") { ?>
 <script type="text/javascript">
 
 // Write your table-specific startup script here
 // document.write("page loaded");
 
 </script>
+<?php } ?>
 <?php include_once "footer.php" ?>
 <?php
 $t99_audittrail_list->Page_Terminate();

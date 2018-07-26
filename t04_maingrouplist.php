@@ -7,6 +7,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "phpfn14.php" ?>
 <?php include_once "t04_maingroupinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
+<?php include_once "t05_subgroupgridcls.php" ?>
 <?php include_once "userfn14.php" ?>
 <?php
 
@@ -304,7 +305,7 @@ class ct04_maingroup_list extends ct04_maingroup {
 		$this->ExportXmlUrl = $this->PageUrl() . "export=xml";
 		$this->ExportCsvUrl = $this->PageUrl() . "export=csv";
 		$this->ExportPdfUrl = $this->PageUrl() . "export=pdf";
-		$this->AddUrl = "t04_maingroupadd.php";
+		$this->AddUrl = "t04_maingroupadd.php?" . EW_TABLE_SHOW_DETAIL . "=";
 		$this->InlineAddUrl = $this->PageUrl() . "a=add";
 		$this->GridAddUrl = $this->PageUrl() . "a=gridadd";
 		$this->GridEditUrl = $this->PageUrl() . "a=gridedit";
@@ -398,7 +399,45 @@ class ct04_maingroup_list extends ct04_maingroup {
 		// 
 		// Security = null;
 		// 
+		// Get export parameters
 
+		$custom = "";
+		if (@$_GET["export"] <> "") {
+			$this->Export = $_GET["export"];
+			$custom = @$_GET["custom"];
+		} elseif (@$_POST["export"] <> "") {
+			$this->Export = $_POST["export"];
+			$custom = @$_POST["custom"];
+		} elseif (ew_IsPost()) {
+			if (@$_POST["exporttype"] <> "")
+				$this->Export = $_POST["exporttype"];
+			$custom = @$_POST["custom"];
+		} elseif (@$_GET["cmd"] == "json") {
+			$this->Export = $_GET["cmd"];
+		} else {
+			$this->setExportReturnUrl(ew_CurrentUrl());
+		}
+		$gsExportFile = $this->TableVar; // Get export file, used in header
+
+		// Get custom export parameters
+		if ($this->Export <> "" && $custom <> "") {
+			$this->CustomExport = $this->Export;
+			$this->Export = "print";
+		}
+		$gsCustomExport = $this->CustomExport;
+		$gsExport = $this->Export; // Get export parameter, used in header
+
+		// Update Export URLs
+		if (defined("EW_USE_PHPEXCEL"))
+			$this->ExportExcelCustom = FALSE;
+		if ($this->ExportExcelCustom)
+			$this->ExportExcelUrl .= "&amp;custom=1";
+		if (defined("EW_USE_PHPWORD"))
+			$this->ExportWordCustom = FALSE;
+		if ($this->ExportWordCustom)
+			$this->ExportWordUrl .= "&amp;custom=1";
+		if ($this->ExportPdfCustom)
+			$this->ExportPdfUrl .= "&amp;custom=1";
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 
 		// Get grid add count
@@ -408,9 +447,9 @@ class ct04_maingroup_list extends ct04_maingroup {
 
 		// Set up list options
 		$this->SetupListOptions();
-		$this->id->SetVisibility();
-		if ($this->IsAdd() || $this->IsCopy() || $this->IsGridAdd())
-			$this->id->Visible = FALSE;
+
+		// Setup export options
+		$this->SetupExportOptions();
 		$this->Nama->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
@@ -428,6 +467,22 @@ class ct04_maingroup_list extends ct04_maingroup {
 
 		// Process auto fill
 		if (@$_POST["ajax"] == "autofill") {
+
+			// Get the keys for master table
+			$sDetailTblVar = $this->getCurrentDetailTable();
+			if ($sDetailTblVar <> "") {
+				$DetailTblVar = explode(",", $sDetailTblVar);
+				if (in_array("t05_subgroup", $DetailTblVar)) {
+
+					// Process auto fill for detail table 't05_subgroup'
+					if (preg_match('/^ft05_subgroup(grid|add|addopt|edit|update|search)$/', @$_POST["form"])) {
+						if (!isset($GLOBALS["t05_subgroup_grid"])) $GLOBALS["t05_subgroup_grid"] = new ct05_subgroup_grid;
+						$GLOBALS["t05_subgroup_grid"]->Page_Init();
+						$this->Page_Terminate();
+						exit();
+					}
+				}
+			}
 			$results = $this->GetAutoFill(@$_POST["name"], @$_POST["q"]);
 			if ($results) {
 
@@ -671,6 +726,13 @@ class ct04_maingroup_list extends ct04_maingroup {
 		} else {
 			$this->setSessionWhere($sFilter);
 			$this->CurrentFilter = "";
+		}
+
+		// Export data only
+		if ($this->CustomExport == "" && in_array($this->Export, array_keys($EW_EXPORT))) {
+			$this->ExportData();
+			$this->Page_Terminate(); // Terminate response
+			exit();
 		}
 
 		// Load record count first
@@ -944,12 +1006,14 @@ class ct04_maingroup_list extends ct04_maingroup {
 	// Set up sort parameters
 	function SetupSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = @$_GET["order"];
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id); // id
-			$this->UpdateSort($this->Nama); // Nama
+			$this->UpdateSort($this->Nama, $bCtrl); // Nama
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -982,7 +1046,6 @@ class ct04_maingroup_list extends ct04_maingroup {
 			if ($this->Command == "resetsort") {
 				$sOrderBy = "";
 				$this->setSessionOrderBy($sOrderBy);
-				$this->id->setSort("");
 				$this->Nama->setSort("");
 			}
 
@@ -999,46 +1062,71 @@ class ct04_maingroup_list extends ct04_maingroup {
 		// Add group option item
 		$item = &$this->ListOptions->Add($this->ListOptions->GroupOptionName);
 		$item->Body = "";
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 		$item->Visible = FALSE;
 
 		// "view"
 		$item = &$this->ListOptions->Add("view");
 		$item->CssClass = "text-nowrap";
 		$item->Visible = $Security->CanView();
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssClass = "text-nowrap";
 		$item->Visible = $Security->CanEdit();
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 
 		// "copy"
 		$item = &$this->ListOptions->Add("copy");
 		$item->CssClass = "text-nowrap";
 		$item->Visible = $Security->CanAdd();
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 
-		// "delete"
-		$item = &$this->ListOptions->Add("delete");
+		// "detail_t05_subgroup"
+		$item = &$this->ListOptions->Add("detail_t05_subgroup");
 		$item->CssClass = "text-nowrap";
-		$item->Visible = $Security->CanDelete();
-		$item->OnLeft = FALSE;
+		$item->Visible = $Security->AllowList(CurrentProjectID() . 't05_subgroup') && !$this->ShowMultipleDetails;
+		$item->OnLeft = TRUE;
+		$item->ShowInButtonGroup = FALSE;
+		if (!isset($GLOBALS["t05_subgroup_grid"])) $GLOBALS["t05_subgroup_grid"] = new ct05_subgroup_grid;
+
+		// Multiple details
+		if ($this->ShowMultipleDetails) {
+			$item = &$this->ListOptions->Add("details");
+			$item->CssClass = "text-nowrap";
+			$item->Visible = $this->ShowMultipleDetails;
+			$item->OnLeft = TRUE;
+			$item->ShowInButtonGroup = FALSE;
+		}
+
+		// Set up detail pages
+		$pages = new cSubPages();
+		$pages->Add("t05_subgroup");
+		$this->DetailPages = $pages;
 
 		// List actions
 		$item = &$this->ListOptions->Add("listactions");
 		$item->CssClass = "text-nowrap";
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 		$item->Visible = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 		$item->ShowInDropDown = FALSE;
 
 		// "checkbox"
 		$item = &$this->ListOptions->Add("checkbox");
-		$item->Visible = FALSE;
-		$item->OnLeft = FALSE;
+		$item->Visible = $Security->CanDelete();
+		$item->OnLeft = TRUE;
 		$item->Header = "<input type=\"checkbox\" name=\"key\" id=\"key\" onclick=\"ew_SelectAllKey(this);\">";
+		$item->MoveTo(0);
+		$item->ShowInDropDown = FALSE;
+		$item->ShowInButtonGroup = FALSE;
+
+		// "sequence"
+		$item = &$this->ListOptions->Add("sequence");
+		$item->CssClass = "text-nowrap";
+		$item->Visible = TRUE;
+		$item->OnLeft = TRUE; // Always on left
 		$item->ShowInDropDown = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 
@@ -1066,6 +1154,10 @@ class ct04_maingroup_list extends ct04_maingroup {
 		// Call ListOptions_Rendering event
 		$this->ListOptions_Rendering();
 
+		// "sequence"
+		$oListOpt = &$this->ListOptions->Items["sequence"];
+		$oListOpt->Body = ew_FormatSeqNo($this->RecCnt);
+
 		// "view"
 		$oListOpt = &$this->ListOptions->Items["view"];
 		$viewcaption = ew_HtmlTitle($Language->Phrase("ViewLink"));
@@ -1092,13 +1184,6 @@ class ct04_maingroup_list extends ct04_maingroup {
 		} else {
 			$oListOpt->Body = "";
 		}
-
-		// "delete"
-		$oListOpt = &$this->ListOptions->Items["delete"];
-		if ($Security->CanDelete())
-			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
-		else
-			$oListOpt->Body = "";
 
 		// Set up list action buttons
 		$oListOpt = &$this->ListOptions->GetItem("listactions");
@@ -1128,6 +1213,68 @@ class ct04_maingroup_list extends ct04_maingroup {
 				$oListOpt->Visible = TRUE;
 			}
 		}
+		$DetailViewTblVar = "";
+		$DetailCopyTblVar = "";
+		$DetailEditTblVar = "";
+
+		// "detail_t05_subgroup"
+		$oListOpt = &$this->ListOptions->Items["detail_t05_subgroup"];
+		if ($Security->AllowList(CurrentProjectID() . 't05_subgroup')) {
+			$body = $Language->Phrase("DetailLink") . $Language->TablePhrase("t05_subgroup", "TblCaption");
+			$body = "<a class=\"btn btn-default btn-sm ewRowLink ewDetail\" data-action=\"list\" href=\"" . ew_HtmlEncode("t05_subgrouplist.php?" . EW_TABLE_SHOW_MASTER . "=t04_maingroup&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
+			$links = "";
+			if ($GLOBALS["t05_subgroup_grid"]->DetailView && $Security->CanView() && $Security->AllowView(CurrentProjectID() . 't05_subgroup')) {
+				$caption = $Language->Phrase("MasterDetailViewLink");
+				$url = $this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=t05_subgroup");
+				$links .= "<li><a class=\"ewRowLink ewDetailView\" data-action=\"view\" data-caption=\"" . ew_HtmlTitle($caption) . "\" href=\"" . ew_HtmlEncode($url) . "\">" . ew_HtmlImageAndText($caption) . "</a></li>";
+				if ($DetailViewTblVar <> "") $DetailViewTblVar .= ",";
+				$DetailViewTblVar .= "t05_subgroup";
+			}
+			if ($GLOBALS["t05_subgroup_grid"]->DetailEdit && $Security->CanEdit() && $Security->AllowEdit(CurrentProjectID() . 't05_subgroup')) {
+				$caption = $Language->Phrase("MasterDetailEditLink");
+				$url = $this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=t05_subgroup");
+				$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($caption) . "\" href=\"" . ew_HtmlEncode($url) . "\">" . ew_HtmlImageAndText($caption) . "</a></li>";
+				if ($DetailEditTblVar <> "") $DetailEditTblVar .= ",";
+				$DetailEditTblVar .= "t05_subgroup";
+			}
+			if ($GLOBALS["t05_subgroup_grid"]->DetailAdd && $Security->CanAdd() && $Security->AllowAdd(CurrentProjectID() . 't05_subgroup')) {
+				$caption = $Language->Phrase("MasterDetailCopyLink");
+				$url = $this->GetCopyUrl(EW_TABLE_SHOW_DETAIL . "=t05_subgroup");
+				$links .= "<li><a class=\"ewRowLink ewDetailCopy\" data-action=\"add\" data-caption=\"" . ew_HtmlTitle($caption) . "\" href=\"" . ew_HtmlEncode($url) . "\">" . ew_HtmlImageAndText($caption) . "</a></li>";
+				if ($DetailCopyTblVar <> "") $DetailCopyTblVar .= ",";
+				$DetailCopyTblVar .= "t05_subgroup";
+			}
+			if ($links <> "") {
+				$body .= "<button class=\"dropdown-toggle btn btn-default btn-sm ewDetail\" data-toggle=\"dropdown\"><b class=\"caret\"></b></button>";
+				$body .= "<ul class=\"dropdown-menu\">". $links . "</ul>";
+			}
+			$body = "<div class=\"btn-group\">" . $body . "</div>";
+			$oListOpt->Body = $body;
+			if ($this->ShowMultipleDetails) $oListOpt->Visible = FALSE;
+		}
+		if ($this->ShowMultipleDetails) {
+			$body = $Language->Phrase("MultipleMasterDetails");
+			$body = "<div class=\"btn-group\">";
+			$links = "";
+			if ($DetailViewTblVar <> "") {
+				$links .= "<li><a class=\"ewRowLink ewDetailView\" data-action=\"view\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailViewLink")) . "\" href=\"" . ew_HtmlEncode($this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=" . $DetailViewTblVar)) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailViewLink")) . "</a></li>";
+			}
+			if ($DetailEditTblVar <> "") {
+				$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=" . $DetailEditTblVar)) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
+			}
+			if ($DetailCopyTblVar <> "") {
+				$links .= "<li><a class=\"ewRowLink ewDetailCopy\" data-action=\"add\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailCopyLink")) . "\" href=\"" . ew_HtmlEncode($this->GetCopyUrl(EW_TABLE_SHOW_DETAIL . "=" . $DetailCopyTblVar)) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailCopyLink")) . "</a></li>";
+			}
+			if ($links <> "") {
+				$body .= "<button class=\"dropdown-toggle btn btn-default btn-sm ewMasterDetail\" title=\"" . ew_HtmlTitle($Language->Phrase("MultipleMasterDetails")) . "\" data-toggle=\"dropdown\">" . $Language->Phrase("MultipleMasterDetails") . "<b class=\"caret\"></b></button>";
+				$body .= "<ul class=\"dropdown-menu ewMenu\">". $links . "</ul>";
+			}
+			$body .= "</div>";
+
+			// Multiple details
+			$oListOpt = &$this->ListOptions->Items["details"];
+			$oListOpt->Body = $body;
+		}
 
 		// "checkbox"
 		$oListOpt = &$this->ListOptions->Items["checkbox"];
@@ -1149,7 +1296,40 @@ class ct04_maingroup_list extends ct04_maingroup {
 		$addcaption = ew_HtmlTitle($Language->Phrase("AddLink"));
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
 		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
+		$option = $options["detail"];
+		$DetailTableLink = "";
+		$item = &$option->Add("detailadd_t05_subgroup");
+		$url = $this->GetAddUrl(EW_TABLE_SHOW_DETAIL . "=t05_subgroup");
+		$caption = $Language->Phrase("Add") . "&nbsp;" . $this->TableCaption() . "/" . $GLOBALS["t05_subgroup"]->TableCaption();
+		$item->Body = "<a class=\"ewDetailAddGroup ewDetailAdd\" title=\"" . ew_HtmlTitle($caption) . "\" data-caption=\"" . ew_HtmlTitle($caption) . "\" href=\"" . ew_HtmlEncode($url) . "\">" . $caption . "</a>";
+		$item->Visible = ($GLOBALS["t05_subgroup"]->DetailAdd && $Security->AllowAdd(CurrentProjectID() . 't05_subgroup') && $Security->CanAdd());
+		if ($item->Visible) {
+			if ($DetailTableLink <> "") $DetailTableLink .= ",";
+			$DetailTableLink .= "t05_subgroup";
+		}
+
+		// Add multiple details
+		if ($this->ShowMultipleDetails) {
+			$item = &$option->Add("detailsadd");
+			$url = $this->GetAddUrl(EW_TABLE_SHOW_DETAIL . "=" . $DetailTableLink);
+			$caption = $Language->Phrase("AddMasterDetailLink");
+			$item->Body = "<a class=\"ewDetailAddGroup ewDetailAdd\" title=\"" . ew_HtmlTitle($caption) . "\" data-caption=\"" . ew_HtmlTitle($caption) . "\" href=\"" . ew_HtmlEncode($url) . "\">" . $caption . "</a>";
+			$item->Visible = ($DetailTableLink <> "" && $Security->CanAdd());
+
+			// Hide single master/detail items
+			$ar = explode(",", $DetailTableLink);
+			$cnt = count($ar);
+			for ($i = 0; $i < $cnt; $i++) {
+				if ($item = &$option->GetItem("detailadd_" . $ar[$i]))
+					$item->Visible = FALSE;
+			}
+		}
 		$option = $options["action"];
+
+		// Add multi delete
+		$item = &$option->Add("multidelete");
+		$item->Body = "<a class=\"ewAction ewMultiDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" href=\"\" onclick=\"ew_SubmitAction(event,{f:document.ft04_maingrouplist,url:'" . $this->MultiDeleteUrl . "'});return false;\">" . $Language->Phrase("DeleteSelectedLink") . "</a>";
+		$item->Visible = ($Security->CanDelete());
 
 		// Set up options default
 		foreach ($options as &$option) {
@@ -1509,11 +1689,6 @@ class ct04_maingroup_list extends ct04_maingroup {
 		$this->Nama->ViewValue = $this->Nama->CurrentValue;
 		$this->Nama->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
 			$this->Nama->HrefValue = "";
@@ -1523,6 +1698,271 @@ class ct04_maingroup_list extends ct04_maingroup {
 		// Call Row Rendered event
 		if ($this->RowType <> EW_ROWTYPE_AGGREGATEINIT)
 			$this->Row_Rendered();
+	}
+
+	// Set up export options
+	function SetupExportOptions() {
+		global $Language;
+
+		// Printer friendly
+		$item = &$this->ExportOptions->Add("print");
+		$item->Body = "<a href=\"" . $this->ExportPrintUrl . "\" class=\"ewExportLink ewPrint\" title=\"" . ew_HtmlEncode($Language->Phrase("PrinterFriendlyText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("PrinterFriendlyText")) . "\">" . $Language->Phrase("PrinterFriendly") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Excel
+		$item = &$this->ExportOptions->Add("excel");
+		$item->Body = "<a href=\"" . $this->ExportExcelUrl . "\" class=\"ewExportLink ewExcel\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToExcelText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToExcelText")) . "\">" . $Language->Phrase("ExportToExcel") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Word
+		$item = &$this->ExportOptions->Add("word");
+		$item->Body = "<a href=\"" . $this->ExportWordUrl . "\" class=\"ewExportLink ewWord\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToWordText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToWordText")) . "\">" . $Language->Phrase("ExportToWord") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Html
+		$item = &$this->ExportOptions->Add("html");
+		$item->Body = "<a href=\"" . $this->ExportHtmlUrl . "\" class=\"ewExportLink ewHtml\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToHtmlText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToHtmlText")) . "\">" . $Language->Phrase("ExportToHtml") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Xml
+		$item = &$this->ExportOptions->Add("xml");
+		$item->Body = "<a href=\"" . $this->ExportXmlUrl . "\" class=\"ewExportLink ewXml\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToXmlText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToXmlText")) . "\">" . $Language->Phrase("ExportToXml") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Csv
+		$item = &$this->ExportOptions->Add("csv");
+		$item->Body = "<a href=\"" . $this->ExportCsvUrl . "\" class=\"ewExportLink ewCsv\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToCsvText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToCsvText")) . "\">" . $Language->Phrase("ExportToCsv") . "</a>";
+		$item->Visible = TRUE;
+
+		// Export to Pdf
+		$item = &$this->ExportOptions->Add("pdf");
+		$item->Body = "<a href=\"" . $this->ExportPdfUrl . "\" class=\"ewExportLink ewPdf\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToPDFText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToPDFText")) . "\">" . $Language->Phrase("ExportToPDF") . "</a>";
+		$item->Visible = FALSE;
+
+		// Export to Email
+		$item = &$this->ExportOptions->Add("email");
+		$url = "";
+		$item->Body = "<button id=\"emf_t04_maingroup\" class=\"ewExportLink ewEmail\" title=\"" . $Language->Phrase("ExportToEmailText") . "\" data-caption=\"" . $Language->Phrase("ExportToEmailText") . "\" onclick=\"ew_EmailDialogShow({lnk:'emf_t04_maingroup',hdr:ewLanguage.Phrase('ExportToEmailText'),f:document.ft04_maingrouplist,sel:false" . $url . "});\">" . $Language->Phrase("ExportToEmail") . "</button>";
+		$item->Visible = TRUE;
+
+		// Drop down button for export
+		$this->ExportOptions->UseButtonGroup = TRUE;
+		$this->ExportOptions->UseImageAndText = TRUE;
+		$this->ExportOptions->UseDropDownButton = TRUE;
+		if ($this->ExportOptions->UseButtonGroup && ew_IsMobile())
+			$this->ExportOptions->UseDropDownButton = TRUE;
+		$this->ExportOptions->DropDownButtonPhrase = $Language->Phrase("ButtonExport");
+
+		// Add group option item
+		$item = &$this->ExportOptions->Add($this->ExportOptions->GroupOptionName);
+		$item->Body = "";
+		$item->Visible = FALSE;
+	}
+
+	// Export data in HTML/CSV/Word/Excel/XML/Email/PDF format
+	function ExportData() {
+		$utf8 = (strtolower(EW_CHARSET) == "utf-8");
+		$bSelectLimit = $this->UseSelectLimit;
+
+		// Load recordset
+		if ($bSelectLimit) {
+			$this->TotalRecs = $this->ListRecordCount();
+		} else {
+			if (!$this->Recordset)
+				$this->Recordset = $this->LoadRecordset();
+			$rs = &$this->Recordset;
+			if ($rs)
+				$this->TotalRecs = $rs->RecordCount();
+		}
+		$this->StartRec = 1;
+
+		// Export all
+		if ($this->ExportAll) {
+			set_time_limit(EW_EXPORT_ALL_TIME_LIMIT);
+			$this->DisplayRecs = $this->TotalRecs;
+			$this->StopRec = $this->TotalRecs;
+		} else { // Export one page only
+			$this->SetupStartRec(); // Set up start record position
+
+			// Set the last record to display
+			if ($this->DisplayRecs <= 0) {
+				$this->StopRec = $this->TotalRecs;
+			} else {
+				$this->StopRec = $this->StartRec + $this->DisplayRecs - 1;
+			}
+		}
+		if ($bSelectLimit)
+			$rs = $this->LoadRecordset($this->StartRec-1, $this->DisplayRecs <= 0 ? $this->TotalRecs : $this->DisplayRecs);
+		if (!$rs) {
+			header("Content-Type:"); // Remove header
+			header("Content-Disposition:");
+			$this->ShowMessage();
+			return;
+		}
+		$this->ExportDoc = ew_ExportDocument($this, "h");
+		$Doc = &$this->ExportDoc;
+		if ($bSelectLimit) {
+			$this->StartRec = 1;
+			$this->StopRec = $this->DisplayRecs <= 0 ? $this->TotalRecs : $this->DisplayRecs;
+		} else {
+
+			//$this->StartRec = $this->StartRec;
+			//$this->StopRec = $this->StopRec;
+
+		}
+
+		// Call Page Exporting server event
+		$this->ExportDoc->ExportCustom = !$this->Page_Exporting();
+		$ParentTable = "";
+		$sHeader = $this->PageHeader;
+		$this->Page_DataRendering($sHeader);
+		$Doc->Text .= $sHeader;
+		$this->ExportDocument($Doc, $rs, $this->StartRec, $this->StopRec, "");
+		$sFooter = $this->PageFooter;
+		$this->Page_DataRendered($sFooter);
+		$Doc->Text .= $sFooter;
+
+		// Close recordset
+		$rs->Close();
+
+		// Call Page Exported server event
+		$this->Page_Exported();
+
+		// Export header and footer
+		$Doc->ExportHeaderAndFooter();
+
+		// Clean output buffer
+		if (!EW_DEBUG_ENABLED && ob_get_length())
+			ob_end_clean();
+
+		// Write debug message if enabled
+		if (EW_DEBUG_ENABLED && $this->Export <> "pdf")
+			echo ew_DebugMsg();
+
+		// Output data
+		if ($this->Export == "email") {
+			echo $this->ExportEmail($Doc->Text);
+		} else {
+			$Doc->Export();
+		}
+	}
+
+	// Export email
+	function ExportEmail($EmailContent) {
+		global $gTmpImages, $Language;
+		$sSender = @$_POST["sender"];
+		$sRecipient = @$_POST["recipient"];
+		$sCc = @$_POST["cc"];
+		$sBcc = @$_POST["bcc"];
+
+		// Subject
+		$sSubject = @$_POST["subject"];
+		$sEmailSubject = $sSubject;
+
+		// Message
+		$sContent = @$_POST["message"];
+		$sEmailMessage = $sContent;
+
+		// Check sender
+		if ($sSender == "") {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterSenderEmail") . "</p>";
+		}
+		if (!ew_CheckEmail($sSender)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperSenderEmail") . "</p>";
+		}
+
+		// Check recipient
+		if (!ew_CheckEmailList($sRecipient, EW_MAX_EMAIL_RECIPIENT)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperRecipientEmail") . "</p>";
+		}
+
+		// Check cc
+		if (!ew_CheckEmailList($sCc, EW_MAX_EMAIL_RECIPIENT)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperCcEmail") . "</p>";
+		}
+
+		// Check bcc
+		if (!ew_CheckEmailList($sBcc, EW_MAX_EMAIL_RECIPIENT)) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperBccEmail") . "</p>";
+		}
+
+		// Check email sent count
+		if (!isset($_SESSION[EW_EXPORT_EMAIL_COUNTER]))
+			$_SESSION[EW_EXPORT_EMAIL_COUNTER] = 0;
+		if (intval($_SESSION[EW_EXPORT_EMAIL_COUNTER]) > EW_MAX_EMAIL_SENT_COUNT) {
+			return "<p class=\"text-danger\">" . $Language->Phrase("ExceedMaxEmailExport") . "</p>";
+		}
+
+		// Send email
+		$Email = new cEmail();
+		$Email->Sender = $sSender; // Sender
+		$Email->Recipient = $sRecipient; // Recipient
+		$Email->Cc = $sCc; // Cc
+		$Email->Bcc = $sBcc; // Bcc
+		$Email->Subject = $sEmailSubject; // Subject
+		$Email->Format = "html";
+		if ($sEmailMessage <> "")
+			$sEmailMessage = ew_RemoveXSS($sEmailMessage) . "<br><br>";
+		foreach ($gTmpImages as $tmpimage)
+			$Email->AddEmbeddedImage($tmpimage);
+		$Email->Content = $sEmailMessage . ew_CleanEmailContent($EmailContent); // Content
+		$EventArgs = array();
+		if ($this->Recordset) {
+			$this->RecCnt = $this->StartRec - 1;
+			$this->Recordset->MoveFirst();
+			if ($this->StartRec > 1)
+				$this->Recordset->Move($this->StartRec - 1);
+			$EventArgs["rs"] = &$this->Recordset;
+		}
+		$bEmailSent = FALSE;
+		if ($this->Email_Sending($Email, $EventArgs))
+			$bEmailSent = $Email->Send();
+
+		// Check email sent status
+		if ($bEmailSent) {
+
+			// Update email sent count
+			$_SESSION[EW_EXPORT_EMAIL_COUNTER]++;
+
+			// Sent email success
+			return "<p class=\"text-success\">" . $Language->Phrase("SendEmailSuccess") . "</p>"; // Set up success message
+		} else {
+
+			// Sent email failure
+			return "<p class=\"text-danger\">" . $Email->SendErrDescription . "</p>";
+		}
+	}
+
+	// Export QueryString
+	function ExportQueryString() {
+
+		// Initialize
+		$sQry = "export=html";
+
+		// Build QueryString for search
+		if ($this->BasicSearch->getKeyword() <> "") {
+			$sQry .= "&" . EW_TABLE_BASIC_SEARCH . "=" . urlencode($this->BasicSearch->getKeyword()) . "&" . EW_TABLE_BASIC_SEARCH_TYPE . "=" . urlencode($this->BasicSearch->getType());
+		}
+
+		// Build QueryString for pager
+		$sQry .= "&" . EW_TABLE_REC_PER_PAGE . "=" . urlencode($this->getRecordsPerPage()) . "&" . EW_TABLE_START_REC . "=" . urlencode($this->getStartRecordNumber());
+		return $sQry;
+	}
+
+	// Add search QueryString
+	function AddSearchQueryString(&$Qry, &$Fld) {
+		$FldSearchValue = $Fld->AdvancedSearch->getValue("x");
+		$FldParm = substr($Fld->FldVar,2);
+		if (strval($FldSearchValue) <> "") {
+			$Qry .= "&x_" . $FldParm . "=" . urlencode($FldSearchValue) .
+				"&z_" . $FldParm . "=" . urlencode($Fld->AdvancedSearch->getValue("z"));
+		}
+		$FldSearchValue2 = $Fld->AdvancedSearch->getValue("y");
+		if (strval($FldSearchValue2) <> "") {
+			$Qry .= "&v_" . $FldParm . "=" . urlencode($Fld->AdvancedSearch->getValue("v")) .
+				"&y_" . $FldParm . "=" . urlencode($FldSearchValue2) .
+				"&w_" . $FldParm . "=" . urlencode($Fld->AdvancedSearch->getValue("w"));
+		}
 	}
 
 	// Set up Breadcrumb
@@ -1698,6 +2138,7 @@ Page_Rendering();
 $t04_maingroup_list->Page_Render();
 ?>
 <?php include_once "header.php" ?>
+<?php if ($t04_maingroup->Export == "") { ?>
 <script type="text/javascript">
 
 // Form object
@@ -1725,6 +2166,8 @@ var CurrentSearchForm = ft04_maingrouplistsrch = new ew_Form("ft04_maingrouplist
 
 // Write your client script here, no need to add script tags.
 </script>
+<?php } ?>
+<?php if ($t04_maingroup->Export == "") { ?>
 <div class="ewToolbar">
 <?php if ($t04_maingroup_list->TotalRecs > 0 && $t04_maingroup_list->ExportOptions->Visible()) { ?>
 <?php $t04_maingroup_list->ExportOptions->Render("body") ?>
@@ -1737,6 +2180,7 @@ var CurrentSearchForm = ft04_maingrouplistsrch = new ew_Form("ft04_maingrouplist
 <?php } ?>
 <div class="clearfix"></div>
 </div>
+<?php } ?>
 <?php
 	$bSelectLimit = $t04_maingroup_list->UseSelectLimit;
 	if ($bSelectLimit) {
@@ -1800,6 +2244,66 @@ $t04_maingroup_list->ShowMessage();
 ?>
 <?php if ($t04_maingroup_list->TotalRecs > 0 || $t04_maingroup->CurrentAction <> "") { ?>
 <div class="box ewBox ewGrid<?php if ($t04_maingroup_list->IsAddOrEdit()) { ?> ewGridAddEdit<?php } ?> t04_maingroup">
+<?php if ($t04_maingroup->Export == "") { ?>
+<div class="box-header ewGridUpperPanel">
+<?php if ($t04_maingroup->CurrentAction <> "gridadd" && $t04_maingroup->CurrentAction <> "gridedit") { ?>
+<form name="ewPagerForm" class="form-inline ewForm ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
+<?php if (!isset($t04_maingroup_list->Pager)) $t04_maingroup_list->Pager = new cPrevNextPager($t04_maingroup_list->StartRec, $t04_maingroup_list->DisplayRecs, $t04_maingroup_list->TotalRecs, $t04_maingroup_list->AutoHidePager) ?>
+<?php if ($t04_maingroup_list->Pager->RecordCount > 0 && $t04_maingroup_list->Pager->Visible) { ?>
+<div class="ewPager">
+<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
+<div class="ewPrevNext"><div class="input-group">
+<div class="input-group-btn">
+<!--first page button-->
+	<?php if ($t04_maingroup_list->Pager->FirstButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t04_maingroup_list->PageUrl() ?>start=<?php echo $t04_maingroup_list->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } ?>
+<!--previous page button-->
+	<?php if ($t04_maingroup_list->Pager->PrevButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t04_maingroup_list->PageUrl() ?>start=<?php echo $t04_maingroup_list->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } ?>
+</div>
+<!--current page number-->
+	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t04_maingroup_list->Pager->CurrentPage ?>">
+<div class="input-group-btn">
+<!--next page button-->
+	<?php if ($t04_maingroup_list->Pager->NextButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t04_maingroup_list->PageUrl() ?>start=<?php echo $t04_maingroup_list->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } ?>
+<!--last page button-->
+	<?php if ($t04_maingroup_list->Pager->LastButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t04_maingroup_list->PageUrl() ?>start=<?php echo $t04_maingroup_list->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } ?>
+</div>
+</div>
+</div>
+<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t04_maingroup_list->Pager->PageCount ?></span>
+</div>
+<?php } ?>
+<?php if ($t04_maingroup_list->Pager->RecordCount > 0) { ?>
+<div class="ewPager ewRec">
+	<span><?php echo $Language->Phrase("Record") ?>&nbsp;<?php echo $t04_maingroup_list->Pager->FromIndex ?>&nbsp;<?php echo $Language->Phrase("To") ?>&nbsp;<?php echo $t04_maingroup_list->Pager->ToIndex ?>&nbsp;<?php echo $Language->Phrase("Of") ?>&nbsp;<?php echo $t04_maingroup_list->Pager->RecordCount ?></span>
+</div>
+<?php } ?>
+</form>
+<?php } ?>
+<div class="ewListOtherOptions">
+<?php
+	foreach ($t04_maingroup_list->OtherOptions as &$option)
+		$option->Render("body");
+?>
+</div>
+<div class="clearfix"></div>
+</div>
+<?php } ?>
 <form name="ft04_maingrouplist" id="ft04_maingrouplist" class="form-inline ewForm ewListForm" action="<?php echo ew_CurrentPage() ?>" method="post">
 <?php if ($t04_maingroup_list->CheckToken) { ?>
 <input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t04_maingroup_list->Token ?>">
@@ -1821,20 +2325,11 @@ $t04_maingroup_list->RenderListOptions();
 // Render list options (header, left)
 $t04_maingroup_list->ListOptions->Render("header", "left");
 ?>
-<?php if ($t04_maingroup->id->Visible) { // id ?>
-	<?php if ($t04_maingroup->SortUrl($t04_maingroup->id) == "") { ?>
-		<th data-name="id" class="<?php echo $t04_maingroup->id->HeaderCellClass() ?>"><div id="elh_t04_maingroup_id" class="t04_maingroup_id"><div class="ewTableHeaderCaption"><?php echo $t04_maingroup->id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="id" class="<?php echo $t04_maingroup->id->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_maingroup->SortUrl($t04_maingroup->id) ?>',1);"><div id="elh_t04_maingroup_id" class="t04_maingroup_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_maingroup->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_maingroup->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_maingroup->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-		</div></div></th>
-	<?php } ?>
-<?php } ?>
 <?php if ($t04_maingroup->Nama->Visible) { // Nama ?>
 	<?php if ($t04_maingroup->SortUrl($t04_maingroup->Nama) == "") { ?>
 		<th data-name="Nama" class="<?php echo $t04_maingroup->Nama->HeaderCellClass() ?>"><div id="elh_t04_maingroup_Nama" class="t04_maingroup_Nama"><div class="ewTableHeaderCaption"><?php echo $t04_maingroup->Nama->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Nama" class="<?php echo $t04_maingroup->Nama->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_maingroup->SortUrl($t04_maingroup->Nama) ?>',1);"><div id="elh_t04_maingroup_Nama" class="t04_maingroup_Nama">
+		<th data-name="Nama" class="<?php echo $t04_maingroup->Nama->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_maingroup->SortUrl($t04_maingroup->Nama) ?>',2);"><div id="elh_t04_maingroup_Nama" class="t04_maingroup_Nama">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_maingroup->Nama->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t04_maingroup->Nama->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_maingroup->Nama->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
@@ -1904,14 +2399,6 @@ while ($t04_maingroup_list->RecCnt < $t04_maingroup_list->StopRec) {
 // Render list options (body, left)
 $t04_maingroup_list->ListOptions->Render("body", "left", $t04_maingroup_list->RowCnt);
 ?>
-	<?php if ($t04_maingroup->id->Visible) { // id ?>
-		<td data-name="id"<?php echo $t04_maingroup->id->CellAttributes() ?>>
-<span id="el<?php echo $t04_maingroup_list->RowCnt ?>_t04_maingroup_id" class="t04_maingroup_id">
-<span<?php echo $t04_maingroup->id->ViewAttributes() ?>>
-<?php echo $t04_maingroup->id->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
 	<?php if ($t04_maingroup->Nama->Visible) { // Nama ?>
 		<td data-name="Nama"<?php echo $t04_maingroup->Nama->CellAttributes() ?>>
 <span id="el<?php echo $t04_maingroup_list->RowCnt ?>_t04_maingroup_Nama" class="t04_maingroup_Nama">
@@ -1946,6 +2433,7 @@ $t04_maingroup_list->ListOptions->Render("body", "right", $t04_maingroup_list->R
 if ($t04_maingroup_list->Recordset)
 	$t04_maingroup_list->Recordset->Close();
 ?>
+<?php if ($t04_maingroup->Export == "") { ?>
 <div class="box-footer ewGridLowerPanel">
 <?php if ($t04_maingroup->CurrentAction <> "gridadd" && $t04_maingroup->CurrentAction <> "gridedit") { ?>
 <form name="ewPagerForm" class="ewForm form-inline ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
@@ -2004,6 +2492,7 @@ if ($t04_maingroup_list->Recordset)
 </div>
 <div class="clearfix"></div>
 </div>
+<?php } ?>
 </div>
 <?php } ?>
 <?php if ($t04_maingroup_list->TotalRecs == 0 && $t04_maingroup->CurrentAction == "") { // Show other options ?>
@@ -2017,22 +2506,26 @@ if ($t04_maingroup_list->Recordset)
 </div>
 <div class="clearfix"></div>
 <?php } ?>
+<?php if ($t04_maingroup->Export == "") { ?>
 <script type="text/javascript">
 ft04_maingrouplistsrch.FilterList = <?php echo $t04_maingroup_list->GetFilterList() ?>;
 ft04_maingrouplistsrch.Init();
 ft04_maingrouplist.Init();
 </script>
+<?php } ?>
 <?php
 $t04_maingroup_list->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
+<?php if ($t04_maingroup->Export == "") { ?>
 <script type="text/javascript">
 
 // Write your table-specific startup script here
 // document.write("page loaded");
 
 </script>
+<?php } ?>
 <?php include_once "footer.php" ?>
 <?php
 $t04_maingroup_list->Page_Terminate();

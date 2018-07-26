@@ -7,6 +7,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "phpfn14.php" ?>
 <?php include_once "t04_maingroupinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
+<?php include_once "t05_subgroupgridcls.php" ?>
 <?php include_once "userfn14.php" ?>
 <?php
 
@@ -342,6 +343,22 @@ class ct04_maingroup_add extends ct04_maingroup {
 
 		// Process auto fill
 		if (@$_POST["ajax"] == "autofill") {
+
+			// Get the keys for master table
+			$sDetailTblVar = $this->getCurrentDetailTable();
+			if ($sDetailTblVar <> "") {
+				$DetailTblVar = explode(",", $sDetailTblVar);
+				if (in_array("t05_subgroup", $DetailTblVar)) {
+
+					// Process auto fill for detail table 't05_subgroup'
+					if (preg_match('/^ft05_subgroup(grid|add|addopt|edit|update|search)$/', @$_POST["form"])) {
+						if (!isset($GLOBALS["t05_subgroup_grid"])) $GLOBALS["t05_subgroup_grid"] = new ct05_subgroup_grid;
+						$GLOBALS["t05_subgroup_grid"]->Page_Init();
+						$this->Page_Terminate();
+						exit();
+					}
+				}
+			}
 			$results = $this->GetAutoFill(@$_POST["name"], @$_POST["q"]);
 			if ($results) {
 
@@ -470,6 +487,9 @@ class ct04_maingroup_add extends ct04_maingroup {
 			$this->LoadFormValues(); // Load form values
 		}
 
+		// Set up detail parameters
+		$this->SetupDetailParms();
+
 		// Validate form if post back
 		if (@$_POST["a_add"] <> "") {
 			if (!$this->ValidateForm()) {
@@ -489,13 +509,19 @@ class ct04_maingroup_add extends ct04_maingroup {
 					if ($this->getFailureMessage() == "") $this->setFailureMessage($Language->Phrase("NoRecord")); // No record found
 					$this->Page_Terminate("t04_maingrouplist.php"); // No matching record, return to list
 				}
+
+				// Set up detail parameters
+				$this->SetupDetailParms();
 				break;
 			case "A": // Add new record
 				$this->SendEmail = TRUE; // Send email on add success
 				if ($this->AddRow($this->OldRecordset)) { // Add successful
 					if ($this->getSuccessMessage() == "")
 						$this->setSuccessMessage($Language->Phrase("AddSuccess")); // Set up success message
-					$sReturnUrl = $this->getReturnUrl();
+					if ($this->getCurrentDetailTable() <> "") // Master/detail add
+						$sReturnUrl = $this->GetDetailUrl();
+					else
+						$sReturnUrl = $this->getReturnUrl();
 					if (ew_GetPageName($sReturnUrl) == "t04_maingrouplist.php")
 						$sReturnUrl = $this->AddMasterUrl($sReturnUrl); // List page, return to List page with correct master key if necessary
 					elseif (ew_GetPageName($sReturnUrl) == "t04_maingroupview.php")
@@ -504,6 +530,9 @@ class ct04_maingroup_add extends ct04_maingroup {
 				} else {
 					$this->EventCancelled = TRUE; // Event cancelled
 					$this->RestoreFormValues(); // Add failed, restore form values
+
+					// Set up detail parameters
+					$this->SetupDetailParms();
 				}
 		}
 
@@ -689,6 +718,13 @@ class ct04_maingroup_add extends ct04_maingroup {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Nama->FldCaption(), $this->Nama->ReqErrMsg));
 		}
 
+		// Validate detail grid
+		$DetailTblVar = explode(",", $this->getCurrentDetailTable());
+		if (in_array("t05_subgroup", $DetailTblVar) && $GLOBALS["t05_subgroup"]->DetailAdd) {
+			if (!isset($GLOBALS["t05_subgroup_grid"])) $GLOBALS["t05_subgroup_grid"] = new ct05_subgroup_grid(); // get detail page object
+			$GLOBALS["t05_subgroup_grid"]->ValidateGridForm();
+		}
+
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
 
@@ -705,6 +741,10 @@ class ct04_maingroup_add extends ct04_maingroup {
 	function AddRow($rsold = NULL) {
 		global $Language, $Security;
 		$conn = &$this->Connection();
+
+		// Begin transaction
+		if ($this->getCurrentDetailTable() <> "")
+			$conn->BeginTrans();
 
 		// Load db values from rsold
 		$this->LoadDbValues($rsold);
@@ -736,6 +776,29 @@ class ct04_maingroup_add extends ct04_maingroup {
 			}
 			$AddRow = FALSE;
 		}
+
+		// Add detail records
+		if ($AddRow) {
+			$DetailTblVar = explode(",", $this->getCurrentDetailTable());
+			if (in_array("t05_subgroup", $DetailTblVar) && $GLOBALS["t05_subgroup"]->DetailAdd) {
+				$GLOBALS["t05_subgroup"]->maingroup_id->setSessionValue($this->id->CurrentValue); // Set master key
+				if (!isset($GLOBALS["t05_subgroup_grid"])) $GLOBALS["t05_subgroup_grid"] = new ct05_subgroup_grid(); // Get detail page object
+				$Security->LoadCurrentUserLevel($this->ProjectID . "t05_subgroup"); // Load user level of detail table
+				$AddRow = $GLOBALS["t05_subgroup_grid"]->GridInsert();
+				$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
+				if (!$AddRow)
+					$GLOBALS["t05_subgroup"]->maingroup_id->setSessionValue(""); // Clear master key if insert failed
+			}
+		}
+
+		// Commit/Rollback transaction
+		if ($this->getCurrentDetailTable() <> "") {
+			if ($AddRow) {
+				$conn->CommitTrans(); // Commit transaction
+			} else {
+				$conn->RollbackTrans(); // Rollback transaction
+			}
+		}
 		if ($AddRow) {
 
 			// Call Row Inserted event
@@ -743,6 +806,39 @@ class ct04_maingroup_add extends ct04_maingroup {
 			$this->Row_Inserted($rs, $rsnew);
 		}
 		return $AddRow;
+	}
+
+	// Set up detail parms based on QueryString
+	function SetupDetailParms() {
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_DETAIL])) {
+			$sDetailTblVar = $_GET[EW_TABLE_SHOW_DETAIL];
+			$this->setCurrentDetailTable($sDetailTblVar);
+		} else {
+			$sDetailTblVar = $this->getCurrentDetailTable();
+		}
+		if ($sDetailTblVar <> "") {
+			$DetailTblVar = explode(",", $sDetailTblVar);
+			if (in_array("t05_subgroup", $DetailTblVar)) {
+				if (!isset($GLOBALS["t05_subgroup_grid"]))
+					$GLOBALS["t05_subgroup_grid"] = new ct05_subgroup_grid;
+				if ($GLOBALS["t05_subgroup_grid"]->DetailAdd) {
+					if ($this->CopyRecord)
+						$GLOBALS["t05_subgroup_grid"]->CurrentMode = "copy";
+					else
+						$GLOBALS["t05_subgroup_grid"]->CurrentMode = "add";
+					$GLOBALS["t05_subgroup_grid"]->CurrentAction = "gridadd";
+
+					// Save current master table to detail table
+					$GLOBALS["t05_subgroup_grid"]->setCurrentMasterTable($this->TableVar);
+					$GLOBALS["t05_subgroup_grid"]->setStartRecordNumber(1);
+					$GLOBALS["t05_subgroup_grid"]->maingroup_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t05_subgroup_grid"]->maingroup_id->CurrentValue = $this->id->CurrentValue;
+					$GLOBALS["t05_subgroup_grid"]->maingroup_id->setSessionValue($GLOBALS["t05_subgroup_grid"]->maingroup_id->CurrentValue);
+				}
+			}
+		}
 	}
 
 	// Set up Breadcrumb
@@ -941,6 +1037,14 @@ $t04_maingroup_add->ShowMessage();
 	</div>
 <?php } ?>
 </div><!-- /page* -->
+<?php
+	if (in_array("t05_subgroup", explode(",", $t04_maingroup->getCurrentDetailTable())) && $t05_subgroup->DetailAdd) {
+?>
+<?php if ($t04_maingroup->getCurrentDetailTable() <> "") { ?>
+<h4 class="ewDetailCaption"><?php echo $Language->TablePhrase("t05_subgroup", "TblCaption") ?></h4>
+<?php } ?>
+<?php include_once "t05_subgroupgrid.php" ?>
+<?php } ?>
 <?php if (!$t04_maingroup_add->IsModal) { ?>
 <div class="form-group"><!-- buttons .form-group -->
 	<div class="<?php echo $t04_maingroup_add->OffsetColumnClass ?>"><!-- buttons offset -->

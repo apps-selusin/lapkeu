@@ -320,9 +320,6 @@ class ct04_maingroup_delete extends ct04_maingroup {
 		// 
 
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		if ($this->IsAdd() || $this->IsCopy() || $this->IsGridAdd())
-			$this->id->Visible = FALSE;
 		$this->Nama->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
@@ -546,11 +543,6 @@ class ct04_maingroup_delete extends ct04_maingroup {
 		// Nama
 		$this->Nama->ViewValue = $this->Nama->CurrentValue;
 		$this->Nama->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
 
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
@@ -793,9 +785,6 @@ $t04_maingroup_delete->ShowMessage();
 <table class="table ewTable">
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t04_maingroup->id->Visible) { // id ?>
-		<th class="<?php echo $t04_maingroup->id->HeaderCellClass() ?>"><span id="elh_t04_maingroup_id" class="t04_maingroup_id"><?php echo $t04_maingroup->id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t04_maingroup->Nama->Visible) { // Nama ?>
 		<th class="<?php echo $t04_maingroup->Nama->HeaderCellClass() ?>"><span id="elh_t04_maingroup_Nama" class="t04_maingroup_Nama"><?php echo $t04_maingroup->Nama->FldCaption() ?></span></th>
 <?php } ?>
@@ -820,14 +809,6 @@ while (!$t04_maingroup_delete->Recordset->EOF) {
 	$t04_maingroup_delete->RenderRow();
 ?>
 	<tr<?php echo $t04_maingroup->RowAttributes() ?>>
-<?php if ($t04_maingroup->id->Visible) { // id ?>
-		<td<?php echo $t04_maingroup->id->CellAttributes() ?>>
-<span id="el<?php echo $t04_maingroup_delete->RowCnt ?>_t04_maingroup_id" class="t04_maingroup_id">
-<span<?php echo $t04_maingroup->id->ViewAttributes() ?>>
-<?php echo $t04_maingroup->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t04_maingroup->Nama->Visible) { // Nama ?>
 		<td<?php echo $t04_maingroup->Nama->CellAttributes() ?>>
 <span id="el<?php echo $t04_maingroup_delete->RowCnt ?>_t04_maingroup_Nama" class="t04_maingroup_Nama">

@@ -25,7 +25,7 @@ define("EW_CONFIG_FILE_FOLDER", EW_PROJECT_NAME, TRUE); // Config file name
 define("EW_PROJECT_ID", "{239A2A32-109A-412F-A3CB-FF6290C167FC}", TRUE); // Project ID (GUID)
 $EW_RELATED_PROJECT_ID = "";
 $EW_RELATED_LANGUAGE_FOLDER = "";
-define("EW_RANDOM_KEY", 'rUMUcpog7IWCciJr', TRUE); // Random key for encryption
+define("EW_RANDOM_KEY", 'jt3BvotJGaddgDc5', TRUE); // Random key for encryption
 define("EW_PROJECT_STYLESHEET_FILENAME", "phpcss/prj_lapkeu.css", TRUE); // Project stylesheet file name
 define("EW_CHARSET", "utf-8", TRUE); // Project charset
 define("EW_EMAIL_CHARSET", EW_CHARSET, TRUE); // Email charset
@@ -237,15 +237,15 @@ define("EW_AUDIT_TRAIL_TO_DATABASE", TRUE, TRUE); // Write audit trail to DB
 define("EW_AUDIT_TRAIL_DBID", "DB", TRUE); // Audit trail DBID
 define("EW_AUDIT_TRAIL_TABLE_NAME", "t99_audittrail", TRUE); // Audit trail table name
 define("EW_AUDIT_TRAIL_TABLE_VAR", "t99_audittrail", TRUE); // Audit trail table var
-define("EW_AUDIT_TRAIL_FIELD_NAME_DATETIME", "", TRUE); // Audit trail DateTime field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_SCRIPT", "", TRUE); // Audit trail Script field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_USER", "", TRUE); // Audit trail User field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_ACTION", "", TRUE); // Audit trail Action field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_TABLE", "", TRUE); // Audit trail Table field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_FIELD", "", TRUE); // Audit trail Field field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_KEYVALUE", "", TRUE); // Audit trail Key Value field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_OLDVALUE", "", TRUE); // Audit trail Old Value field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_NEWVALUE", "", TRUE); // Audit trail New Value field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_DATETIME", "datetime", TRUE); // Audit trail DateTime field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_SCRIPT", "script", TRUE); // Audit trail Script field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_USER", "user", TRUE); // Audit trail User field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_ACTION", "action", TRUE); // Audit trail Action field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_TABLE", "table", TRUE); // Audit trail Table field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_FIELD", "field", TRUE); // Audit trail Field field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_KEYVALUE", "keyvalue", TRUE); // Audit trail Key Value field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_OLDVALUE", "oldvalue", TRUE); // Audit trail Old Value field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_NEWVALUE", "newvalue", TRUE); // Audit trail New Value field name
 
 // Security
 define("EW_ADMIN_USER_NAME", "", TRUE); // Administrator user name
@@ -975,5 +975,7 @@ $LoginStatus = array();
 $EW_USE_SUBMENU_FOR_ROOT_HEADER = FALSE;
 ?>
 <?php
-define("EW_PDF_STYLESHEET_FILENAME", "", TRUE); // Export PDF CSS styles
+define("EW_PDF_STYLESHEET_FILENAME", "phpcss/ewpdf.css", TRUE); // export PDF CSS styles
+define("EW_PDF_MEMORY_LIMIT", "128M", TRUE); // Memory limit
+define("EW_PDF_TIME_LIMIT", 120, TRUE); // Time limit
 ?>

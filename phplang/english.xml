@@ -637,22 +637,22 @@
       <phrase id="menutext" value="Barang" />
     </menu>
     <menu id="4">
-      <phrase id="menutext" value="Main Group" />
+      <phrase id="menutext" value="Jenis Pengeluaran" />
     </menu>
     <menu id="5">
-      <phrase id="menutext" value="Sub Group" />
+      <phrase id="menutext" value="Sub Jenis Pengeluaran" />
     </menu>
     <menu id="7">
-      <phrase id="menutext" value="t 96 employees" />
+      <phrase id="menutext" value="User" />
     </menu>
     <menu id="8">
-      <phrase id="menutext" value="t 97 userlevels" />
+      <phrase id="menutext" value="Level User" />
     </menu>
     <menu id="9">
-      <phrase id="menutext" value="t 98 userlevelpermissions" />
+      <phrase id="menutext" value="Hak Akses User" />
     </menu>
-    <menu id="10">
-      <phrase id="menutext" value="t 99 audittrail" />
+    <menu id="23">
+      <phrase id="menutext" value="User Log" />
     </menu>
     <table id="t01_supplier">
       <phrase id="tblcaption" value="Supplier" />
@@ -687,11 +687,11 @@
         <phrase id="fldcaption" value="Nama" />
       </field>
       <field id="satuan_id">
-        <phrase id="fldcaption" value="satuan id" />
+        <phrase id="fldcaption" value="Satuan" />
       </field>
     </table>
     <table id="t04_maingroup">
-      <phrase id="tblcaption" value="Main Group" />
+      <phrase id="tblcaption" value="Jenis Pengeluaran" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
@@ -700,12 +700,12 @@
       </field>
     </table>
     <table id="t05_subgroup">
-      <phrase id="tblcaption" value="Sub Group" />
+      <phrase id="tblcaption" value="Sub Jenis Pengeluaran" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
       <field id="maingroup_id">
-        <phrase id="fldcaption" value="maingroup id" />
+        <phrase id="fldcaption" value="Jenis Pengeluaran" />
       </field>
       <field id="nama">
         <phrase id="fldcaption" value="Nama" />
@@ -745,7 +745,7 @@
       </field>
     </table>
     <table id="t96_employees">
-      <phrase id="tblcaption" value="t 96 employees" />
+      <phrase id="tblcaption" value="User" />
       <field id="employeeid">
         <phrase id="fldcaption" value="Employee ID" />
       </field>
@@ -821,7 +821,7 @@
       </field>
     </table>
     <table id="t97_userlevels">
-      <phrase id="tblcaption" value="t 97 userlevels" />
+      <phrase id="tblcaption" value="Level User" />
       <field id="userlevelid">
         <phrase id="fldcaption" value="userlevelid" />
       </field>
@@ -830,7 +830,7 @@
       </field>
     </table>
     <table id="t98_userlevelpermissions">
-      <phrase id="tblcaption" value="t 98 userlevelpermissions" />
+      <phrase id="tblcaption" value="Hak Akses User" />
       <field id="userlevelid">
         <phrase id="fldcaption" value="userlevelid" />
       </field>
@@ -841,8 +841,11 @@
         <phrase id="fldcaption" value="permission" />
       </field>
     </table>
+    <table id="cf01_home_php">
+      <phrase id="tblcaption" value="Home" />
+    </table>
     <table id="t99_audittrail">
-      <phrase id="tblcaption" value="t 99 audittrail" />
+      <phrase id="tblcaption" value="User Log" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
@@ -873,9 +876,6 @@
       <field id="newvalue">
         <phrase id="fldcaption" value="newvalue" />
       </field>
-    </table>
-    <table id="cf01_home_php">
-      <phrase id="tblcaption" value="Home" />
     </table>
   </project>
 </ew-language>

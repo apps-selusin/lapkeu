@@ -1,3 +1,4 @@
+<?php if (@$gsExport == "") { ?>
 <?php if (@!$gbSkipHeaderFooter) { ?>
 		<?php if (isset($gTimer)) $gTimer->Stop() ?>
 		</section>
@@ -99,6 +100,15 @@ ew_RenderJsTemplates();
 </script>
 <!-- modal dialog -->
 <div id="ewModalDialog" class="modal" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title"></h4></div><div class="modal-body"></div><div class="modal-footer"></div></div></div></div>
+<!-- modal lookup dialog -->
+<div id="ewModalLookupDialog" class="modal" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title"></h4></div><div class="modal-body"></div><div class="modal-footer"></div></div></div></div>
+<!-- add option dialog -->
+<div id="ewAddOptDialog" class="modal" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title"></h4></div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-primary ewButton"><?php echo $Language->Phrase("AddBtn") ?></button><button type="button" class="btn btn-default ewButton" data-dismiss="modal"><?php echo $Language->Phrase("CancelBtn") ?></button></div></div></div></div>
+<!-- email dialog -->
+<div id="ewEmailDialog" class="modal" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title"></h4></div>
+<div class="modal-body">
+<?php include_once $EW_RELATIVE_PATH . "ewemail14.php" ?>
+</div><div class="modal-footer"><button type="button" class="btn btn-primary ewButton"><?php echo $Language->Phrase("SendEmailBtn") ?></button><button type="button" class="btn btn-default ewButton" data-dismiss="modal"><?php echo $Language->Phrase("CancelBtn") ?></button></div></div></div></div>
 <!-- message box -->
 <div id="ewMsgBox" class="modal" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-primary ewButton" data-dismiss="modal"><?php echo $Language->Phrase("MessageOK") ?></button></div></div></div></div>
 <!-- prompt -->
@@ -107,6 +117,8 @@ ew_RenderJsTemplates();
 <div id="ewTimer" class="modal" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-primary ewButton" data-dismiss="modal"><?php echo $Language->Phrase("MessageOK") ?></button></div></div></div></div>
 <!-- tooltip -->
 <div id="ewTooltip"></div>
+<?php } ?>
+<?php if (@$gsExport == "") { ?>
 <script type="text/javascript">
 jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt14.js");
 </script>
@@ -116,5 +128,6 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt14.js");
 // document.write("page loaded");
 
 </script>
+<?php } ?>
 </body>
 </html>

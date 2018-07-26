@@ -55,8 +55,10 @@ class ct03_barang extends cTable {
 		$this->fields['Nama'] = &$this->Nama;
 
 		// satuan_id
-		$this->satuan_id = new cField('t03_barang', 't03_barang', 'x_satuan_id', 'satuan_id', '`satuan_id`', '`satuan_id`', 3, -1, FALSE, '`satuan_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->satuan_id = new cField('t03_barang', 't03_barang', 'x_satuan_id', 'satuan_id', '`satuan_id`', '`satuan_id`', 3, -1, FALSE, '`EV__satuan_id`', TRUE, TRUE, TRUE, 'FORMATTED TEXT', 'SELECT');
 		$this->satuan_id->Sortable = TRUE; // Allow sort
+		$this->satuan_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->satuan_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->satuan_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['satuan_id'] = &$this->satuan_id;
 	}
@@ -81,8 +83,8 @@ class ct03_barang extends cTable {
 		}
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -92,10 +94,43 @@ class ct03_barang extends cTable {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ctrl) {
+				$sOrderBy = $this->getSessionOrderBy();
+				if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+					$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+				} else {
+					if ($sOrderBy <> "") $sOrderBy .= ", ";
+					$sOrderBy .= $sSortField . " " . $sThisSort;
+				}
+				$this->setSessionOrderBy($sOrderBy); // Save to Session
+			} else {
+				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			}
+			$sSortFieldList = ($ofld->FldVirtualExpression <> "") ? $ofld->FldVirtualExpression : $sSortField;
+			if ($ctrl) {
+				$sOrderByList = $this->getSessionOrderByList();
+				if (strpos($sOrderByList, $sSortFieldList . " " . $sLastSort) !== FALSE) {
+					$sOrderByList = str_replace($sSortFieldList . " " . $sLastSort, $sSortFieldList . " " . $sThisSort, $sOrderByList);
+				} else {
+					if ($sOrderByList <> "") $sOrderByList .= ", ";
+					$sOrderByList .= $sSortFieldList . " " . $sThisSort;
+				}
+				$this->setSessionOrderByList($sOrderByList); // Save to Session
+			} else {
+				$this->setSessionOrderByList($sSortFieldList . " " . $sThisSort); // Save to Session
+			}
 		} else {
-			$ofld->setSort("");
+			if (!$ctrl) $ofld->setSort("");
 		}
+	}
+
+	// Session ORDER BY for List page
+	function getSessionOrderByList() {
+		return @$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_ORDER_BY_LIST];
+	}
+
+	function setSessionOrderByList($v) {
+		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_ORDER_BY_LIST] = $v;
 	}
 
 	// Table level SQL
@@ -124,6 +159,23 @@ class ct03_barang extends cTable {
 
 	function setSqlSelect($v) {
 		$this->_SqlSelect = $v;
+	}
+	var $_SqlSelectList = "";
+
+	function getSqlSelectList() { // Select for List page
+		$select = "";
+		$select = "SELECT * FROM (" .
+			"SELECT *, (SELECT `Nama` FROM `t02_satuan` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t03_barang`.`satuan_id` LIMIT 1) AS `EV__satuan_id` FROM `t03_barang`" .
+			") `EW_TMP_TABLE`";
+		return ($this->_SqlSelectList <> "") ? $this->_SqlSelectList : $select;
+	}
+
+	function SqlSelectList() { // For backward compatibility
+		return $this->getSqlSelectList();
+	}
+
+	function setSqlSelectList($v) {
+		$this->_SqlSelectList = $v;
 	}
 	var $_SqlWhere = "";
 
@@ -236,16 +288,38 @@ class ct03_barang extends cTable {
 		ew_AddFilter($sFilter, $this->CurrentFilter);
 		$sFilter = $this->ApplyUserIDFilters($sFilter);
 		$this->Recordset_Selecting($sFilter);
-		$sSelect = $this->getSqlSelect();
-		$sSort = $this->UseSessionForListSQL ? $this->getSessionOrderBy() : "";
+		if ($this->UseVirtualFields()) {
+			$sSelect = $this->getSqlSelectList();
+			$sSort = $this->UseSessionForListSQL ? $this->getSessionOrderByList() : "";
+		} else {
+			$sSelect = $this->getSqlSelect();
+			$sSort = $this->UseSessionForListSQL ? $this->getSessionOrderBy() : "";
+		}
 		return ew_BuildSelectSql($sSelect, $this->getSqlWhere(), $this->getSqlGroupBy(),
 			$this->getSqlHaving(), $this->getSqlOrderBy(), $sFilter, $sSort);
 	}
 
 	// Get ORDER BY clause
 	function GetOrderBy() {
-		$sSort = $this->getSessionOrderBy();
+		$sSort = ($this->UseVirtualFields()) ? $this->getSessionOrderByList() : $this->getSessionOrderBy();
 		return ew_BuildSelectSql("", "", "", "", $this->getSqlOrderBy(), "", $sSort);
+	}
+
+	// Check if virtual fields is used in SQL
+	function UseVirtualFields() {
+		$sWhere = $this->UseSessionForListSQL ? $this->getSessionWhere() : $this->CurrentFilter;
+		$sOrderBy = $this->UseSessionForListSQL ? $this->getSessionOrderByList() : "";
+		if ($sWhere <> "")
+			$sWhere = " " . str_replace(array("(",")"), array("",""), $sWhere) . " ";
+		if ($sOrderBy <> "")
+			$sOrderBy = " " . str_replace(array("(",")"), array("",""), $sOrderBy) . " ";
+		if ($this->satuan_id->AdvancedSearch->SearchValue <> "" ||
+			$this->satuan_id->AdvancedSearch->SearchValue2 <> "" ||
+			strpos($sWhere, " " . $this->satuan_id->FldVirtualExpression . " ") !== FALSE)
+			return TRUE;
+		if (strpos($sOrderBy, " " . $this->satuan_id->FldVirtualExpression . " ") !== FALSE)
+			return TRUE;
+		return FALSE;
 	}
 
 	// Try to get record count
@@ -296,7 +370,10 @@ class ct03_barang extends cTable {
 		$select = $this->TableType == 'CUSTOMVIEW' ? $this->getSqlSelect() : "SELECT * FROM " . $this->getSqlFrom();
 		$groupBy = $this->TableType == 'CUSTOMVIEW' ? $this->getSqlGroupBy() : "";
 		$having = $this->TableType == 'CUSTOMVIEW' ? $this->getSqlHaving() : "";
-		$sql = ew_BuildSelectSql($select, $this->getSqlWhere(), $groupBy, $having, "", $filter, "");
+		if ($this->UseVirtualFields())
+			$sql = ew_BuildSelectSql($this->getSqlSelectList(), $this->getSqlWhere(), $groupBy, $having, "", $filter, "");
+		else
+			$sql = ew_BuildSelectSql($select, $this->getSqlWhere(), $groupBy, $having, "", $filter, "");
 		$cnt = $this->TryGetRecordCount($sql);
 		if ($cnt == -1) {
 			$conn = &$this->Connection();
@@ -612,7 +689,31 @@ class ct03_barang extends cTable {
 		$this->Nama->ViewCustomAttributes = "";
 
 		// satuan_id
-		$this->satuan_id->ViewValue = $this->satuan_id->CurrentValue;
+		if ($this->satuan_id->VirtualValue <> "") {
+			$this->satuan_id->ViewValue = $this->satuan_id->VirtualValue;
+		} else {
+		if (strval($this->satuan_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->satuan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_satuan`";
+		$sWhereWrk = "";
+		$this->satuan_id->LookupFilters = array("dx1" => '`Nama`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->satuan_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+		$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->satuan_id->ViewValue = $this->satuan_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->satuan_id->ViewValue = $this->satuan_id->CurrentValue;
+			}
+		} else {
+			$this->satuan_id->ViewValue = NULL;
+		}
+		}
 		$this->satuan_id->ViewCustomAttributes = "";
 
 		// id
@@ -659,8 +760,6 @@ class ct03_barang extends cTable {
 		// satuan_id
 		$this->satuan_id->EditAttrs["class"] = "form-control";
 		$this->satuan_id->EditCustomAttributes = "";
-		$this->satuan_id->EditValue = $this->satuan_id->CurrentValue;
-		$this->satuan_id->PlaceHolder = ew_RemoveHtml($this->satuan_id->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -689,7 +788,6 @@ class ct03_barang extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->Nama->Exportable) $Doc->ExportCaption($this->Nama);
 					if ($this->satuan_id->Exportable) $Doc->ExportCaption($this->satuan_id);
 				} else {
@@ -727,7 +825,6 @@ class ct03_barang extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->Nama->Exportable) $Doc->ExportField($this->Nama);
 						if ($this->satuan_id->Exportable) $Doc->ExportField($this->satuan_id);
 					} else {

@@ -325,9 +325,6 @@ class ct03_barang_edit extends ct03_barang {
 
 		$objForm = new cFormObj();
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		if ($this->IsAdd() || $this->IsCopy() || $this->IsGridAdd())
-			$this->id->Visible = FALSE;
 		$this->Nama->SetVisibility();
 		$this->satuan_id->SetVisibility();
 
@@ -427,6 +424,15 @@ class ct03_barang_edit extends ct03_barang {
 	var $IsMobileOrModal = FALSE;
 	var $DbMasterFilter;
 	var $DbDetailFilter;
+	var $DisplayRecs = 1;
+	var $StartRec;
+	var $StopRec;
+	var $TotalRecs = 0;
+	var $RecRange = 10;
+	var $Pager;
+	var $AutoHidePager = EW_AUTO_HIDE_PAGER;
+	var $RecCnt;
+	var $Recordset;
 
 	//
 	// Page main
@@ -439,6 +445,9 @@ class ct03_barang_edit extends ct03_barang {
 			$gbSkipHeaderFooter = TRUE;
 		$this->IsMobileOrModal = ew_IsMobile() || $this->IsModal;
 		$this->FormClassName = "ewForm ewEditForm form-horizontal";
+
+		// Load record by position
+		$loadByPosition = FALSE;
 		$sReturnUrl = "";
 		$loaded = FALSE;
 		$postBack = FALSE;
@@ -464,10 +473,44 @@ class ct03_barang_edit extends ct03_barang {
 			} else {
 				$this->id->CurrentValue = NULL;
 			}
+			if (!$loadByQuery)
+				$loadByPosition = TRUE;
 		}
 
-		// Load current record
-		$loaded = $this->LoadRow();
+		// Load recordset
+		$this->StartRec = 1; // Initialize start position
+		if ($this->Recordset = $this->LoadRecordset()) // Load records
+			$this->TotalRecs = $this->Recordset->RecordCount(); // Get record count
+		if ($this->TotalRecs <= 0) { // No record found
+			if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
+				$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
+			$this->Page_Terminate("t03_baranglist.php"); // Return to list page
+		} elseif ($loadByPosition) { // Load record by position
+			$this->SetupStartRec(); // Set up start record position
+
+			// Point to current record
+			if (intval($this->StartRec) <= intval($this->TotalRecs)) {
+				$this->Recordset->Move($this->StartRec-1);
+				$loaded = TRUE;
+			}
+		} else { // Match key values
+			if (!is_null($this->id->CurrentValue)) {
+				while (!$this->Recordset->EOF) {
+					if (strval($this->id->CurrentValue) == strval($this->Recordset->fields('id'))) {
+						$this->setStartRecordNumber($this->StartRec); // Save record position
+						$loaded = TRUE;
+						break;
+					} else {
+						$this->StartRec++;
+						$this->Recordset->MoveNext();
+					}
+				}
+			}
+		}
+
+		// Load current row values
+		if ($loaded)
+			$this->LoadRowValues($this->Recordset);
 
 		// Process form if post back
 		if ($postBack) {
@@ -487,9 +530,11 @@ class ct03_barang_edit extends ct03_barang {
 		// Perform current action
 		switch ($this->CurrentAction) {
 			case "I": // Get a record to display
-				if (!$loaded) { // Load record based on key
-					if ($this->getFailureMessage() == "") $this->setFailureMessage($Language->Phrase("NoRecord")); // No record found
-					$this->Page_Terminate("t03_baranglist.php"); // No matching record, return to list
+				if (!$loaded) {
+					if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
+						$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
+					$this->Page_Terminate("t03_baranglist.php"); // Return to list page
+				} else {
 				}
 				break;
 			Case "U": // Update
@@ -566,14 +611,14 @@ class ct03_barang_edit extends ct03_barang {
 
 		// Load from form
 		global $objForm;
-		if (!$this->id->FldIsDetailKey)
-			$this->id->setFormValue($objForm->GetValue("x_id"));
 		if (!$this->Nama->FldIsDetailKey) {
 			$this->Nama->setFormValue($objForm->GetValue("x_Nama"));
 		}
 		if (!$this->satuan_id->FldIsDetailKey) {
 			$this->satuan_id->setFormValue($objForm->GetValue("x_satuan_id"));
 		}
+		if (!$this->id->FldIsDetailKey)
+			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
 
 	// Restore form values
@@ -582,6 +627,32 @@ class ct03_barang_edit extends ct03_barang {
 		$this->id->CurrentValue = $this->id->FormValue;
 		$this->Nama->CurrentValue = $this->Nama->FormValue;
 		$this->satuan_id->CurrentValue = $this->satuan_id->FormValue;
+	}
+
+	// Load recordset
+	function LoadRecordset($offset = -1, $rowcnt = -1) {
+
+		// Load List page SQL
+		$sSql = $this->ListSQL();
+		$conn = &$this->Connection();
+
+		// Load recordset
+		$dbtype = ew_GetConnectionType($this->DBID);
+		if ($this->UseSelectLimit) {
+			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
+			if ($dbtype == "MSSQL") {
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderByList())));
+			} else {
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
+			}
+			$conn->raiseErrorFn = '';
+		} else {
+			$rs = ew_LoadRecordset($sSql, $conn);
+		}
+
+		// Call Recordset Selected event
+		$this->Recordset_Selected($rs);
+		return $rs;
 	}
 
 	// Load row based on key values
@@ -620,6 +691,11 @@ class ct03_barang_edit extends ct03_barang {
 		$this->id->setDbValue($row['id']);
 		$this->Nama->setDbValue($row['Nama']);
 		$this->satuan_id->setDbValue($row['satuan_id']);
+		if (array_key_exists('EV__satuan_id', $rs->fields)) {
+			$this->satuan_id->VirtualValue = $rs->fields('EV__satuan_id'); // Set up virtual field value
+		} else {
+			$this->satuan_id->VirtualValue = ""; // Clear value
+		}
 	}
 
 	// Return a row with default values
@@ -688,13 +764,32 @@ class ct03_barang_edit extends ct03_barang {
 		$this->Nama->ViewCustomAttributes = "";
 
 		// satuan_id
-		$this->satuan_id->ViewValue = $this->satuan_id->CurrentValue;
+		if ($this->satuan_id->VirtualValue <> "") {
+			$this->satuan_id->ViewValue = $this->satuan_id->VirtualValue;
+		} else {
+		if (strval($this->satuan_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->satuan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_satuan`";
+		$sWhereWrk = "";
+		$this->satuan_id->LookupFilters = array("dx1" => '`Nama`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->satuan_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+		$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->satuan_id->ViewValue = $this->satuan_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->satuan_id->ViewValue = $this->satuan_id->CurrentValue;
+			}
+		} else {
+			$this->satuan_id->ViewValue = NULL;
+		}
+		}
 		$this->satuan_id->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
 
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
@@ -707,12 +802,6 @@ class ct03_barang_edit extends ct03_barang {
 			$this->satuan_id->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
-			// id
-			$this->id->EditAttrs["class"] = "form-control";
-			$this->id->EditCustomAttributes = "";
-			$this->id->EditValue = $this->id->CurrentValue;
-			$this->id->ViewCustomAttributes = "";
-
 			// Nama
 			$this->Nama->EditAttrs["class"] = "form-control";
 			$this->Nama->EditCustomAttributes = "";
@@ -720,18 +809,34 @@ class ct03_barang_edit extends ct03_barang {
 			$this->Nama->PlaceHolder = ew_RemoveHtml($this->Nama->FldCaption());
 
 			// satuan_id
-			$this->satuan_id->EditAttrs["class"] = "form-control";
 			$this->satuan_id->EditCustomAttributes = "";
-			$this->satuan_id->EditValue = ew_HtmlEncode($this->satuan_id->CurrentValue);
-			$this->satuan_id->PlaceHolder = ew_RemoveHtml($this->satuan_id->FldCaption());
+			if (trim(strval($this->satuan_id->CurrentValue)) == "") {
+				$sFilterWrk = "0=1";
+			} else {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->satuan_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			}
+			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, '' AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t02_satuan`";
+			$sWhereWrk = "";
+			$this->satuan_id->LookupFilters = array("dx1" => '`Nama`');
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->satuan_id, $sWhereWrk); // Call Lookup Selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = ew_HtmlEncode($rswrk->fields('DispFld'));
+				$this->satuan_id->ViewValue = $this->satuan_id->DisplayValue($arwrk);
+			} else {
+				$this->satuan_id->ViewValue = $Language->Phrase("PleaseSelect");
+			}
+			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
+			if ($rswrk) $rswrk->Close();
+			$this->satuan_id->EditValue = $arwrk;
 
 			// Edit refer script
-			// id
-
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-
 			// Nama
+
 			$this->Nama->LinkCustomAttributes = "";
 			$this->Nama->HrefValue = "";
 
@@ -762,9 +867,6 @@ class ct03_barang_edit extends ct03_barang {
 		}
 		if (!$this->satuan_id->FldIsDetailKey && !is_null($this->satuan_id->FormValue) && $this->satuan_id->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->satuan_id->FldCaption(), $this->satuan_id->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->satuan_id->FormValue)) {
-			ew_AddMessage($gsFormError, $this->satuan_id->FldErrMsg());
 		}
 
 		// Return validate result
@@ -855,6 +957,19 @@ class ct03_barang_edit extends ct03_barang {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
+		case "x_satuan_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_satuan`";
+			$sWhereWrk = "{filter}";
+			$fld->LookupFilters = array("dx1" => '`Nama`');
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` IN ({filter_value})', "t0" => "3", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->satuan_id, $sWhereWrk); // Call Lookup Selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " ORDER BY `Nama` ASC";
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 		}
 	}
 
@@ -980,9 +1095,6 @@ ft03_barangedit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_satuan_id");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t03_barang->satuan_id->FldCaption(), $t03_barang->satuan_id->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_satuan_id");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t03_barang->satuan_id->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1012,8 +1124,10 @@ ft03_barangedit.Form_CustomValidate =
 ft03_barangedit.ValidateRequired = <?php echo json_encode(EW_CLIENT_VALIDATE) ?>;
 
 // Dynamic selection lists
-// Form object for search
+ft03_barangedit.Lists["x_satuan_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t02_satuan"};
+ft03_barangedit.Lists["x_satuan_id"].Data = "<?php echo $t03_barang_edit->satuan_id->LookupFilterQuery(FALSE, "edit") ?>";
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
@@ -1023,6 +1137,51 @@ ft03_barangedit.ValidateRequired = <?php echo json_encode(EW_CLIENT_VALIDATE) ?>
 <?php
 $t03_barang_edit->ShowMessage();
 ?>
+<?php if (!$t03_barang_edit->IsModal) { ?>
+<form name="ewPagerForm" class="form-horizontal ewForm ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
+<?php if (!isset($t03_barang_edit->Pager)) $t03_barang_edit->Pager = new cPrevNextPager($t03_barang_edit->StartRec, $t03_barang_edit->DisplayRecs, $t03_barang_edit->TotalRecs, $t03_barang_edit->AutoHidePager) ?>
+<?php if ($t03_barang_edit->Pager->RecordCount > 0 && $t03_barang_edit->Pager->Visible) { ?>
+<div class="ewPager">
+<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
+<div class="ewPrevNext"><div class="input-group">
+<div class="input-group-btn">
+<!--first page button-->
+	<?php if ($t03_barang_edit->Pager->FirstButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t03_barang_edit->PageUrl() ?>start=<?php echo $t03_barang_edit->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } ?>
+<!--previous page button-->
+	<?php if ($t03_barang_edit->Pager->PrevButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t03_barang_edit->PageUrl() ?>start=<?php echo $t03_barang_edit->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } ?>
+</div>
+<!--current page number-->
+	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t03_barang_edit->Pager->CurrentPage ?>">
+<div class="input-group-btn">
+<!--next page button-->
+	<?php if ($t03_barang_edit->Pager->NextButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t03_barang_edit->PageUrl() ?>start=<?php echo $t03_barang_edit->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } ?>
+<!--last page button-->
+	<?php if ($t03_barang_edit->Pager->LastButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t03_barang_edit->PageUrl() ?>start=<?php echo $t03_barang_edit->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } ?>
+</div>
+</div>
+</div>
+<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t03_barang_edit->Pager->PageCount ?></span>
+</div>
+<?php } ?>
+<div class="clearfix"></div>
+</form>
+<?php } ?>
 <form name="ft03_barangedit" id="ft03_barangedit" class="<?php echo $t03_barang_edit->FormClassName ?>" action="<?php echo ew_CurrentPage() ?>" method="post">
 <?php if ($t03_barang_edit->CheckToken) { ?>
 <input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t03_barang_edit->Token ?>">
@@ -1031,18 +1190,6 @@ $t03_barang_edit->ShowMessage();
 <input type="hidden" name="a_edit" id="a_edit" value="U">
 <input type="hidden" name="modal" value="<?php echo intval($t03_barang_edit->IsModal) ?>">
 <div class="ewEditDiv"><!-- page* -->
-<?php if ($t03_barang->id->Visible) { // id ?>
-	<div id="r_id" class="form-group">
-		<label id="elh_t03_barang_id" class="<?php echo $t03_barang_edit->LeftColumnClass ?>"><?php echo $t03_barang->id->FldCaption() ?></label>
-		<div class="<?php echo $t03_barang_edit->RightColumnClass ?>"><div<?php echo $t03_barang->id->CellAttributes() ?>>
-<span id="el_t03_barang_id">
-<span<?php echo $t03_barang->id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t03_barang->id->EditValue ?></p></span>
-</span>
-<input type="hidden" data-table="t03_barang" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($t03_barang->id->CurrentValue) ?>">
-<?php echo $t03_barang->id->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
 <?php if ($t03_barang->Nama->Visible) { // Nama ?>
 	<div id="r_Nama" class="form-group">
 		<label id="elh_t03_barang_Nama" for="x_Nama" class="<?php echo $t03_barang_edit->LeftColumnClass ?>"><?php echo $t03_barang->Nama->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
@@ -1058,12 +1205,20 @@ $t03_barang_edit->ShowMessage();
 		<label id="elh_t03_barang_satuan_id" for="x_satuan_id" class="<?php echo $t03_barang_edit->LeftColumnClass ?>"><?php echo $t03_barang->satuan_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="<?php echo $t03_barang_edit->RightColumnClass ?>"><div<?php echo $t03_barang->satuan_id->CellAttributes() ?>>
 <span id="el_t03_barang_satuan_id">
-<input type="text" data-table="t03_barang" data-field="x_satuan_id" name="x_satuan_id" id="x_satuan_id" size="30" placeholder="<?php echo ew_HtmlEncode($t03_barang->satuan_id->getPlaceHolder()) ?>" value="<?php echo $t03_barang->satuan_id->EditValue ?>"<?php echo $t03_barang->satuan_id->EditAttributes() ?>>
+<span class="ewLookupList">
+	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_satuan_id"><?php echo (strval($t03_barang->satuan_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t03_barang->satuan_id->ViewValue); ?></span>
+</span>
+<button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t03_barang->satuan_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x_satuan_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"<?php echo (($t03_barang->satuan_id->ReadOnly || $t03_barang->satuan_id->Disabled) ? " disabled" : "")?>><span class="glyphicon glyphicon-search ewIcon"></span></button>
+<input type="hidden" data-table="t03_barang" data-field="x_satuan_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t03_barang->satuan_id->DisplayValueSeparatorAttribute() ?>" name="x_satuan_id" id="x_satuan_id" value="<?php echo $t03_barang->satuan_id->CurrentValue ?>"<?php echo $t03_barang->satuan_id->EditAttributes() ?>>
+<?php if (AllowAdd(CurrentProjectID() . "t02_satuan") && !$t03_barang->satuan_id->ReadOnly) { ?>
+<button type="button" title="<?php echo ew_HtmlTitle($Language->Phrase("AddLink")) . "&nbsp;" . $t03_barang->satuan_id->FldCaption() ?>" onclick="ew_AddOptDialogShow({lnk:this,el:'x_satuan_id',url:'t02_satuanaddopt.php'});" class="ewAddOptBtn btn btn-default btn-sm" id="aol_x_satuan_id"><span class="glyphicon glyphicon-plus ewIcon"></span><span class="hide"><?php echo $Language->Phrase("AddLink") ?>&nbsp;<?php echo $t03_barang->satuan_id->FldCaption() ?></span></button>
+<?php } ?>
 </span>
 <?php echo $t03_barang->satuan_id->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div><!-- /page* -->
+<input type="hidden" data-table="t03_barang" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($t03_barang->id->CurrentValue) ?>">
 <?php if (!$t03_barang_edit->IsModal) { ?>
 <div class="form-group"><!-- buttons .form-group -->
 	<div class="<?php echo $t03_barang_edit->OffsetColumnClass ?>"><!-- buttons offset -->
@@ -1071,6 +1226,49 @@ $t03_barang_edit->ShowMessage();
 <button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t03_barang_edit->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 	</div><!-- /buttons offset -->
 </div><!-- /buttons .form-group -->
+<?php } ?>
+<?php if (!$t03_barang_edit->IsModal) { ?>
+<?php if (!isset($t03_barang_edit->Pager)) $t03_barang_edit->Pager = new cPrevNextPager($t03_barang_edit->StartRec, $t03_barang_edit->DisplayRecs, $t03_barang_edit->TotalRecs, $t03_barang_edit->AutoHidePager) ?>
+<?php if ($t03_barang_edit->Pager->RecordCount > 0 && $t03_barang_edit->Pager->Visible) { ?>
+<div class="ewPager">
+<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
+<div class="ewPrevNext"><div class="input-group">
+<div class="input-group-btn">
+<!--first page button-->
+	<?php if ($t03_barang_edit->Pager->FirstButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t03_barang_edit->PageUrl() ?>start=<?php echo $t03_barang_edit->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } ?>
+<!--previous page button-->
+	<?php if ($t03_barang_edit->Pager->PrevButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t03_barang_edit->PageUrl() ?>start=<?php echo $t03_barang_edit->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } ?>
+</div>
+<!--current page number-->
+	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t03_barang_edit->Pager->CurrentPage ?>">
+<div class="input-group-btn">
+<!--next page button-->
+	<?php if ($t03_barang_edit->Pager->NextButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t03_barang_edit->PageUrl() ?>start=<?php echo $t03_barang_edit->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } ?>
+<!--last page button-->
+	<?php if ($t03_barang_edit->Pager->LastButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t03_barang_edit->PageUrl() ?>start=<?php echo $t03_barang_edit->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } ?>
+</div>
+</div>
+</div>
+<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t03_barang_edit->Pager->PageCount ?></span>
+</div>
+<?php } ?>
+<div class="clearfix"></div>
 <?php } ?>
 </form>
 <script type="text/javascript">

@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql14.php") ?>
 <?php include_once "phpfn14.php" ?>
 <?php include_once "t05_subgroupinfo.php" ?>
+<?php include_once "t04_maingroupinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn14.php" ?>
 <?php
@@ -256,6 +257,9 @@ class ct05_subgroup_edit extends ct05_subgroup {
 			$GLOBALS["Table"] = &$GLOBALS["t05_subgroup"];
 		}
 
+		// Table object (t04_maingroup)
+		if (!isset($GLOBALS['t04_maingroup'])) $GLOBALS['t04_maingroup'] = new ct04_maingroup();
+
 		// Table object (t96_employees)
 		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
 
@@ -325,10 +329,6 @@ class ct05_subgroup_edit extends ct05_subgroup {
 
 		$objForm = new cFormObj();
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		if ($this->IsAdd() || $this->IsCopy() || $this->IsGridAdd())
-			$this->id->Visible = FALSE;
-		$this->maingroup_id->SetVisibility();
 		$this->Nama->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
@@ -427,6 +427,15 @@ class ct05_subgroup_edit extends ct05_subgroup {
 	var $IsMobileOrModal = FALSE;
 	var $DbMasterFilter;
 	var $DbDetailFilter;
+	var $DisplayRecs = 1;
+	var $StartRec;
+	var $StopRec;
+	var $TotalRecs = 0;
+	var $RecRange = 10;
+	var $Pager;
+	var $AutoHidePager = EW_AUTO_HIDE_PAGER;
+	var $RecCnt;
+	var $Recordset;
 
 	//
 	// Page main
@@ -439,6 +448,9 @@ class ct05_subgroup_edit extends ct05_subgroup {
 			$gbSkipHeaderFooter = TRUE;
 		$this->IsMobileOrModal = ew_IsMobile() || $this->IsModal;
 		$this->FormClassName = "ewForm ewEditForm form-horizontal";
+
+		// Load record by position
+		$loadByPosition = FALSE;
 		$sReturnUrl = "";
 		$loaded = FALSE;
 		$postBack = FALSE;
@@ -464,10 +476,47 @@ class ct05_subgroup_edit extends ct05_subgroup {
 			} else {
 				$this->id->CurrentValue = NULL;
 			}
+			if (!$loadByQuery)
+				$loadByPosition = TRUE;
 		}
 
-		// Load current record
-		$loaded = $this->LoadRow();
+		// Set up master detail parameters
+		$this->SetupMasterParms();
+
+		// Load recordset
+		$this->StartRec = 1; // Initialize start position
+		if ($this->Recordset = $this->LoadRecordset()) // Load records
+			$this->TotalRecs = $this->Recordset->RecordCount(); // Get record count
+		if ($this->TotalRecs <= 0) { // No record found
+			if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
+				$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
+			$this->Page_Terminate("t05_subgrouplist.php"); // Return to list page
+		} elseif ($loadByPosition) { // Load record by position
+			$this->SetupStartRec(); // Set up start record position
+
+			// Point to current record
+			if (intval($this->StartRec) <= intval($this->TotalRecs)) {
+				$this->Recordset->Move($this->StartRec-1);
+				$loaded = TRUE;
+			}
+		} else { // Match key values
+			if (!is_null($this->id->CurrentValue)) {
+				while (!$this->Recordset->EOF) {
+					if (strval($this->id->CurrentValue) == strval($this->Recordset->fields('id'))) {
+						$this->setStartRecordNumber($this->StartRec); // Save record position
+						$loaded = TRUE;
+						break;
+					} else {
+						$this->StartRec++;
+						$this->Recordset->MoveNext();
+					}
+				}
+			}
+		}
+
+		// Load current row values
+		if ($loaded)
+			$this->LoadRowValues($this->Recordset);
 
 		// Process form if post back
 		if ($postBack) {
@@ -487,9 +536,11 @@ class ct05_subgroup_edit extends ct05_subgroup {
 		// Perform current action
 		switch ($this->CurrentAction) {
 			case "I": // Get a record to display
-				if (!$loaded) { // Load record based on key
-					if ($this->getFailureMessage() == "") $this->setFailureMessage($Language->Phrase("NoRecord")); // No record found
-					$this->Page_Terminate("t05_subgrouplist.php"); // No matching record, return to list
+				if (!$loaded) {
+					if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
+						$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
+					$this->Page_Terminate("t05_subgrouplist.php"); // Return to list page
+				} else {
 				}
 				break;
 			Case "U": // Update
@@ -566,22 +617,44 @@ class ct05_subgroup_edit extends ct05_subgroup {
 
 		// Load from form
 		global $objForm;
-		if (!$this->id->FldIsDetailKey)
-			$this->id->setFormValue($objForm->GetValue("x_id"));
-		if (!$this->maingroup_id->FldIsDetailKey) {
-			$this->maingroup_id->setFormValue($objForm->GetValue("x_maingroup_id"));
-		}
 		if (!$this->Nama->FldIsDetailKey) {
 			$this->Nama->setFormValue($objForm->GetValue("x_Nama"));
 		}
+		if (!$this->id->FldIsDetailKey)
+			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
 
 	// Restore form values
 	function RestoreFormValues() {
 		global $objForm;
 		$this->id->CurrentValue = $this->id->FormValue;
-		$this->maingroup_id->CurrentValue = $this->maingroup_id->FormValue;
 		$this->Nama->CurrentValue = $this->Nama->FormValue;
+	}
+
+	// Load recordset
+	function LoadRecordset($offset = -1, $rowcnt = -1) {
+
+		// Load List page SQL
+		$sSql = $this->ListSQL();
+		$conn = &$this->Connection();
+
+		// Load recordset
+		$dbtype = ew_GetConnectionType($this->DBID);
+		if ($this->UseSelectLimit) {
+			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
+			if ($dbtype == "MSSQL") {
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
+			} else {
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
+			}
+			$conn->raiseErrorFn = '';
+		} else {
+			$rs = ew_LoadRecordset($sSql, $conn);
+		}
+
+		// Call Recordset Selected event
+		$this->Recordset_Selected($rs);
+		return $rs;
 	}
 
 	// Load row based on key values
@@ -685,39 +758,37 @@ class ct05_subgroup_edit extends ct05_subgroup {
 
 		// maingroup_id
 		$this->maingroup_id->ViewValue = $this->maingroup_id->CurrentValue;
+		if (strval($this->maingroup_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->maingroup_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t04_maingroup`";
+		$sWhereWrk = "";
+		$this->maingroup_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->maingroup_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->maingroup_id->ViewValue = $this->maingroup_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->maingroup_id->ViewValue = $this->maingroup_id->CurrentValue;
+			}
+		} else {
+			$this->maingroup_id->ViewValue = NULL;
+		}
 		$this->maingroup_id->ViewCustomAttributes = "";
 
 		// Nama
 		$this->Nama->ViewValue = $this->Nama->CurrentValue;
 		$this->Nama->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
-			// maingroup_id
-			$this->maingroup_id->LinkCustomAttributes = "";
-			$this->maingroup_id->HrefValue = "";
-			$this->maingroup_id->TooltipValue = "";
-
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
 			$this->Nama->HrefValue = "";
 			$this->Nama->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
-
-			// id
-			$this->id->EditAttrs["class"] = "form-control";
-			$this->id->EditCustomAttributes = "";
-			$this->id->EditValue = $this->id->CurrentValue;
-			$this->id->ViewCustomAttributes = "";
-
-			// maingroup_id
-			$this->maingroup_id->EditAttrs["class"] = "form-control";
-			$this->maingroup_id->EditCustomAttributes = "";
-			$this->maingroup_id->EditValue = ew_HtmlEncode($this->maingroup_id->CurrentValue);
-			$this->maingroup_id->PlaceHolder = ew_RemoveHtml($this->maingroup_id->FldCaption());
 
 			// Nama
 			$this->Nama->EditAttrs["class"] = "form-control";
@@ -726,16 +797,8 @@ class ct05_subgroup_edit extends ct05_subgroup {
 			$this->Nama->PlaceHolder = ew_RemoveHtml($this->Nama->FldCaption());
 
 			// Edit refer script
-			// id
-
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-
-			// maingroup_id
-			$this->maingroup_id->LinkCustomAttributes = "";
-			$this->maingroup_id->HrefValue = "";
-
 			// Nama
+
 			$this->Nama->LinkCustomAttributes = "";
 			$this->Nama->HrefValue = "";
 		}
@@ -757,12 +820,6 @@ class ct05_subgroup_edit extends ct05_subgroup {
 		// Check if validation required
 		if (!EW_SERVER_VALIDATE)
 			return ($gsFormError == "");
-		if (!$this->maingroup_id->FldIsDetailKey && !is_null($this->maingroup_id->FormValue) && $this->maingroup_id->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->maingroup_id->FldCaption(), $this->maingroup_id->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->maingroup_id->FormValue)) {
-			ew_AddMessage($gsFormError, $this->maingroup_id->FldErrMsg());
-		}
 		if (!$this->Nama->FldIsDetailKey && !is_null($this->Nama->FormValue) && $this->Nama->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Nama->FldCaption(), $this->Nama->ReqErrMsg));
 		}
@@ -802,9 +859,6 @@ class ct05_subgroup_edit extends ct05_subgroup {
 			$this->LoadDbValues($rsold);
 			$rsnew = array();
 
-			// maingroup_id
-			$this->maingroup_id->SetDbValueDef($rsnew, $this->maingroup_id->CurrentValue, 0, $this->maingroup_id->ReadOnly);
-
 			// Nama
 			$this->Nama->SetDbValueDef($rsnew, $this->Nama->CurrentValue, "", $this->Nama->ReadOnly);
 
@@ -838,6 +892,69 @@ class ct05_subgroup_edit extends ct05_subgroup {
 			$this->Row_Updated($rsold, $rsnew);
 		$rs->Close();
 		return $EditRow;
+	}
+
+	// Set up master/detail based on QueryString
+	function SetupMasterParms() {
+		$bValidMaster = FALSE;
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_GET[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t04_maingroup") {
+				$bValidMaster = TRUE;
+				if (@$_GET["fk_id"] <> "") {
+					$GLOBALS["t04_maingroup"]->id->setQueryStringValue($_GET["fk_id"]);
+					$this->maingroup_id->setQueryStringValue($GLOBALS["t04_maingroup"]->id->QueryStringValue);
+					$this->maingroup_id->setSessionValue($this->maingroup_id->QueryStringValue);
+					if (!is_numeric($GLOBALS["t04_maingroup"]->id->QueryStringValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		} elseif (isset($_POST[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_POST[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t04_maingroup") {
+				$bValidMaster = TRUE;
+				if (@$_POST["fk_id"] <> "") {
+					$GLOBALS["t04_maingroup"]->id->setFormValue($_POST["fk_id"]);
+					$this->maingroup_id->setFormValue($GLOBALS["t04_maingroup"]->id->FormValue);
+					$this->maingroup_id->setSessionValue($this->maingroup_id->FormValue);
+					if (!is_numeric($GLOBALS["t04_maingroup"]->id->FormValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		}
+		if ($bValidMaster) {
+
+			// Save current master table
+			$this->setCurrentMasterTable($sMasterTblVar);
+			$this->setSessionWhere($this->GetDetailFilter());
+
+			// Reset start record counter (new master key)
+			if (!$this->IsAddOrEdit()) {
+				$this->StartRec = 1;
+				$this->setStartRecordNumber($this->StartRec);
+			}
+
+			// Clear previous master key from Session
+			if ($sMasterTblVar <> "t04_maingroup") {
+				if ($this->maingroup_id->CurrentValue == "") $this->maingroup_id->setSessionValue("");
+			}
+		}
+		$this->DbMasterFilter = $this->GetMasterFilter(); // Get master filter
+		$this->DbDetailFilter = $this->GetDetailFilter(); // Get detail filter
 	}
 
 	// Set up Breadcrumb
@@ -974,12 +1091,6 @@ ft05_subgroupedit.Validate = function() {
 	for (var i = startcnt; i <= rowcnt; i++) {
 		var infix = ($k[0]) ? String(i) : "";
 		$fobj.data("rowindex", infix);
-			elm = this.GetElements("x" + infix + "_maingroup_id");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t05_subgroup->maingroup_id->FldCaption(), $t05_subgroup->maingroup_id->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_maingroup_id");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t05_subgroup->maingroup_id->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_Nama");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t05_subgroup->Nama->FldCaption(), $t05_subgroup->Nama->ReqErrMsg)) ?>");
@@ -1023,6 +1134,51 @@ ft05_subgroupedit.ValidateRequired = <?php echo json_encode(EW_CLIENT_VALIDATE) 
 <?php
 $t05_subgroup_edit->ShowMessage();
 ?>
+<?php if (!$t05_subgroup_edit->IsModal) { ?>
+<form name="ewPagerForm" class="form-horizontal ewForm ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
+<?php if (!isset($t05_subgroup_edit->Pager)) $t05_subgroup_edit->Pager = new cPrevNextPager($t05_subgroup_edit->StartRec, $t05_subgroup_edit->DisplayRecs, $t05_subgroup_edit->TotalRecs, $t05_subgroup_edit->AutoHidePager) ?>
+<?php if ($t05_subgroup_edit->Pager->RecordCount > 0 && $t05_subgroup_edit->Pager->Visible) { ?>
+<div class="ewPager">
+<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
+<div class="ewPrevNext"><div class="input-group">
+<div class="input-group-btn">
+<!--first page button-->
+	<?php if ($t05_subgroup_edit->Pager->FirstButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t05_subgroup_edit->PageUrl() ?>start=<?php echo $t05_subgroup_edit->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } ?>
+<!--previous page button-->
+	<?php if ($t05_subgroup_edit->Pager->PrevButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t05_subgroup_edit->PageUrl() ?>start=<?php echo $t05_subgroup_edit->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } ?>
+</div>
+<!--current page number-->
+	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t05_subgroup_edit->Pager->CurrentPage ?>">
+<div class="input-group-btn">
+<!--next page button-->
+	<?php if ($t05_subgroup_edit->Pager->NextButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t05_subgroup_edit->PageUrl() ?>start=<?php echo $t05_subgroup_edit->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } ?>
+<!--last page button-->
+	<?php if ($t05_subgroup_edit->Pager->LastButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t05_subgroup_edit->PageUrl() ?>start=<?php echo $t05_subgroup_edit->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } ?>
+</div>
+</div>
+</div>
+<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t05_subgroup_edit->Pager->PageCount ?></span>
+</div>
+<?php } ?>
+<div class="clearfix"></div>
+</form>
+<?php } ?>
 <form name="ft05_subgroupedit" id="ft05_subgroupedit" class="<?php echo $t05_subgroup_edit->FormClassName ?>" action="<?php echo ew_CurrentPage() ?>" method="post">
 <?php if ($t05_subgroup_edit->CheckToken) { ?>
 <input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t05_subgroup_edit->Token ?>">
@@ -1030,29 +1186,11 @@ $t05_subgroup_edit->ShowMessage();
 <input type="hidden" name="t" value="t05_subgroup">
 <input type="hidden" name="a_edit" id="a_edit" value="U">
 <input type="hidden" name="modal" value="<?php echo intval($t05_subgroup_edit->IsModal) ?>">
+<?php if ($t05_subgroup->getCurrentMasterTable() == "t04_maingroup") { ?>
+<input type="hidden" name="<?php echo EW_TABLE_SHOW_MASTER ?>" value="t04_maingroup">
+<input type="hidden" name="fk_id" value="<?php echo $t05_subgroup->maingroup_id->getSessionValue() ?>">
+<?php } ?>
 <div class="ewEditDiv"><!-- page* -->
-<?php if ($t05_subgroup->id->Visible) { // id ?>
-	<div id="r_id" class="form-group">
-		<label id="elh_t05_subgroup_id" class="<?php echo $t05_subgroup_edit->LeftColumnClass ?>"><?php echo $t05_subgroup->id->FldCaption() ?></label>
-		<div class="<?php echo $t05_subgroup_edit->RightColumnClass ?>"><div<?php echo $t05_subgroup->id->CellAttributes() ?>>
-<span id="el_t05_subgroup_id">
-<span<?php echo $t05_subgroup->id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t05_subgroup->id->EditValue ?></p></span>
-</span>
-<input type="hidden" data-table="t05_subgroup" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($t05_subgroup->id->CurrentValue) ?>">
-<?php echo $t05_subgroup->id->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t05_subgroup->maingroup_id->Visible) { // maingroup_id ?>
-	<div id="r_maingroup_id" class="form-group">
-		<label id="elh_t05_subgroup_maingroup_id" for="x_maingroup_id" class="<?php echo $t05_subgroup_edit->LeftColumnClass ?>"><?php echo $t05_subgroup->maingroup_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="<?php echo $t05_subgroup_edit->RightColumnClass ?>"><div<?php echo $t05_subgroup->maingroup_id->CellAttributes() ?>>
-<span id="el_t05_subgroup_maingroup_id">
-<input type="text" data-table="t05_subgroup" data-field="x_maingroup_id" name="x_maingroup_id" id="x_maingroup_id" size="30" placeholder="<?php echo ew_HtmlEncode($t05_subgroup->maingroup_id->getPlaceHolder()) ?>" value="<?php echo $t05_subgroup->maingroup_id->EditValue ?>"<?php echo $t05_subgroup->maingroup_id->EditAttributes() ?>>
-</span>
-<?php echo $t05_subgroup->maingroup_id->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
 <?php if ($t05_subgroup->Nama->Visible) { // Nama ?>
 	<div id="r_Nama" class="form-group">
 		<label id="elh_t05_subgroup_Nama" for="x_Nama" class="<?php echo $t05_subgroup_edit->LeftColumnClass ?>"><?php echo $t05_subgroup->Nama->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
@@ -1064,6 +1202,7 @@ $t05_subgroup_edit->ShowMessage();
 	</div>
 <?php } ?>
 </div><!-- /page* -->
+<input type="hidden" data-table="t05_subgroup" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($t05_subgroup->id->CurrentValue) ?>">
 <?php if (!$t05_subgroup_edit->IsModal) { ?>
 <div class="form-group"><!-- buttons .form-group -->
 	<div class="<?php echo $t05_subgroup_edit->OffsetColumnClass ?>"><!-- buttons offset -->
@@ -1071,6 +1210,49 @@ $t05_subgroup_edit->ShowMessage();
 <button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t05_subgroup_edit->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 	</div><!-- /buttons offset -->
 </div><!-- /buttons .form-group -->
+<?php } ?>
+<?php if (!$t05_subgroup_edit->IsModal) { ?>
+<?php if (!isset($t05_subgroup_edit->Pager)) $t05_subgroup_edit->Pager = new cPrevNextPager($t05_subgroup_edit->StartRec, $t05_subgroup_edit->DisplayRecs, $t05_subgroup_edit->TotalRecs, $t05_subgroup_edit->AutoHidePager) ?>
+<?php if ($t05_subgroup_edit->Pager->RecordCount > 0 && $t05_subgroup_edit->Pager->Visible) { ?>
+<div class="ewPager">
+<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
+<div class="ewPrevNext"><div class="input-group">
+<div class="input-group-btn">
+<!--first page button-->
+	<?php if ($t05_subgroup_edit->Pager->FirstButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t05_subgroup_edit->PageUrl() ?>start=<?php echo $t05_subgroup_edit->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
+	<?php } ?>
+<!--previous page button-->
+	<?php if ($t05_subgroup_edit->Pager->PrevButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t05_subgroup_edit->PageUrl() ?>start=<?php echo $t05_subgroup_edit->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php } ?>
+</div>
+<!--current page number-->
+	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t05_subgroup_edit->Pager->CurrentPage ?>">
+<div class="input-group-btn">
+<!--next page button-->
+	<?php if ($t05_subgroup_edit->Pager->NextButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t05_subgroup_edit->PageUrl() ?>start=<?php echo $t05_subgroup_edit->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
+	<?php } ?>
+<!--last page button-->
+	<?php if ($t05_subgroup_edit->Pager->LastButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t05_subgroup_edit->PageUrl() ?>start=<?php echo $t05_subgroup_edit->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } else { ?>
+	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
+	<?php } ?>
+</div>
+</div>
+</div>
+<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t05_subgroup_edit->Pager->PageCount ?></span>
+</div>
+<?php } ?>
+<div class="clearfix"></div>
 <?php } ?>
 </form>
 <script type="text/javascript">
