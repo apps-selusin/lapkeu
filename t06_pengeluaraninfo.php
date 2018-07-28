@@ -7,6 +7,12 @@ $t06_pengeluaran = NULL;
 // Table class for t06_pengeluaran
 //
 class ct06_pengeluaran extends cTable {
+	var $AuditTrailOnAdd = TRUE;
+	var $AuditTrailOnEdit = TRUE;
+	var $AuditTrailOnDelete = TRUE;
+	var $AuditTrailOnView = FALSE;
+	var $AuditTrailOnViewData = FALSE;
+	var $AuditTrailOnSearch = FALSE;
 	var $id;
 	var $supplier_id;
 	var $Tanggal;
@@ -15,7 +21,6 @@ class ct06_pengeluaran extends cTable {
 	var $Banyaknya;
 	var $Harga;
 	var $Jumlah;
-	var $maingroup_id;
 	var $subgroup_id;
 
 	//
@@ -96,12 +101,6 @@ class ct06_pengeluaran extends cTable {
 		$this->Jumlah->Sortable = TRUE; // Allow sort
 		$this->Jumlah->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
 		$this->fields['Jumlah'] = &$this->Jumlah;
-
-		// maingroup_id
-		$this->maingroup_id = new cField('t06_pengeluaran', 't06_pengeluaran', 'x_maingroup_id', 'maingroup_id', '`maingroup_id`', '`maingroup_id`', 3, -1, FALSE, '`maingroup_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->maingroup_id->Sortable = TRUE; // Allow sort
-		$this->maingroup_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
-		$this->fields['maingroup_id'] = &$this->maingroup_id;
 
 		// subgroup_id
 		$this->subgroup_id = new cField('t06_pengeluaran', 't06_pengeluaran', 'x_subgroup_id', 'subgroup_id', '`subgroup_id`', '`subgroup_id`', 3, -1, FALSE, '`subgroup_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
@@ -392,6 +391,8 @@ class ct06_pengeluaran extends cTable {
 			// Get insert id if necessary
 			$this->id->setDbValue($conn->Insert_ID());
 			$rs['id'] = $this->id->DbValue;
+			if ($this->AuditTrailOnAdd)
+				$this->WriteAuditTrailOnAdd($rs);
 		}
 		return $bInsert;
 	}
@@ -418,6 +419,12 @@ class ct06_pengeluaran extends cTable {
 	function Update(&$rs, $where = "", $rsold = NULL, $curfilter = TRUE) {
 		$conn = &$this->Connection();
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
+		if ($bUpdate && $this->AuditTrailOnEdit) {
+			$rsaudit = $rs;
+			$fldname = 'id';
+			if (!array_key_exists($fldname, $rsaudit)) $rsaudit[$fldname] = $rsold[$fldname];
+			$this->WriteAuditTrailOnEdit($rsold, $rsaudit);
+		}
 		return $bUpdate;
 	}
 
@@ -445,6 +452,8 @@ class ct06_pengeluaran extends cTable {
 		$conn = &$this->Connection();
 		if ($bDelete)
 			$bDelete = $conn->Execute($this->DeleteSQL($rs, $where, $curfilter));
+		if ($bDelete && $this->AuditTrailOnDelete)
+			$this->WriteAuditTrailOnDelete($rs);
 		return $bDelete;
 	}
 
@@ -654,7 +663,6 @@ class ct06_pengeluaran extends cTable {
 		$this->Banyaknya->setDbValue($rs->fields('Banyaknya'));
 		$this->Harga->setDbValue($rs->fields('Harga'));
 		$this->Jumlah->setDbValue($rs->fields('Jumlah'));
-		$this->maingroup_id->setDbValue($rs->fields('maingroup_id'));
 		$this->subgroup_id->setDbValue($rs->fields('subgroup_id'));
 	}
 
@@ -674,7 +682,6 @@ class ct06_pengeluaran extends cTable {
 		// Banyaknya
 		// Harga
 		// Jumlah
-		// maingroup_id
 		// subgroup_id
 		// id
 
@@ -709,10 +716,6 @@ class ct06_pengeluaran extends cTable {
 		// Jumlah
 		$this->Jumlah->ViewValue = $this->Jumlah->CurrentValue;
 		$this->Jumlah->ViewCustomAttributes = "";
-
-		// maingroup_id
-		$this->maingroup_id->ViewValue = $this->maingroup_id->CurrentValue;
-		$this->maingroup_id->ViewCustomAttributes = "";
 
 		// subgroup_id
 		$this->subgroup_id->ViewValue = $this->subgroup_id->CurrentValue;
@@ -757,11 +760,6 @@ class ct06_pengeluaran extends cTable {
 		$this->Jumlah->LinkCustomAttributes = "";
 		$this->Jumlah->HrefValue = "";
 		$this->Jumlah->TooltipValue = "";
-
-		// maingroup_id
-		$this->maingroup_id->LinkCustomAttributes = "";
-		$this->maingroup_id->HrefValue = "";
-		$this->maingroup_id->TooltipValue = "";
 
 		// subgroup_id
 		$this->subgroup_id->LinkCustomAttributes = "";
@@ -833,12 +831,6 @@ class ct06_pengeluaran extends cTable {
 		$this->Jumlah->PlaceHolder = ew_RemoveHtml($this->Jumlah->FldCaption());
 		if (strval($this->Jumlah->EditValue) <> "" && is_numeric($this->Jumlah->EditValue)) $this->Jumlah->EditValue = ew_FormatNumber($this->Jumlah->EditValue, -2, -1, -2, 0);
 
-		// maingroup_id
-		$this->maingroup_id->EditAttrs["class"] = "form-control";
-		$this->maingroup_id->EditCustomAttributes = "";
-		$this->maingroup_id->EditValue = $this->maingroup_id->CurrentValue;
-		$this->maingroup_id->PlaceHolder = ew_RemoveHtml($this->maingroup_id->FldCaption());
-
 		// subgroup_id
 		$this->subgroup_id->EditAttrs["class"] = "form-control";
 		$this->subgroup_id->EditCustomAttributes = "";
@@ -880,7 +872,6 @@ class ct06_pengeluaran extends cTable {
 					if ($this->Banyaknya->Exportable) $Doc->ExportCaption($this->Banyaknya);
 					if ($this->Harga->Exportable) $Doc->ExportCaption($this->Harga);
 					if ($this->Jumlah->Exportable) $Doc->ExportCaption($this->Jumlah);
-					if ($this->maingroup_id->Exportable) $Doc->ExportCaption($this->maingroup_id);
 					if ($this->subgroup_id->Exportable) $Doc->ExportCaption($this->subgroup_id);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
@@ -891,7 +882,6 @@ class ct06_pengeluaran extends cTable {
 					if ($this->Banyaknya->Exportable) $Doc->ExportCaption($this->Banyaknya);
 					if ($this->Harga->Exportable) $Doc->ExportCaption($this->Harga);
 					if ($this->Jumlah->Exportable) $Doc->ExportCaption($this->Jumlah);
-					if ($this->maingroup_id->Exportable) $Doc->ExportCaption($this->maingroup_id);
 					if ($this->subgroup_id->Exportable) $Doc->ExportCaption($this->subgroup_id);
 				}
 				$Doc->EndExportRow();
@@ -932,7 +922,6 @@ class ct06_pengeluaran extends cTable {
 						if ($this->Banyaknya->Exportable) $Doc->ExportField($this->Banyaknya);
 						if ($this->Harga->Exportable) $Doc->ExportField($this->Harga);
 						if ($this->Jumlah->Exportable) $Doc->ExportField($this->Jumlah);
-						if ($this->maingroup_id->Exportable) $Doc->ExportField($this->maingroup_id);
 						if ($this->subgroup_id->Exportable) $Doc->ExportField($this->subgroup_id);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
@@ -943,7 +932,6 @@ class ct06_pengeluaran extends cTable {
 						if ($this->Banyaknya->Exportable) $Doc->ExportField($this->Banyaknya);
 						if ($this->Harga->Exportable) $Doc->ExportField($this->Harga);
 						if ($this->Jumlah->Exportable) $Doc->ExportField($this->Jumlah);
-						if ($this->maingroup_id->Exportable) $Doc->ExportField($this->maingroup_id);
 						if ($this->subgroup_id->Exportable) $Doc->ExportField($this->subgroup_id);
 					}
 					$Doc->EndExportRow($RowCnt);
@@ -983,6 +971,129 @@ class ct06_pengeluaran extends cTable {
 			return ew_ArrayToJson($rsarr);
 		} else {
 			return FALSE;
+		}
+	}
+
+	// Write Audit Trail start/end for grid update
+	function WriteAuditTrailDummy($typ) {
+		$table = 't06_pengeluaran';
+		$usr = CurrentUserID();
+		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
+	}
+
+	// Write Audit Trail (add page)
+	function WriteAuditTrailOnAdd(&$rs) {
+		global $Language;
+		if (!$this->AuditTrailOnAdd) return;
+		$table = 't06_pengeluaran';
+
+		// Get key value
+		$key = "";
+		if ($key <> "") $key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
+		$key .= $rs['id'];
+
+		// Write Audit Trail
+		$dt = ew_StdCurrentDateTime();
+		$id = ew_ScriptName();
+		$usr = CurrentUserID();
+		foreach (array_keys($rs) as $fldname) {
+			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
+				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {
+					$newvalue = $Language->Phrase("PasswordMask"); // Password Field
+				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_MEMO) {
+					if (EW_AUDIT_TRAIL_TO_DATABASE)
+						$newvalue = $rs[$fldname];
+					else
+						$newvalue = "[MEMO]"; // Memo Field
+				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_XML) {
+					$newvalue = "[XML]"; // XML Field
+				} else {
+					$newvalue = $rs[$fldname];
+				}
+				ew_WriteAuditTrail("log", $dt, $id, $usr, "A", $table, $fldname, $key, "", $newvalue);
+			}
+		}
+	}
+
+	// Write Audit Trail (edit page)
+	function WriteAuditTrailOnEdit(&$rsold, &$rsnew) {
+		global $Language;
+		if (!$this->AuditTrailOnEdit) return;
+		$table = 't06_pengeluaran';
+
+		// Get key value
+		$key = "";
+		if ($key <> "") $key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
+		$key .= $rsold['id'];
+
+		// Write Audit Trail
+		$dt = ew_StdCurrentDateTime();
+		$id = ew_ScriptName();
+		$usr = CurrentUserID();
+		foreach (array_keys($rsnew) as $fldname) {
+			if (array_key_exists($fldname, $this->fields) && array_key_exists($fldname, $rsold) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
+				if ($this->fields[$fldname]->FldDataType == EW_DATATYPE_DATE) { // DateTime field
+					$modified = (ew_FormatDateTime($rsold[$fldname], 0) <> ew_FormatDateTime($rsnew[$fldname], 0));
+				} else {
+					$modified = !ew_CompareValue($rsold[$fldname], $rsnew[$fldname]);
+				}
+				if ($modified) {
+					if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") { // Password Field
+						$oldvalue = $Language->Phrase("PasswordMask");
+						$newvalue = $Language->Phrase("PasswordMask");
+					} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_MEMO) { // Memo field
+						if (EW_AUDIT_TRAIL_TO_DATABASE) {
+							$oldvalue = $rsold[$fldname];
+							$newvalue = $rsnew[$fldname];
+						} else {
+							$oldvalue = "[MEMO]";
+							$newvalue = "[MEMO]";
+						}
+					} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_XML) { // XML field
+						$oldvalue = "[XML]";
+						$newvalue = "[XML]";
+					} else {
+						$oldvalue = $rsold[$fldname];
+						$newvalue = $rsnew[$fldname];
+					}
+					ew_WriteAuditTrail("log", $dt, $id, $usr, "U", $table, $fldname, $key, $oldvalue, $newvalue);
+				}
+			}
+		}
+	}
+
+	// Write Audit Trail (delete page)
+	function WriteAuditTrailOnDelete(&$rs) {
+		global $Language;
+		if (!$this->AuditTrailOnDelete) return;
+		$table = 't06_pengeluaran';
+
+		// Get key value
+		$key = "";
+		if ($key <> "")
+			$key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
+		$key .= $rs['id'];
+
+		// Write Audit Trail
+		$dt = ew_StdCurrentDateTime();
+		$id = ew_ScriptName();
+		$curUser = CurrentUserID();
+		foreach (array_keys($rs) as $fldname) {
+			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
+				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {
+					$oldvalue = $Language->Phrase("PasswordMask"); // Password Field
+				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_MEMO) {
+					if (EW_AUDIT_TRAIL_TO_DATABASE)
+						$oldvalue = $rs[$fldname];
+					else
+						$oldvalue = "[MEMO]"; // Memo field
+				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_XML) {
+					$oldvalue = "[XML]"; // XML field
+				} else {
+					$oldvalue = $rs[$fldname];
+				}
+				ew_WriteAuditTrail("log", $dt, $id, $curUser, "D", $table, $fldname, $key, $oldvalue, "");
+			}
 		}
 	}
 

@@ -38,6 +38,8 @@ if (!isset($Language)) {
 <link rel="stylesheet" type="text/css" href="<?php echo $EW_RELATIVE_PATH ?><?php echo EW_PDF_STYLESHEET_FILENAME ?>">
 <?php } ?>
 <script type="text/javascript" src="<?php echo $EW_RELATIVE_PATH ?>jquery/jquery-3.2.1.min.js"></script>
+<script type="text/javascript">jQuery.migrateMute = true;</script>
+<script type="text/javascript" src="<?php echo $EW_RELATIVE_PATH ?>jquery/jquery-migrate-3.0.0.js"></script>
 <script type="text/javascript" src="<?php echo $EW_RELATIVE_PATH ?>jquery/jquery.ui.widget.js"></script>
 <script type="text/javascript" src="<?php echo $EW_RELATIVE_PATH ?>jquery/jquery.storageapi.min.js"></script>
 <?php } ?>
@@ -80,7 +82,6 @@ var EW_LOOKUP_FILE_NAME = "ewlookup14.php"; // Lookup file name
 var EW_LOOKUP_FILTER_VALUE_SEPARATOR = "<?php echo EW_LOOKUP_FILTER_VALUE_SEPARATOR ?>"; // Lookup filter value separator
 var EW_MODAL_LOOKUP_FILE_NAME = "ewmodallookup14.php"; // Modal lookup file name
 var EW_AUTO_SUGGEST_MAX_ENTRIES = <?php echo EW_AUTO_SUGGEST_MAX_ENTRIES ?>; // Auto-Suggest max entries
-var EW_MAX_EMAIL_RECIPIENT = <?php echo EW_MAX_EMAIL_RECIPIENT ?>;
 var EW_DISABLE_BUTTON_ON_SUBMIT = true;
 var EW_IMAGE_FOLDER = "phpimages/"; // Image folder
 var EW_UPLOAD_URL = "<?php echo EW_UPLOAD_URL ?>"; // Upload URL

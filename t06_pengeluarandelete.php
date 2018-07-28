@@ -65,6 +65,12 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		if ($this->UseTokenInUrl) $PageUrl .= "t=" . $this->TableVar . "&"; // Add page token
 		return $PageUrl;
 	}
+	var $AuditTrailOnAdd = TRUE;
+	var $AuditTrailOnEdit = TRUE;
+	var $AuditTrailOnDelete = TRUE;
+	var $AuditTrailOnView = FALSE;
+	var $AuditTrailOnViewData = FALSE;
+	var $AuditTrailOnSearch = FALSE;
 
 	// Message
 	function getMessage() {
@@ -330,7 +336,6 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		$this->Banyaknya->SetVisibility();
 		$this->Harga->SetVisibility();
 		$this->Jumlah->SetVisibility();
-		$this->maingroup_id->SetVisibility();
 		$this->subgroup_id->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
@@ -519,7 +524,6 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		$this->Banyaknya->setDbValue($row['Banyaknya']);
 		$this->Harga->setDbValue($row['Harga']);
 		$this->Jumlah->setDbValue($row['Jumlah']);
-		$this->maingroup_id->setDbValue($row['maingroup_id']);
 		$this->subgroup_id->setDbValue($row['subgroup_id']);
 	}
 
@@ -534,7 +538,6 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		$row['Banyaknya'] = NULL;
 		$row['Harga'] = NULL;
 		$row['Jumlah'] = NULL;
-		$row['maingroup_id'] = NULL;
 		$row['subgroup_id'] = NULL;
 		return $row;
 	}
@@ -552,7 +555,6 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		$this->Banyaknya->DbValue = $row['Banyaknya'];
 		$this->Harga->DbValue = $row['Harga'];
 		$this->Jumlah->DbValue = $row['Jumlah'];
-		$this->maingroup_id->DbValue = $row['maingroup_id'];
 		$this->subgroup_id->DbValue = $row['subgroup_id'];
 	}
 
@@ -586,7 +588,6 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		// Banyaknya
 		// Harga
 		// Jumlah
-		// maingroup_id
 		// subgroup_id
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
@@ -623,10 +624,6 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		// Jumlah
 		$this->Jumlah->ViewValue = $this->Jumlah->CurrentValue;
 		$this->Jumlah->ViewCustomAttributes = "";
-
-		// maingroup_id
-		$this->maingroup_id->ViewValue = $this->maingroup_id->CurrentValue;
-		$this->maingroup_id->ViewCustomAttributes = "";
 
 		// subgroup_id
 		$this->subgroup_id->ViewValue = $this->subgroup_id->CurrentValue;
@@ -672,11 +669,6 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 			$this->Jumlah->HrefValue = "";
 			$this->Jumlah->TooltipValue = "";
 
-			// maingroup_id
-			$this->maingroup_id->LinkCustomAttributes = "";
-			$this->maingroup_id->HrefValue = "";
-			$this->maingroup_id->TooltipValue = "";
-
 			// subgroup_id
 			$this->subgroup_id->LinkCustomAttributes = "";
 			$this->subgroup_id->HrefValue = "";
@@ -712,6 +704,7 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		}
 		$rows = ($rs) ? $rs->GetRows() : array();
 		$conn->BeginTrans();
+		if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteBegin")); // Batch delete begin
 
 		// Clone old rows
 		$rsold = $rows;
@@ -755,8 +748,10 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		}
 		if ($DeleteRows) {
 			$conn->CommitTrans(); // Commit the changes
+			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteSuccess")); // Batch delete success
 		} else {
 			$conn->RollbackTrans(); // Rollback changes
+			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteRollback")); // Batch delete rollback
 		}
 
 		// Call Row Deleted event
@@ -942,9 +937,6 @@ $t06_pengeluaran_delete->ShowMessage();
 <?php if ($t06_pengeluaran->Jumlah->Visible) { // Jumlah ?>
 		<th class="<?php echo $t06_pengeluaran->Jumlah->HeaderCellClass() ?>"><span id="elh_t06_pengeluaran_Jumlah" class="t06_pengeluaran_Jumlah"><?php echo $t06_pengeluaran->Jumlah->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t06_pengeluaran->maingroup_id->Visible) { // maingroup_id ?>
-		<th class="<?php echo $t06_pengeluaran->maingroup_id->HeaderCellClass() ?>"><span id="elh_t06_pengeluaran_maingroup_id" class="t06_pengeluaran_maingroup_id"><?php echo $t06_pengeluaran->maingroup_id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t06_pengeluaran->subgroup_id->Visible) { // subgroup_id ?>
 		<th class="<?php echo $t06_pengeluaran->subgroup_id->HeaderCellClass() ?>"><span id="elh_t06_pengeluaran_subgroup_id" class="t06_pengeluaran_subgroup_id"><?php echo $t06_pengeluaran->subgroup_id->FldCaption() ?></span></th>
 <?php } ?>
@@ -1030,14 +1022,6 @@ while (!$t06_pengeluaran_delete->Recordset->EOF) {
 <span id="el<?php echo $t06_pengeluaran_delete->RowCnt ?>_t06_pengeluaran_Jumlah" class="t06_pengeluaran_Jumlah">
 <span<?php echo $t06_pengeluaran->Jumlah->ViewAttributes() ?>>
 <?php echo $t06_pengeluaran->Jumlah->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t06_pengeluaran->maingroup_id->Visible) { // maingroup_id ?>
-		<td<?php echo $t06_pengeluaran->maingroup_id->CellAttributes() ?>>
-<span id="el<?php echo $t06_pengeluaran_delete->RowCnt ?>_t06_pengeluaran_maingroup_id" class="t06_pengeluaran_maingroup_id">
-<span<?php echo $t06_pengeluaran->maingroup_id->ViewAttributes() ?>>
-<?php echo $t06_pengeluaran->maingroup_id->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

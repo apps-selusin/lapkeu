@@ -104,6 +104,12 @@ class ct96_employees_list extends ct96_employees {
 	var $GridEditUrl;
 	var $MultiDeleteUrl;
 	var $MultiUpdateUrl;
+	var $AuditTrailOnAdd = TRUE;
+	var $AuditTrailOnEdit = TRUE;
+	var $AuditTrailOnDelete = TRUE;
+	var $AuditTrailOnView = FALSE;
+	var $AuditTrailOnViewData = FALSE;
+	var $AuditTrailOnSearch = FALSE;
 
 	// Message
 	function getMessage() {
@@ -398,45 +404,7 @@ class ct96_employees_list extends ct96_employees {
 		// 
 		// Security = null;
 		// 
-		// Get export parameters
 
-		$custom = "";
-		if (@$_GET["export"] <> "") {
-			$this->Export = $_GET["export"];
-			$custom = @$_GET["custom"];
-		} elseif (@$_POST["export"] <> "") {
-			$this->Export = $_POST["export"];
-			$custom = @$_POST["custom"];
-		} elseif (ew_IsPost()) {
-			if (@$_POST["exporttype"] <> "")
-				$this->Export = $_POST["exporttype"];
-			$custom = @$_POST["custom"];
-		} elseif (@$_GET["cmd"] == "json") {
-			$this->Export = $_GET["cmd"];
-		} else {
-			$this->setExportReturnUrl(ew_CurrentUrl());
-		}
-		$gsExportFile = $this->TableVar; // Get export file, used in header
-
-		// Get custom export parameters
-		if ($this->Export <> "" && $custom <> "") {
-			$this->CustomExport = $this->Export;
-			$this->Export = "print";
-		}
-		$gsCustomExport = $this->CustomExport;
-		$gsExport = $this->Export; // Get export parameter, used in header
-
-		// Update Export URLs
-		if (defined("EW_USE_PHPEXCEL"))
-			$this->ExportExcelCustom = FALSE;
-		if ($this->ExportExcelCustom)
-			$this->ExportExcelUrl .= "&amp;custom=1";
-		if (defined("EW_USE_PHPWORD"))
-			$this->ExportWordCustom = FALSE;
-		if ($this->ExportWordCustom)
-			$this->ExportWordUrl .= "&amp;custom=1";
-		if ($this->ExportPdfCustom)
-			$this->ExportPdfUrl .= "&amp;custom=1";
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 
 		// Get grid add count
@@ -446,9 +414,6 @@ class ct96_employees_list extends ct96_employees {
 
 		// Set up list options
 		$this->SetupListOptions();
-
-		// Setup export options
-		$this->SetupExportOptions();
 		$this->EmployeeID->SetVisibility();
 		if ($this->IsAdd() || $this->IsCopy() || $this->IsGridAdd())
 			$this->EmployeeID->Visible = FALSE;
@@ -657,38 +622,8 @@ class ct96_employees_list extends ct96_employees {
 					$option->HideAllOptions();
 			}
 
-			// Get default search criteria
-			ew_AddFilter($this->DefaultSearchWhere, $this->BasicSearchWhere(TRUE));
-			ew_AddFilter($this->DefaultSearchWhere, $this->AdvancedSearchWhere(TRUE));
-
-			// Get basic search values
-			$this->LoadBasicSearchValues();
-
-			// Get and validate search values for advanced search
-			$this->LoadSearchValues(); // Get search values
-
-			// Process filter list
-			$this->ProcessFilterList();
-			if (!$this->ValidateSearch())
-				$this->setFailureMessage($gsSearchError);
-
-			// Restore search parms from Session if not searching / reset / export
-			if (($this->Export <> "" || $this->Command <> "search" && $this->Command <> "reset" && $this->Command <> "resetall") && $this->Command <> "json" && $this->CheckSearchParms())
-				$this->RestoreSearchParms();
-
-			// Call Recordset SearchValidated event
-			$this->Recordset_SearchValidated();
-
 			// Set up sorting order
 			$this->SetupSortOrder();
-
-			// Get basic search criteria
-			if ($gsSearchError == "")
-				$sSrchBasic = $this->BasicSearchWhere();
-
-			// Get search criteria for advanced search
-			if ($gsSearchError == "")
-				$sSrchAdvanced = $this->AdvancedSearchWhere();
 		}
 
 		// Restore display records
@@ -701,36 +636,6 @@ class ct96_employees_list extends ct96_employees {
 		// Load Sorting Order
 		if ($this->Command <> "json")
 			$this->LoadSortOrder();
-
-		// Load search default if no existing search criteria
-		if (!$this->CheckSearchParms()) {
-
-			// Load basic search from default
-			$this->BasicSearch->LoadDefault();
-			if ($this->BasicSearch->Keyword != "")
-				$sSrchBasic = $this->BasicSearchWhere();
-
-			// Load advanced search from default
-			if ($this->LoadAdvancedSearchDefault()) {
-				$sSrchAdvanced = $this->AdvancedSearchWhere();
-			}
-		}
-
-		// Build search criteria
-		ew_AddFilter($this->SearchWhere, $sSrchAdvanced);
-		ew_AddFilter($this->SearchWhere, $sSrchBasic);
-
-		// Call Recordset_Searching event
-		$this->Recordset_Searching($this->SearchWhere);
-
-		// Save search criteria
-		if ($this->Command == "search" && !$this->RestoreSearch) {
-			$this->setSearchWhere($this->SearchWhere); // Save to Session
-			$this->StartRec = 1; // Reset start record counter
-			$this->setStartRecordNumber($this->StartRec);
-		} elseif ($this->Command <> "json") {
-			$this->SearchWhere = $this->getSearchWhere();
-		}
 
 		// Build filter
 		$sFilter = "";
@@ -746,13 +651,6 @@ class ct96_employees_list extends ct96_employees {
 		} else {
 			$this->setSessionWhere($sFilter);
 			$this->CurrentFilter = "";
-		}
-
-		// Export data only
-		if ($this->CustomExport == "" && in_array($this->Export, array_keys($EW_EXPORT))) {
-			$this->ExportData();
-			$this->Page_Terminate(); // Terminate response
-			exit();
 		}
 
 		// Load record count first
@@ -806,632 +704,6 @@ class ct96_employees_list extends ct96_employees {
 				return FALSE;
 		}
 		return TRUE;
-	}
-
-	// Get list of filters
-	function GetFilterList() {
-		global $UserProfile;
-
-		// Initialize
-		$sFilterList = "";
-		$sSavedFilterList = "";
-		$sFilterList = ew_Concat($sFilterList, $this->EmployeeID->AdvancedSearch->ToJson(), ","); // Field EmployeeID
-		$sFilterList = ew_Concat($sFilterList, $this->LastName->AdvancedSearch->ToJson(), ","); // Field LastName
-		$sFilterList = ew_Concat($sFilterList, $this->FirstName->AdvancedSearch->ToJson(), ","); // Field FirstName
-		$sFilterList = ew_Concat($sFilterList, $this->Title->AdvancedSearch->ToJson(), ","); // Field Title
-		$sFilterList = ew_Concat($sFilterList, $this->TitleOfCourtesy->AdvancedSearch->ToJson(), ","); // Field TitleOfCourtesy
-		$sFilterList = ew_Concat($sFilterList, $this->BirthDate->AdvancedSearch->ToJson(), ","); // Field BirthDate
-		$sFilterList = ew_Concat($sFilterList, $this->HireDate->AdvancedSearch->ToJson(), ","); // Field HireDate
-		$sFilterList = ew_Concat($sFilterList, $this->Address->AdvancedSearch->ToJson(), ","); // Field Address
-		$sFilterList = ew_Concat($sFilterList, $this->City->AdvancedSearch->ToJson(), ","); // Field City
-		$sFilterList = ew_Concat($sFilterList, $this->Region->AdvancedSearch->ToJson(), ","); // Field Region
-		$sFilterList = ew_Concat($sFilterList, $this->PostalCode->AdvancedSearch->ToJson(), ","); // Field PostalCode
-		$sFilterList = ew_Concat($sFilterList, $this->Country->AdvancedSearch->ToJson(), ","); // Field Country
-		$sFilterList = ew_Concat($sFilterList, $this->HomePhone->AdvancedSearch->ToJson(), ","); // Field HomePhone
-		$sFilterList = ew_Concat($sFilterList, $this->Extension->AdvancedSearch->ToJson(), ","); // Field Extension
-		$sFilterList = ew_Concat($sFilterList, $this->_Email->AdvancedSearch->ToJson(), ","); // Field Email
-		$sFilterList = ew_Concat($sFilterList, $this->Photo->AdvancedSearch->ToJson(), ","); // Field Photo
-		$sFilterList = ew_Concat($sFilterList, $this->Notes->AdvancedSearch->ToJson(), ","); // Field Notes
-		$sFilterList = ew_Concat($sFilterList, $this->ReportsTo->AdvancedSearch->ToJson(), ","); // Field ReportsTo
-		$sFilterList = ew_Concat($sFilterList, $this->Password->AdvancedSearch->ToJson(), ","); // Field Password
-		$sFilterList = ew_Concat($sFilterList, $this->UserLevel->AdvancedSearch->ToJson(), ","); // Field UserLevel
-		$sFilterList = ew_Concat($sFilterList, $this->Username->AdvancedSearch->ToJson(), ","); // Field Username
-		$sFilterList = ew_Concat($sFilterList, $this->Activated->AdvancedSearch->ToJson(), ","); // Field Activated
-		$sFilterList = ew_Concat($sFilterList, $this->Profile->AdvancedSearch->ToJson(), ","); // Field Profile
-		if ($this->BasicSearch->Keyword <> "") {
-			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
-			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
-		}
-		$sFilterList = preg_replace('/,$/', "", $sFilterList);
-
-		// Return filter list in json
-		if ($sFilterList <> "")
-			$sFilterList = "\"data\":{" . $sFilterList . "}";
-		if ($sSavedFilterList <> "") {
-			if ($sFilterList <> "")
-				$sFilterList .= ",";
-			$sFilterList .= "\"filters\":" . $sSavedFilterList;
-		}
-		return ($sFilterList <> "") ? "{" . $sFilterList . "}" : "null";
-	}
-
-	// Process filter list
-	function ProcessFilterList() {
-		global $UserProfile;
-		if (@$_POST["ajax"] == "savefilters") { // Save filter request (Ajax)
-			$filters = @$_POST["filters"];
-			$UserProfile->SetSearchFilters(CurrentUserName(), "ft96_employeeslistsrch", $filters);
-
-			// Clean output buffer
-			if (!EW_DEBUG_ENABLED && ob_get_length())
-				ob_end_clean();
-			echo ew_ArrayToJson(array(array("success" => TRUE))); // Success
-			$this->Page_Terminate();
-			exit();
-		} elseif (@$_POST["cmd"] == "resetfilter") {
-			$this->RestoreFilterList();
-		}
-	}
-
-	// Restore list of filters
-	function RestoreFilterList() {
-
-		// Return if not reset filter
-		if (@$_POST["cmd"] <> "resetfilter")
-			return FALSE;
-		$filter = json_decode(@$_POST["filter"], TRUE);
-		$this->Command = "search";
-
-		// Field EmployeeID
-		$this->EmployeeID->AdvancedSearch->SearchValue = @$filter["x_EmployeeID"];
-		$this->EmployeeID->AdvancedSearch->SearchOperator = @$filter["z_EmployeeID"];
-		$this->EmployeeID->AdvancedSearch->SearchCondition = @$filter["v_EmployeeID"];
-		$this->EmployeeID->AdvancedSearch->SearchValue2 = @$filter["y_EmployeeID"];
-		$this->EmployeeID->AdvancedSearch->SearchOperator2 = @$filter["w_EmployeeID"];
-		$this->EmployeeID->AdvancedSearch->Save();
-
-		// Field LastName
-		$this->LastName->AdvancedSearch->SearchValue = @$filter["x_LastName"];
-		$this->LastName->AdvancedSearch->SearchOperator = @$filter["z_LastName"];
-		$this->LastName->AdvancedSearch->SearchCondition = @$filter["v_LastName"];
-		$this->LastName->AdvancedSearch->SearchValue2 = @$filter["y_LastName"];
-		$this->LastName->AdvancedSearch->SearchOperator2 = @$filter["w_LastName"];
-		$this->LastName->AdvancedSearch->Save();
-
-		// Field FirstName
-		$this->FirstName->AdvancedSearch->SearchValue = @$filter["x_FirstName"];
-		$this->FirstName->AdvancedSearch->SearchOperator = @$filter["z_FirstName"];
-		$this->FirstName->AdvancedSearch->SearchCondition = @$filter["v_FirstName"];
-		$this->FirstName->AdvancedSearch->SearchValue2 = @$filter["y_FirstName"];
-		$this->FirstName->AdvancedSearch->SearchOperator2 = @$filter["w_FirstName"];
-		$this->FirstName->AdvancedSearch->Save();
-
-		// Field Title
-		$this->Title->AdvancedSearch->SearchValue = @$filter["x_Title"];
-		$this->Title->AdvancedSearch->SearchOperator = @$filter["z_Title"];
-		$this->Title->AdvancedSearch->SearchCondition = @$filter["v_Title"];
-		$this->Title->AdvancedSearch->SearchValue2 = @$filter["y_Title"];
-		$this->Title->AdvancedSearch->SearchOperator2 = @$filter["w_Title"];
-		$this->Title->AdvancedSearch->Save();
-
-		// Field TitleOfCourtesy
-		$this->TitleOfCourtesy->AdvancedSearch->SearchValue = @$filter["x_TitleOfCourtesy"];
-		$this->TitleOfCourtesy->AdvancedSearch->SearchOperator = @$filter["z_TitleOfCourtesy"];
-		$this->TitleOfCourtesy->AdvancedSearch->SearchCondition = @$filter["v_TitleOfCourtesy"];
-		$this->TitleOfCourtesy->AdvancedSearch->SearchValue2 = @$filter["y_TitleOfCourtesy"];
-		$this->TitleOfCourtesy->AdvancedSearch->SearchOperator2 = @$filter["w_TitleOfCourtesy"];
-		$this->TitleOfCourtesy->AdvancedSearch->Save();
-
-		// Field BirthDate
-		$this->BirthDate->AdvancedSearch->SearchValue = @$filter["x_BirthDate"];
-		$this->BirthDate->AdvancedSearch->SearchOperator = @$filter["z_BirthDate"];
-		$this->BirthDate->AdvancedSearch->SearchCondition = @$filter["v_BirthDate"];
-		$this->BirthDate->AdvancedSearch->SearchValue2 = @$filter["y_BirthDate"];
-		$this->BirthDate->AdvancedSearch->SearchOperator2 = @$filter["w_BirthDate"];
-		$this->BirthDate->AdvancedSearch->Save();
-
-		// Field HireDate
-		$this->HireDate->AdvancedSearch->SearchValue = @$filter["x_HireDate"];
-		$this->HireDate->AdvancedSearch->SearchOperator = @$filter["z_HireDate"];
-		$this->HireDate->AdvancedSearch->SearchCondition = @$filter["v_HireDate"];
-		$this->HireDate->AdvancedSearch->SearchValue2 = @$filter["y_HireDate"];
-		$this->HireDate->AdvancedSearch->SearchOperator2 = @$filter["w_HireDate"];
-		$this->HireDate->AdvancedSearch->Save();
-
-		// Field Address
-		$this->Address->AdvancedSearch->SearchValue = @$filter["x_Address"];
-		$this->Address->AdvancedSearch->SearchOperator = @$filter["z_Address"];
-		$this->Address->AdvancedSearch->SearchCondition = @$filter["v_Address"];
-		$this->Address->AdvancedSearch->SearchValue2 = @$filter["y_Address"];
-		$this->Address->AdvancedSearch->SearchOperator2 = @$filter["w_Address"];
-		$this->Address->AdvancedSearch->Save();
-
-		// Field City
-		$this->City->AdvancedSearch->SearchValue = @$filter["x_City"];
-		$this->City->AdvancedSearch->SearchOperator = @$filter["z_City"];
-		$this->City->AdvancedSearch->SearchCondition = @$filter["v_City"];
-		$this->City->AdvancedSearch->SearchValue2 = @$filter["y_City"];
-		$this->City->AdvancedSearch->SearchOperator2 = @$filter["w_City"];
-		$this->City->AdvancedSearch->Save();
-
-		// Field Region
-		$this->Region->AdvancedSearch->SearchValue = @$filter["x_Region"];
-		$this->Region->AdvancedSearch->SearchOperator = @$filter["z_Region"];
-		$this->Region->AdvancedSearch->SearchCondition = @$filter["v_Region"];
-		$this->Region->AdvancedSearch->SearchValue2 = @$filter["y_Region"];
-		$this->Region->AdvancedSearch->SearchOperator2 = @$filter["w_Region"];
-		$this->Region->AdvancedSearch->Save();
-
-		// Field PostalCode
-		$this->PostalCode->AdvancedSearch->SearchValue = @$filter["x_PostalCode"];
-		$this->PostalCode->AdvancedSearch->SearchOperator = @$filter["z_PostalCode"];
-		$this->PostalCode->AdvancedSearch->SearchCondition = @$filter["v_PostalCode"];
-		$this->PostalCode->AdvancedSearch->SearchValue2 = @$filter["y_PostalCode"];
-		$this->PostalCode->AdvancedSearch->SearchOperator2 = @$filter["w_PostalCode"];
-		$this->PostalCode->AdvancedSearch->Save();
-
-		// Field Country
-		$this->Country->AdvancedSearch->SearchValue = @$filter["x_Country"];
-		$this->Country->AdvancedSearch->SearchOperator = @$filter["z_Country"];
-		$this->Country->AdvancedSearch->SearchCondition = @$filter["v_Country"];
-		$this->Country->AdvancedSearch->SearchValue2 = @$filter["y_Country"];
-		$this->Country->AdvancedSearch->SearchOperator2 = @$filter["w_Country"];
-		$this->Country->AdvancedSearch->Save();
-
-		// Field HomePhone
-		$this->HomePhone->AdvancedSearch->SearchValue = @$filter["x_HomePhone"];
-		$this->HomePhone->AdvancedSearch->SearchOperator = @$filter["z_HomePhone"];
-		$this->HomePhone->AdvancedSearch->SearchCondition = @$filter["v_HomePhone"];
-		$this->HomePhone->AdvancedSearch->SearchValue2 = @$filter["y_HomePhone"];
-		$this->HomePhone->AdvancedSearch->SearchOperator2 = @$filter["w_HomePhone"];
-		$this->HomePhone->AdvancedSearch->Save();
-
-		// Field Extension
-		$this->Extension->AdvancedSearch->SearchValue = @$filter["x_Extension"];
-		$this->Extension->AdvancedSearch->SearchOperator = @$filter["z_Extension"];
-		$this->Extension->AdvancedSearch->SearchCondition = @$filter["v_Extension"];
-		$this->Extension->AdvancedSearch->SearchValue2 = @$filter["y_Extension"];
-		$this->Extension->AdvancedSearch->SearchOperator2 = @$filter["w_Extension"];
-		$this->Extension->AdvancedSearch->Save();
-
-		// Field Email
-		$this->_Email->AdvancedSearch->SearchValue = @$filter["x__Email"];
-		$this->_Email->AdvancedSearch->SearchOperator = @$filter["z__Email"];
-		$this->_Email->AdvancedSearch->SearchCondition = @$filter["v__Email"];
-		$this->_Email->AdvancedSearch->SearchValue2 = @$filter["y__Email"];
-		$this->_Email->AdvancedSearch->SearchOperator2 = @$filter["w__Email"];
-		$this->_Email->AdvancedSearch->Save();
-
-		// Field Photo
-		$this->Photo->AdvancedSearch->SearchValue = @$filter["x_Photo"];
-		$this->Photo->AdvancedSearch->SearchOperator = @$filter["z_Photo"];
-		$this->Photo->AdvancedSearch->SearchCondition = @$filter["v_Photo"];
-		$this->Photo->AdvancedSearch->SearchValue2 = @$filter["y_Photo"];
-		$this->Photo->AdvancedSearch->SearchOperator2 = @$filter["w_Photo"];
-		$this->Photo->AdvancedSearch->Save();
-
-		// Field Notes
-		$this->Notes->AdvancedSearch->SearchValue = @$filter["x_Notes"];
-		$this->Notes->AdvancedSearch->SearchOperator = @$filter["z_Notes"];
-		$this->Notes->AdvancedSearch->SearchCondition = @$filter["v_Notes"];
-		$this->Notes->AdvancedSearch->SearchValue2 = @$filter["y_Notes"];
-		$this->Notes->AdvancedSearch->SearchOperator2 = @$filter["w_Notes"];
-		$this->Notes->AdvancedSearch->Save();
-
-		// Field ReportsTo
-		$this->ReportsTo->AdvancedSearch->SearchValue = @$filter["x_ReportsTo"];
-		$this->ReportsTo->AdvancedSearch->SearchOperator = @$filter["z_ReportsTo"];
-		$this->ReportsTo->AdvancedSearch->SearchCondition = @$filter["v_ReportsTo"];
-		$this->ReportsTo->AdvancedSearch->SearchValue2 = @$filter["y_ReportsTo"];
-		$this->ReportsTo->AdvancedSearch->SearchOperator2 = @$filter["w_ReportsTo"];
-		$this->ReportsTo->AdvancedSearch->Save();
-
-		// Field Password
-		$this->Password->AdvancedSearch->SearchValue = @$filter["x_Password"];
-		$this->Password->AdvancedSearch->SearchOperator = @$filter["z_Password"];
-		$this->Password->AdvancedSearch->SearchCondition = @$filter["v_Password"];
-		$this->Password->AdvancedSearch->SearchValue2 = @$filter["y_Password"];
-		$this->Password->AdvancedSearch->SearchOperator2 = @$filter["w_Password"];
-		$this->Password->AdvancedSearch->Save();
-
-		// Field UserLevel
-		$this->UserLevel->AdvancedSearch->SearchValue = @$filter["x_UserLevel"];
-		$this->UserLevel->AdvancedSearch->SearchOperator = @$filter["z_UserLevel"];
-		$this->UserLevel->AdvancedSearch->SearchCondition = @$filter["v_UserLevel"];
-		$this->UserLevel->AdvancedSearch->SearchValue2 = @$filter["y_UserLevel"];
-		$this->UserLevel->AdvancedSearch->SearchOperator2 = @$filter["w_UserLevel"];
-		$this->UserLevel->AdvancedSearch->Save();
-
-		// Field Username
-		$this->Username->AdvancedSearch->SearchValue = @$filter["x_Username"];
-		$this->Username->AdvancedSearch->SearchOperator = @$filter["z_Username"];
-		$this->Username->AdvancedSearch->SearchCondition = @$filter["v_Username"];
-		$this->Username->AdvancedSearch->SearchValue2 = @$filter["y_Username"];
-		$this->Username->AdvancedSearch->SearchOperator2 = @$filter["w_Username"];
-		$this->Username->AdvancedSearch->Save();
-
-		// Field Activated
-		$this->Activated->AdvancedSearch->SearchValue = @$filter["x_Activated"];
-		$this->Activated->AdvancedSearch->SearchOperator = @$filter["z_Activated"];
-		$this->Activated->AdvancedSearch->SearchCondition = @$filter["v_Activated"];
-		$this->Activated->AdvancedSearch->SearchValue2 = @$filter["y_Activated"];
-		$this->Activated->AdvancedSearch->SearchOperator2 = @$filter["w_Activated"];
-		$this->Activated->AdvancedSearch->Save();
-
-		// Field Profile
-		$this->Profile->AdvancedSearch->SearchValue = @$filter["x_Profile"];
-		$this->Profile->AdvancedSearch->SearchOperator = @$filter["z_Profile"];
-		$this->Profile->AdvancedSearch->SearchCondition = @$filter["v_Profile"];
-		$this->Profile->AdvancedSearch->SearchValue2 = @$filter["y_Profile"];
-		$this->Profile->AdvancedSearch->SearchOperator2 = @$filter["w_Profile"];
-		$this->Profile->AdvancedSearch->Save();
-		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
-		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
-	}
-
-	// Advanced search WHERE clause based on QueryString
-	function AdvancedSearchWhere($Default = FALSE) {
-		global $Security;
-		$sWhere = "";
-		if (!$Security->CanSearch()) return "";
-		$this->BuildSearchSql($sWhere, $this->EmployeeID, $Default, FALSE); // EmployeeID
-		$this->BuildSearchSql($sWhere, $this->LastName, $Default, FALSE); // LastName
-		$this->BuildSearchSql($sWhere, $this->FirstName, $Default, FALSE); // FirstName
-		$this->BuildSearchSql($sWhere, $this->Title, $Default, FALSE); // Title
-		$this->BuildSearchSql($sWhere, $this->TitleOfCourtesy, $Default, FALSE); // TitleOfCourtesy
-		$this->BuildSearchSql($sWhere, $this->BirthDate, $Default, FALSE); // BirthDate
-		$this->BuildSearchSql($sWhere, $this->HireDate, $Default, FALSE); // HireDate
-		$this->BuildSearchSql($sWhere, $this->Address, $Default, FALSE); // Address
-		$this->BuildSearchSql($sWhere, $this->City, $Default, FALSE); // City
-		$this->BuildSearchSql($sWhere, $this->Region, $Default, FALSE); // Region
-		$this->BuildSearchSql($sWhere, $this->PostalCode, $Default, FALSE); // PostalCode
-		$this->BuildSearchSql($sWhere, $this->Country, $Default, FALSE); // Country
-		$this->BuildSearchSql($sWhere, $this->HomePhone, $Default, FALSE); // HomePhone
-		$this->BuildSearchSql($sWhere, $this->Extension, $Default, FALSE); // Extension
-		$this->BuildSearchSql($sWhere, $this->_Email, $Default, FALSE); // Email
-		$this->BuildSearchSql($sWhere, $this->Photo, $Default, FALSE); // Photo
-		$this->BuildSearchSql($sWhere, $this->Notes, $Default, FALSE); // Notes
-		$this->BuildSearchSql($sWhere, $this->ReportsTo, $Default, FALSE); // ReportsTo
-		$this->BuildSearchSql($sWhere, $this->Password, $Default, FALSE); // Password
-		$this->BuildSearchSql($sWhere, $this->UserLevel, $Default, FALSE); // UserLevel
-		$this->BuildSearchSql($sWhere, $this->Username, $Default, FALSE); // Username
-		$this->BuildSearchSql($sWhere, $this->Activated, $Default, FALSE); // Activated
-		$this->BuildSearchSql($sWhere, $this->Profile, $Default, FALSE); // Profile
-
-		// Set up search parm
-		if (!$Default && $sWhere <> "" && in_array($this->Command, array("", "reset", "resetall"))) {
-			$this->Command = "search";
-		}
-		if (!$Default && $this->Command == "search") {
-			$this->EmployeeID->AdvancedSearch->Save(); // EmployeeID
-			$this->LastName->AdvancedSearch->Save(); // LastName
-			$this->FirstName->AdvancedSearch->Save(); // FirstName
-			$this->Title->AdvancedSearch->Save(); // Title
-			$this->TitleOfCourtesy->AdvancedSearch->Save(); // TitleOfCourtesy
-			$this->BirthDate->AdvancedSearch->Save(); // BirthDate
-			$this->HireDate->AdvancedSearch->Save(); // HireDate
-			$this->Address->AdvancedSearch->Save(); // Address
-			$this->City->AdvancedSearch->Save(); // City
-			$this->Region->AdvancedSearch->Save(); // Region
-			$this->PostalCode->AdvancedSearch->Save(); // PostalCode
-			$this->Country->AdvancedSearch->Save(); // Country
-			$this->HomePhone->AdvancedSearch->Save(); // HomePhone
-			$this->Extension->AdvancedSearch->Save(); // Extension
-			$this->_Email->AdvancedSearch->Save(); // Email
-			$this->Photo->AdvancedSearch->Save(); // Photo
-			$this->Notes->AdvancedSearch->Save(); // Notes
-			$this->ReportsTo->AdvancedSearch->Save(); // ReportsTo
-			$this->Password->AdvancedSearch->Save(); // Password
-			$this->UserLevel->AdvancedSearch->Save(); // UserLevel
-			$this->Username->AdvancedSearch->Save(); // Username
-			$this->Activated->AdvancedSearch->Save(); // Activated
-			$this->Profile->AdvancedSearch->Save(); // Profile
-		}
-		return $sWhere;
-	}
-
-	// Build search SQL
-	function BuildSearchSql(&$Where, &$Fld, $Default, $MultiValue) {
-		$FldParm = $Fld->FldParm();
-		$FldVal = ($Default) ? $Fld->AdvancedSearch->SearchValueDefault : $Fld->AdvancedSearch->SearchValue; // @$_GET["x_$FldParm"]
-		$FldOpr = ($Default) ? $Fld->AdvancedSearch->SearchOperatorDefault : $Fld->AdvancedSearch->SearchOperator; // @$_GET["z_$FldParm"]
-		$FldCond = ($Default) ? $Fld->AdvancedSearch->SearchConditionDefault : $Fld->AdvancedSearch->SearchCondition; // @$_GET["v_$FldParm"]
-		$FldVal2 = ($Default) ? $Fld->AdvancedSearch->SearchValue2Default : $Fld->AdvancedSearch->SearchValue2; // @$_GET["y_$FldParm"]
-		$FldOpr2 = ($Default) ? $Fld->AdvancedSearch->SearchOperator2Default : $Fld->AdvancedSearch->SearchOperator2; // @$_GET["w_$FldParm"]
-		$sWrk = "";
-		if (is_array($FldVal)) $FldVal = implode(",", $FldVal);
-		if (is_array($FldVal2)) $FldVal2 = implode(",", $FldVal2);
-		$FldOpr = strtoupper(trim($FldOpr));
-		if ($FldOpr == "") $FldOpr = "=";
-		$FldOpr2 = strtoupper(trim($FldOpr2));
-		if ($FldOpr2 == "") $FldOpr2 = "=";
-		if (EW_SEARCH_MULTI_VALUE_OPTION == 1)
-			$MultiValue = FALSE;
-		if ($MultiValue) {
-			$sWrk1 = ($FldVal <> "") ? ew_GetMultiSearchSql($Fld, $FldOpr, $FldVal, $this->DBID) : ""; // Field value 1
-			$sWrk2 = ($FldVal2 <> "") ? ew_GetMultiSearchSql($Fld, $FldOpr2, $FldVal2, $this->DBID) : ""; // Field value 2
-			$sWrk = $sWrk1; // Build final SQL
-			if ($sWrk2 <> "")
-				$sWrk = ($sWrk <> "") ? "($sWrk) $FldCond ($sWrk2)" : $sWrk2;
-		} else {
-			$FldVal = $this->ConvertSearchValue($Fld, $FldVal);
-			$FldVal2 = $this->ConvertSearchValue($Fld, $FldVal2);
-			$sWrk = ew_GetSearchSql($Fld, $FldVal, $FldOpr, $FldCond, $FldVal2, $FldOpr2, $this->DBID);
-		}
-		ew_AddFilter($Where, $sWrk);
-	}
-
-	// Convert search value
-	function ConvertSearchValue(&$Fld, $FldVal) {
-		if ($FldVal == EW_NULL_VALUE || $FldVal == EW_NOT_NULL_VALUE)
-			return $FldVal;
-		$Value = $FldVal;
-		if ($Fld->FldDataType == EW_DATATYPE_BOOLEAN) {
-			if ($FldVal <> "") $Value = ($FldVal == "1" || strtolower(strval($FldVal)) == "y" || strtolower(strval($FldVal)) == "t") ? $Fld->TrueValue : $Fld->FalseValue;
-		} elseif ($Fld->FldDataType == EW_DATATYPE_DATE || $Fld->FldDataType == EW_DATATYPE_TIME) {
-			if ($FldVal <> "") $Value = ew_UnFormatDateTime($FldVal, $Fld->FldDateTimeFormat);
-		}
-		return $Value;
-	}
-
-	// Return basic search SQL
-	function BasicSearchSQL($arKeywords, $type) {
-		$sWhere = "";
-		$this->BuildBasicSearchSQL($sWhere, $this->LastName, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->FirstName, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->Title, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->TitleOfCourtesy, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->Address, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->City, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->Region, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->PostalCode, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->Country, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->HomePhone, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->Extension, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->_Email, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->Photo, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->Notes, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->Password, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->Username, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->Profile, $arKeywords, $type);
-		return $sWhere;
-	}
-
-	// Build basic search SQL
-	function BuildBasicSearchSQL(&$Where, &$Fld, $arKeywords, $type) {
-		global $EW_BASIC_SEARCH_IGNORE_PATTERN;
-		$sDefCond = ($type == "OR") ? "OR" : "AND";
-		$arSQL = array(); // Array for SQL parts
-		$arCond = array(); // Array for search conditions
-		$cnt = count($arKeywords);
-		$j = 0; // Number of SQL parts
-		for ($i = 0; $i < $cnt; $i++) {
-			$Keyword = $arKeywords[$i];
-			$Keyword = trim($Keyword);
-			if ($EW_BASIC_SEARCH_IGNORE_PATTERN <> "") {
-				$Keyword = preg_replace($EW_BASIC_SEARCH_IGNORE_PATTERN, "\\", $Keyword);
-				$ar = explode("\\", $Keyword);
-			} else {
-				$ar = array($Keyword);
-			}
-			foreach ($ar as $Keyword) {
-				if ($Keyword <> "") {
-					$sWrk = "";
-					if ($Keyword == "OR" && $type == "") {
-						if ($j > 0)
-							$arCond[$j-1] = "OR";
-					} elseif ($Keyword == EW_NULL_VALUE) {
-						$sWrk = $Fld->FldExpression . " IS NULL";
-					} elseif ($Keyword == EW_NOT_NULL_VALUE) {
-						$sWrk = $Fld->FldExpression . " IS NOT NULL";
-					} elseif ($Fld->FldIsVirtual) {
-						$sWrk = $Fld->FldVirtualExpression . ew_Like(ew_QuotedValue("%" . $Keyword . "%", EW_DATATYPE_STRING, $this->DBID), $this->DBID);
-					} elseif ($Fld->FldDataType != EW_DATATYPE_NUMBER || is_numeric($Keyword)) {
-						$sWrk = $Fld->FldBasicSearchExpression . ew_Like(ew_QuotedValue("%" . $Keyword . "%", EW_DATATYPE_STRING, $this->DBID), $this->DBID);
-					}
-					if ($sWrk <> "") {
-						$arSQL[$j] = $sWrk;
-						$arCond[$j] = $sDefCond;
-						$j += 1;
-					}
-				}
-			}
-		}
-		$cnt = count($arSQL);
-		$bQuoted = FALSE;
-		$sSql = "";
-		if ($cnt > 0) {
-			for ($i = 0; $i < $cnt-1; $i++) {
-				if ($arCond[$i] == "OR") {
-					if (!$bQuoted) $sSql .= "(";
-					$bQuoted = TRUE;
-				}
-				$sSql .= $arSQL[$i];
-				if ($bQuoted && $arCond[$i] <> "OR") {
-					$sSql .= ")";
-					$bQuoted = FALSE;
-				}
-				$sSql .= " " . $arCond[$i] . " ";
-			}
-			$sSql .= $arSQL[$cnt-1];
-			if ($bQuoted)
-				$sSql .= ")";
-		}
-		if ($sSql <> "") {
-			if ($Where <> "") $Where .= " OR ";
-			$Where .= "(" . $sSql . ")";
-		}
-	}
-
-	// Return basic search WHERE clause based on search keyword and type
-	function BasicSearchWhere($Default = FALSE) {
-		global $Security;
-		$sSearchStr = "";
-		if (!$Security->CanSearch()) return "";
-		$sSearchKeyword = ($Default) ? $this->BasicSearch->KeywordDefault : $this->BasicSearch->Keyword;
-		$sSearchType = ($Default) ? $this->BasicSearch->TypeDefault : $this->BasicSearch->Type;
-
-		// Get search SQL
-		if ($sSearchKeyword <> "") {
-			$ar = $this->BasicSearch->KeywordList($Default);
-
-			// Search keyword in any fields
-			if (($sSearchType == "OR" || $sSearchType == "AND") && $this->BasicSearch->BasicSearchAnyFields) {
-				foreach ($ar as $sKeyword) {
-					if ($sKeyword <> "") {
-						if ($sSearchStr <> "") $sSearchStr .= " " . $sSearchType . " ";
-						$sSearchStr .= "(" . $this->BasicSearchSQL(array($sKeyword), $sSearchType) . ")";
-					}
-				}
-			} else {
-				$sSearchStr = $this->BasicSearchSQL($ar, $sSearchType);
-			}
-			if (!$Default && in_array($this->Command, array("", "reset", "resetall"))) $this->Command = "search";
-		}
-		if (!$Default && $this->Command == "search") {
-			$this->BasicSearch->setKeyword($sSearchKeyword);
-			$this->BasicSearch->setType($sSearchType);
-		}
-		return $sSearchStr;
-	}
-
-	// Check if search parm exists
-	function CheckSearchParms() {
-
-		// Check basic search
-		if ($this->BasicSearch->IssetSession())
-			return TRUE;
-		if ($this->EmployeeID->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->LastName->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->FirstName->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Title->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->TitleOfCourtesy->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->BirthDate->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->HireDate->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Address->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->City->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Region->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->PostalCode->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Country->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->HomePhone->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Extension->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->_Email->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Photo->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Notes->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->ReportsTo->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Password->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->UserLevel->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Username->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Activated->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Profile->AdvancedSearch->IssetSession())
-			return TRUE;
-		return FALSE;
-	}
-
-	// Clear all search parameters
-	function ResetSearchParms() {
-
-		// Clear search WHERE clause
-		$this->SearchWhere = "";
-		$this->setSearchWhere($this->SearchWhere);
-
-		// Clear basic search parameters
-		$this->ResetBasicSearchParms();
-
-		// Clear advanced search parameters
-		$this->ResetAdvancedSearchParms();
-	}
-
-	// Load advanced search default values
-	function LoadAdvancedSearchDefault() {
-		return FALSE;
-	}
-
-	// Clear all basic search parameters
-	function ResetBasicSearchParms() {
-		$this->BasicSearch->UnsetSession();
-	}
-
-	// Clear all advanced search parameters
-	function ResetAdvancedSearchParms() {
-		$this->EmployeeID->AdvancedSearch->UnsetSession();
-		$this->LastName->AdvancedSearch->UnsetSession();
-		$this->FirstName->AdvancedSearch->UnsetSession();
-		$this->Title->AdvancedSearch->UnsetSession();
-		$this->TitleOfCourtesy->AdvancedSearch->UnsetSession();
-		$this->BirthDate->AdvancedSearch->UnsetSession();
-		$this->HireDate->AdvancedSearch->UnsetSession();
-		$this->Address->AdvancedSearch->UnsetSession();
-		$this->City->AdvancedSearch->UnsetSession();
-		$this->Region->AdvancedSearch->UnsetSession();
-		$this->PostalCode->AdvancedSearch->UnsetSession();
-		$this->Country->AdvancedSearch->UnsetSession();
-		$this->HomePhone->AdvancedSearch->UnsetSession();
-		$this->Extension->AdvancedSearch->UnsetSession();
-		$this->_Email->AdvancedSearch->UnsetSession();
-		$this->Photo->AdvancedSearch->UnsetSession();
-		$this->Notes->AdvancedSearch->UnsetSession();
-		$this->ReportsTo->AdvancedSearch->UnsetSession();
-		$this->Password->AdvancedSearch->UnsetSession();
-		$this->UserLevel->AdvancedSearch->UnsetSession();
-		$this->Username->AdvancedSearch->UnsetSession();
-		$this->Activated->AdvancedSearch->UnsetSession();
-		$this->Profile->AdvancedSearch->UnsetSession();
-	}
-
-	// Restore all search parameters
-	function RestoreSearchParms() {
-		$this->RestoreSearch = TRUE;
-
-		// Restore basic search values
-		$this->BasicSearch->Load();
-
-		// Restore advanced search values
-		$this->EmployeeID->AdvancedSearch->Load();
-		$this->LastName->AdvancedSearch->Load();
-		$this->FirstName->AdvancedSearch->Load();
-		$this->Title->AdvancedSearch->Load();
-		$this->TitleOfCourtesy->AdvancedSearch->Load();
-		$this->BirthDate->AdvancedSearch->Load();
-		$this->HireDate->AdvancedSearch->Load();
-		$this->Address->AdvancedSearch->Load();
-		$this->City->AdvancedSearch->Load();
-		$this->Region->AdvancedSearch->Load();
-		$this->PostalCode->AdvancedSearch->Load();
-		$this->Country->AdvancedSearch->Load();
-		$this->HomePhone->AdvancedSearch->Load();
-		$this->Extension->AdvancedSearch->Load();
-		$this->_Email->AdvancedSearch->Load();
-		$this->Photo->AdvancedSearch->Load();
-		$this->Notes->AdvancedSearch->Load();
-		$this->ReportsTo->AdvancedSearch->Load();
-		$this->Password->AdvancedSearch->Load();
-		$this->UserLevel->AdvancedSearch->Load();
-		$this->Username->AdvancedSearch->Load();
-		$this->Activated->AdvancedSearch->Load();
-		$this->Profile->AdvancedSearch->Load();
 	}
 
 	// Set up sort parameters
@@ -1489,10 +761,6 @@ class ct96_employees_list extends ct96_employees {
 		// Check if reset command
 		if (substr($this->Command,0,5) == "reset") {
 
-			// Reset search criteria
-			if ($this->Command == "reset" || $this->Command == "resetall")
-				$this->ResetSearchParms();
-
 			// Reset sorting order
 			if ($this->Command == "resetsort") {
 				$sOrderBy = "";
@@ -1533,41 +801,46 @@ class ct96_employees_list extends ct96_employees {
 		// Add group option item
 		$item = &$this->ListOptions->Add($this->ListOptions->GroupOptionName);
 		$item->Body = "";
-		$item->OnLeft = TRUE;
+		$item->OnLeft = FALSE;
 		$item->Visible = FALSE;
 
 		// "view"
 		$item = &$this->ListOptions->Add("view");
 		$item->CssClass = "text-nowrap";
 		$item->Visible = $Security->CanView();
-		$item->OnLeft = TRUE;
+		$item->OnLeft = FALSE;
 
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssClass = "text-nowrap";
 		$item->Visible = $Security->CanEdit();
-		$item->OnLeft = TRUE;
+		$item->OnLeft = FALSE;
 
 		// "copy"
 		$item = &$this->ListOptions->Add("copy");
 		$item->CssClass = "text-nowrap";
 		$item->Visible = $Security->CanAdd();
-		$item->OnLeft = TRUE;
+		$item->OnLeft = FALSE;
+
+		// "delete"
+		$item = &$this->ListOptions->Add("delete");
+		$item->CssClass = "text-nowrap";
+		$item->Visible = $Security->CanDelete();
+		$item->OnLeft = FALSE;
 
 		// List actions
 		$item = &$this->ListOptions->Add("listactions");
 		$item->CssClass = "text-nowrap";
-		$item->OnLeft = TRUE;
+		$item->OnLeft = FALSE;
 		$item->Visible = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 		$item->ShowInDropDown = FALSE;
 
 		// "checkbox"
 		$item = &$this->ListOptions->Add("checkbox");
-		$item->Visible = $Security->CanDelete();
-		$item->OnLeft = TRUE;
+		$item->Visible = FALSE;
+		$item->OnLeft = FALSE;
 		$item->Header = "<input type=\"checkbox\" name=\"key\" id=\"key\" onclick=\"ew_SelectAllKey(this);\">";
-		$item->MoveTo(0);
 		$item->ShowInDropDown = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 
@@ -1634,6 +907,13 @@ class ct96_employees_list extends ct96_employees {
 			$oListOpt->Body = "";
 		}
 
+		// "delete"
+		$oListOpt = &$this->ListOptions->Items["delete"];
+		if ($Security->CanDelete() && $this->ShowOptionLink('delete'))
+			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
+		else
+			$oListOpt->Body = "";
+
 		// Set up list action buttons
 		$oListOpt = &$this->ListOptions->GetItem("listactions");
 		if ($oListOpt && $this->Export == "" && $this->CurrentAction == "") {
@@ -1685,11 +965,6 @@ class ct96_employees_list extends ct96_employees {
 		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 		$option = $options["action"];
 
-		// Add multi delete
-		$item = &$option->Add("multidelete");
-		$item->Body = "<a class=\"ewAction ewMultiDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteSelectedLink")) . "\" href=\"\" onclick=\"ew_SubmitAction(event,{f:document.ft96_employeeslist,url:'" . $this->MultiDeleteUrl . "'});return false;\">" . $Language->Phrase("DeleteSelectedLink") . "</a>";
-		$item->Visible = ($Security->CanDelete());
-
 		// Set up options default
 		foreach ($options as &$option) {
 			$option->UseImageAndText = TRUE;
@@ -1707,10 +982,10 @@ class ct96_employees_list extends ct96_employees {
 		// Filter button
 		$item = &$this->FilterOptions->Add("savecurrentfilter");
 		$item->Body = "<a class=\"ewSaveFilter\" data-form=\"ft96_employeeslistsrch\" href=\"#\">" . $Language->Phrase("SaveCurrentFilter") . "</a>";
-		$item->Visible = TRUE;
+		$item->Visible = FALSE;
 		$item = &$this->FilterOptions->Add("deletefilter");
 		$item->Body = "<a class=\"ewDeleteFilter\" data-form=\"ft96_employeeslistsrch\" href=\"#\">" . $Language->Phrase("DeleteFilter") . "</a>";
-		$item->Visible = TRUE;
+		$item->Visible = FALSE;
 		$this->FilterOptions->UseDropDownButton = TRUE;
 		$this->FilterOptions->UseButtonGroup = !$this->FilterOptions->UseDropDownButton;
 		$this->FilterOptions->DropDownButtonPhrase = $Language->Phrase("Filters");
@@ -1846,17 +1121,6 @@ class ct96_employees_list extends ct96_employees {
 		$this->SearchOptions->Tag = "div";
 		$this->SearchOptions->TagClassName = "ewSearchOption";
 
-		// Search button
-		$item = &$this->SearchOptions->Add("searchtoggle");
-		$SearchToggleClass = ($this->SearchWhere <> "") ? " active" : " active";
-		$item->Body = "<button type=\"button\" class=\"btn btn-default ewSearchToggle" . $SearchToggleClass . "\" title=\"" . $Language->Phrase("SearchPanel") . "\" data-caption=\"" . $Language->Phrase("SearchPanel") . "\" data-toggle=\"button\" data-form=\"ft96_employeeslistsrch\">" . $Language->Phrase("SearchLink") . "</button>";
-		$item->Visible = TRUE;
-
-		// Show all button
-		$item = &$this->SearchOptions->Add("showall");
-		$item->Body = "<a class=\"btn btn-default ewShowAll\" title=\"" . $Language->Phrase("ShowAll") . "\" data-caption=\"" . $Language->Phrase("ShowAll") . "\" href=\"" . $this->PageUrl() . "cmd=reset\">" . $Language->Phrase("ShowAllBtn") . "</a>";
-		$item->Visible = ($this->SearchWhere <> $this->DefaultSearchWhere && $this->SearchWhere <> "0=101");
-
 		// Button group for search
 		$this->SearchOptions->UseDropDownButton = FALSE;
 		$this->SearchOptions->UseImageAndText = TRUE;
@@ -1920,137 +1184,6 @@ class ct96_employees_list extends ct96_employees {
 			$this->StartRec = intval(($this->StartRec-1)/$this->DisplayRecs)*$this->DisplayRecs+1; // Point to page boundary
 			$this->setStartRecordNumber($this->StartRec);
 		}
-	}
-
-	// Load basic search values
-	function LoadBasicSearchValues() {
-		$this->BasicSearch->Keyword = @$_GET[EW_TABLE_BASIC_SEARCH];
-		if ($this->BasicSearch->Keyword <> "" && $this->Command == "") $this->Command = "search";
-		$this->BasicSearch->Type = @$_GET[EW_TABLE_BASIC_SEARCH_TYPE];
-	}
-
-	// Load search values for validation
-	function LoadSearchValues() {
-		global $objForm;
-
-		// Load search values
-		// EmployeeID
-
-		$this->EmployeeID->AdvancedSearch->SearchValue = @$_GET["x_EmployeeID"];
-		if ($this->EmployeeID->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->EmployeeID->AdvancedSearch->SearchOperator = @$_GET["z_EmployeeID"];
-
-		// LastName
-		$this->LastName->AdvancedSearch->SearchValue = @$_GET["x_LastName"];
-		if ($this->LastName->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->LastName->AdvancedSearch->SearchOperator = @$_GET["z_LastName"];
-
-		// FirstName
-		$this->FirstName->AdvancedSearch->SearchValue = @$_GET["x_FirstName"];
-		if ($this->FirstName->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->FirstName->AdvancedSearch->SearchOperator = @$_GET["z_FirstName"];
-
-		// Title
-		$this->Title->AdvancedSearch->SearchValue = @$_GET["x_Title"];
-		if ($this->Title->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->Title->AdvancedSearch->SearchOperator = @$_GET["z_Title"];
-
-		// TitleOfCourtesy
-		$this->TitleOfCourtesy->AdvancedSearch->SearchValue = @$_GET["x_TitleOfCourtesy"];
-		if ($this->TitleOfCourtesy->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->TitleOfCourtesy->AdvancedSearch->SearchOperator = @$_GET["z_TitleOfCourtesy"];
-
-		// BirthDate
-		$this->BirthDate->AdvancedSearch->SearchValue = @$_GET["x_BirthDate"];
-		if ($this->BirthDate->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->BirthDate->AdvancedSearch->SearchOperator = @$_GET["z_BirthDate"];
-
-		// HireDate
-		$this->HireDate->AdvancedSearch->SearchValue = @$_GET["x_HireDate"];
-		if ($this->HireDate->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->HireDate->AdvancedSearch->SearchOperator = @$_GET["z_HireDate"];
-
-		// Address
-		$this->Address->AdvancedSearch->SearchValue = @$_GET["x_Address"];
-		if ($this->Address->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->Address->AdvancedSearch->SearchOperator = @$_GET["z_Address"];
-
-		// City
-		$this->City->AdvancedSearch->SearchValue = @$_GET["x_City"];
-		if ($this->City->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->City->AdvancedSearch->SearchOperator = @$_GET["z_City"];
-
-		// Region
-		$this->Region->AdvancedSearch->SearchValue = @$_GET["x_Region"];
-		if ($this->Region->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->Region->AdvancedSearch->SearchOperator = @$_GET["z_Region"];
-
-		// PostalCode
-		$this->PostalCode->AdvancedSearch->SearchValue = @$_GET["x_PostalCode"];
-		if ($this->PostalCode->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->PostalCode->AdvancedSearch->SearchOperator = @$_GET["z_PostalCode"];
-
-		// Country
-		$this->Country->AdvancedSearch->SearchValue = @$_GET["x_Country"];
-		if ($this->Country->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->Country->AdvancedSearch->SearchOperator = @$_GET["z_Country"];
-
-		// HomePhone
-		$this->HomePhone->AdvancedSearch->SearchValue = @$_GET["x_HomePhone"];
-		if ($this->HomePhone->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->HomePhone->AdvancedSearch->SearchOperator = @$_GET["z_HomePhone"];
-
-		// Extension
-		$this->Extension->AdvancedSearch->SearchValue = @$_GET["x_Extension"];
-		if ($this->Extension->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->Extension->AdvancedSearch->SearchOperator = @$_GET["z_Extension"];
-
-		// Email
-		$this->_Email->AdvancedSearch->SearchValue = @$_GET["x__Email"];
-		if ($this->_Email->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->_Email->AdvancedSearch->SearchOperator = @$_GET["z__Email"];
-
-		// Photo
-		$this->Photo->AdvancedSearch->SearchValue = @$_GET["x_Photo"];
-		if ($this->Photo->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->Photo->AdvancedSearch->SearchOperator = @$_GET["z_Photo"];
-
-		// Notes
-		$this->Notes->AdvancedSearch->SearchValue = @$_GET["x_Notes"];
-		if ($this->Notes->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->Notes->AdvancedSearch->SearchOperator = @$_GET["z_Notes"];
-
-		// ReportsTo
-		$this->ReportsTo->AdvancedSearch->SearchValue = @$_GET["x_ReportsTo"];
-		if ($this->ReportsTo->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->ReportsTo->AdvancedSearch->SearchOperator = @$_GET["z_ReportsTo"];
-
-		// Password
-		$this->Password->AdvancedSearch->SearchValue = @$_GET["x_Password"];
-		if ($this->Password->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->Password->AdvancedSearch->SearchOperator = @$_GET["z_Password"];
-
-		// UserLevel
-		$this->UserLevel->AdvancedSearch->SearchValue = @$_GET["x_UserLevel"];
-		if ($this->UserLevel->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->UserLevel->AdvancedSearch->SearchOperator = @$_GET["z_UserLevel"];
-
-		// Username
-		$this->Username->AdvancedSearch->SearchValue = @$_GET["x_Username"];
-		if ($this->Username->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->Username->AdvancedSearch->SearchOperator = @$_GET["z_Username"];
-
-		// Activated
-		$this->Activated->AdvancedSearch->SearchValue = @$_GET["x_Activated"];
-		if ($this->Activated->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->Activated->AdvancedSearch->SearchOperator = @$_GET["z_Activated"];
-		if (is_array($this->Activated->AdvancedSearch->SearchValue)) $this->Activated->AdvancedSearch->SearchValue = implode(",", $this->Activated->AdvancedSearch->SearchValue);
-		if (is_array($this->Activated->AdvancedSearch->SearchValue2)) $this->Activated->AdvancedSearch->SearchValue2 = implode(",", $this->Activated->AdvancedSearch->SearchValue2);
-
-		// Profile
-		$this->Profile->AdvancedSearch->SearchValue = @$_GET["x_Profile"];
-		if ($this->Profile->AdvancedSearch->SearchValue <> "" && $this->Command == "") $this->Command = "search";
-		$this->Profile->AdvancedSearch->SearchOperator = @$_GET["z_Profile"];
 	}
 
 	// Load recordset
@@ -2477,484 +1610,11 @@ class ct96_employees_list extends ct96_employees {
 			$this->Activated->LinkCustomAttributes = "";
 			$this->Activated->HrefValue = "";
 			$this->Activated->TooltipValue = "";
-		} elseif ($this->RowType == EW_ROWTYPE_SEARCH) { // Search row
-
-			// EmployeeID
-			$this->EmployeeID->EditAttrs["class"] = "form-control";
-			$this->EmployeeID->EditCustomAttributes = "";
-			if (!$Security->IsAdmin() && $Security->IsLoggedIn() && !$this->UserIDAllow($this->CurrentAction)) { // Non system admin
-				$this->EmployeeID->AdvancedSearch->SearchValue = CurrentUserID();
-			$this->EmployeeID->EditValue = $this->EmployeeID->AdvancedSearch->SearchValue;
-			$this->EmployeeID->ViewCustomAttributes = "";
-			} else {
-			$this->EmployeeID->EditValue = ew_HtmlEncode($this->EmployeeID->AdvancedSearch->SearchValue);
-			$this->EmployeeID->PlaceHolder = ew_RemoveHtml($this->EmployeeID->FldCaption());
-			}
-
-			// LastName
-			$this->LastName->EditAttrs["class"] = "form-control";
-			$this->LastName->EditCustomAttributes = "";
-			$this->LastName->EditValue = ew_HtmlEncode($this->LastName->AdvancedSearch->SearchValue);
-			$this->LastName->PlaceHolder = ew_RemoveHtml($this->LastName->FldCaption());
-
-			// FirstName
-			$this->FirstName->EditAttrs["class"] = "form-control";
-			$this->FirstName->EditCustomAttributes = "";
-			$this->FirstName->EditValue = ew_HtmlEncode($this->FirstName->AdvancedSearch->SearchValue);
-			$this->FirstName->PlaceHolder = ew_RemoveHtml($this->FirstName->FldCaption());
-
-			// Title
-			$this->Title->EditAttrs["class"] = "form-control";
-			$this->Title->EditCustomAttributes = "";
-			$this->Title->EditValue = ew_HtmlEncode($this->Title->AdvancedSearch->SearchValue);
-			$this->Title->PlaceHolder = ew_RemoveHtml($this->Title->FldCaption());
-
-			// TitleOfCourtesy
-			$this->TitleOfCourtesy->EditAttrs["class"] = "form-control";
-			$this->TitleOfCourtesy->EditCustomAttributes = "";
-			$this->TitleOfCourtesy->EditValue = ew_HtmlEncode($this->TitleOfCourtesy->AdvancedSearch->SearchValue);
-			$this->TitleOfCourtesy->PlaceHolder = ew_RemoveHtml($this->TitleOfCourtesy->FldCaption());
-
-			// BirthDate
-			$this->BirthDate->EditAttrs["class"] = "form-control";
-			$this->BirthDate->EditCustomAttributes = "";
-			$this->BirthDate->EditValue = ew_HtmlEncode(ew_FormatDateTime(ew_UnFormatDateTime($this->BirthDate->AdvancedSearch->SearchValue, 0), 8));
-			$this->BirthDate->PlaceHolder = ew_RemoveHtml($this->BirthDate->FldCaption());
-
-			// HireDate
-			$this->HireDate->EditAttrs["class"] = "form-control";
-			$this->HireDate->EditCustomAttributes = "";
-			$this->HireDate->EditValue = ew_HtmlEncode(ew_FormatDateTime(ew_UnFormatDateTime($this->HireDate->AdvancedSearch->SearchValue, 0), 8));
-			$this->HireDate->PlaceHolder = ew_RemoveHtml($this->HireDate->FldCaption());
-
-			// Address
-			$this->Address->EditAttrs["class"] = "form-control";
-			$this->Address->EditCustomAttributes = "";
-			$this->Address->EditValue = ew_HtmlEncode($this->Address->AdvancedSearch->SearchValue);
-			$this->Address->PlaceHolder = ew_RemoveHtml($this->Address->FldCaption());
-
-			// City
-			$this->City->EditAttrs["class"] = "form-control";
-			$this->City->EditCustomAttributes = "";
-			$this->City->EditValue = ew_HtmlEncode($this->City->AdvancedSearch->SearchValue);
-			$this->City->PlaceHolder = ew_RemoveHtml($this->City->FldCaption());
-
-			// Region
-			$this->Region->EditAttrs["class"] = "form-control";
-			$this->Region->EditCustomAttributes = "";
-			$this->Region->EditValue = ew_HtmlEncode($this->Region->AdvancedSearch->SearchValue);
-			$this->Region->PlaceHolder = ew_RemoveHtml($this->Region->FldCaption());
-
-			// PostalCode
-			$this->PostalCode->EditAttrs["class"] = "form-control";
-			$this->PostalCode->EditCustomAttributes = "";
-			$this->PostalCode->EditValue = ew_HtmlEncode($this->PostalCode->AdvancedSearch->SearchValue);
-			$this->PostalCode->PlaceHolder = ew_RemoveHtml($this->PostalCode->FldCaption());
-
-			// Country
-			$this->Country->EditAttrs["class"] = "form-control";
-			$this->Country->EditCustomAttributes = "";
-			$this->Country->EditValue = ew_HtmlEncode($this->Country->AdvancedSearch->SearchValue);
-			$this->Country->PlaceHolder = ew_RemoveHtml($this->Country->FldCaption());
-
-			// HomePhone
-			$this->HomePhone->EditAttrs["class"] = "form-control";
-			$this->HomePhone->EditCustomAttributes = "";
-			$this->HomePhone->EditValue = ew_HtmlEncode($this->HomePhone->AdvancedSearch->SearchValue);
-			$this->HomePhone->PlaceHolder = ew_RemoveHtml($this->HomePhone->FldCaption());
-
-			// Extension
-			$this->Extension->EditAttrs["class"] = "form-control";
-			$this->Extension->EditCustomAttributes = "";
-			$this->Extension->EditValue = ew_HtmlEncode($this->Extension->AdvancedSearch->SearchValue);
-			$this->Extension->PlaceHolder = ew_RemoveHtml($this->Extension->FldCaption());
-
-			// Email
-			$this->_Email->EditAttrs["class"] = "form-control";
-			$this->_Email->EditCustomAttributes = "";
-			$this->_Email->EditValue = ew_HtmlEncode($this->_Email->AdvancedSearch->SearchValue);
-			$this->_Email->PlaceHolder = ew_RemoveHtml($this->_Email->FldCaption());
-
-			// Photo
-			$this->Photo->EditAttrs["class"] = "form-control";
-			$this->Photo->EditCustomAttributes = "";
-			$this->Photo->EditValue = ew_HtmlEncode($this->Photo->AdvancedSearch->SearchValue);
-			$this->Photo->PlaceHolder = ew_RemoveHtml($this->Photo->FldCaption());
-
-			// ReportsTo
-			$this->ReportsTo->EditAttrs["class"] = "form-control";
-			$this->ReportsTo->EditCustomAttributes = "";
-			$this->ReportsTo->EditValue = ew_HtmlEncode($this->ReportsTo->AdvancedSearch->SearchValue);
-			$this->ReportsTo->PlaceHolder = ew_RemoveHtml($this->ReportsTo->FldCaption());
-
-			// Password
-			$this->Password->EditAttrs["class"] = "form-control";
-			$this->Password->EditCustomAttributes = "";
-			$this->Password->EditValue = ew_HtmlEncode($this->Password->AdvancedSearch->SearchValue);
-			$this->Password->PlaceHolder = ew_RemoveHtml($this->Password->FldCaption());
-
-			// UserLevel
-			$this->UserLevel->EditAttrs["class"] = "form-control";
-			$this->UserLevel->EditCustomAttributes = "";
-			if (!$Security->CanAdmin()) { // System admin
-				$this->UserLevel->EditValue = $Language->Phrase("PasswordMask");
-			} else {
-			}
-
-			// Username
-			$this->Username->EditAttrs["class"] = "form-control";
-			$this->Username->EditCustomAttributes = "";
-			$this->Username->EditValue = ew_HtmlEncode($this->Username->AdvancedSearch->SearchValue);
-			$this->Username->PlaceHolder = ew_RemoveHtml($this->Username->FldCaption());
-
-			// Activated
-			$this->Activated->EditCustomAttributes = "";
-			$this->Activated->EditValue = $this->Activated->Options(FALSE);
 		}
-		if ($this->RowType == EW_ROWTYPE_ADD || $this->RowType == EW_ROWTYPE_EDIT || $this->RowType == EW_ROWTYPE_SEARCH) // Add/Edit/Search row
-			$this->SetupFieldTitles();
 
 		// Call Row Rendered event
 		if ($this->RowType <> EW_ROWTYPE_AGGREGATEINIT)
 			$this->Row_Rendered();
-	}
-
-	// Validate search
-	function ValidateSearch() {
-		global $gsSearchError;
-
-		// Initialize
-		$gsSearchError = "";
-
-		// Check if validation required
-		if (!EW_SERVER_VALIDATE)
-			return TRUE;
-
-		// Return validate result
-		$ValidateSearch = ($gsSearchError == "");
-
-		// Call Form_CustomValidate event
-		$sFormCustomError = "";
-		$ValidateSearch = $ValidateSearch && $this->Form_CustomValidate($sFormCustomError);
-		if ($sFormCustomError <> "") {
-			ew_AddMessage($gsSearchError, $sFormCustomError);
-		}
-		return $ValidateSearch;
-	}
-
-	// Load advanced search
-	function LoadAdvancedSearch() {
-		$this->EmployeeID->AdvancedSearch->Load();
-		$this->LastName->AdvancedSearch->Load();
-		$this->FirstName->AdvancedSearch->Load();
-		$this->Title->AdvancedSearch->Load();
-		$this->TitleOfCourtesy->AdvancedSearch->Load();
-		$this->BirthDate->AdvancedSearch->Load();
-		$this->HireDate->AdvancedSearch->Load();
-		$this->Address->AdvancedSearch->Load();
-		$this->City->AdvancedSearch->Load();
-		$this->Region->AdvancedSearch->Load();
-		$this->PostalCode->AdvancedSearch->Load();
-		$this->Country->AdvancedSearch->Load();
-		$this->HomePhone->AdvancedSearch->Load();
-		$this->Extension->AdvancedSearch->Load();
-		$this->_Email->AdvancedSearch->Load();
-		$this->Photo->AdvancedSearch->Load();
-		$this->Notes->AdvancedSearch->Load();
-		$this->ReportsTo->AdvancedSearch->Load();
-		$this->Password->AdvancedSearch->Load();
-		$this->UserLevel->AdvancedSearch->Load();
-		$this->Username->AdvancedSearch->Load();
-		$this->Activated->AdvancedSearch->Load();
-		$this->Profile->AdvancedSearch->Load();
-	}
-
-	// Set up export options
-	function SetupExportOptions() {
-		global $Language;
-
-		// Printer friendly
-		$item = &$this->ExportOptions->Add("print");
-		$item->Body = "<a href=\"" . $this->ExportPrintUrl . "\" class=\"ewExportLink ewPrint\" title=\"" . ew_HtmlEncode($Language->Phrase("PrinterFriendlyText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("PrinterFriendlyText")) . "\">" . $Language->Phrase("PrinterFriendly") . "</a>";
-		$item->Visible = TRUE;
-
-		// Export to Excel
-		$item = &$this->ExportOptions->Add("excel");
-		$item->Body = "<a href=\"" . $this->ExportExcelUrl . "\" class=\"ewExportLink ewExcel\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToExcelText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToExcelText")) . "\">" . $Language->Phrase("ExportToExcel") . "</a>";
-		$item->Visible = TRUE;
-
-		// Export to Word
-		$item = &$this->ExportOptions->Add("word");
-		$item->Body = "<a href=\"" . $this->ExportWordUrl . "\" class=\"ewExportLink ewWord\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToWordText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToWordText")) . "\">" . $Language->Phrase("ExportToWord") . "</a>";
-		$item->Visible = TRUE;
-
-		// Export to Html
-		$item = &$this->ExportOptions->Add("html");
-		$item->Body = "<a href=\"" . $this->ExportHtmlUrl . "\" class=\"ewExportLink ewHtml\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToHtmlText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToHtmlText")) . "\">" . $Language->Phrase("ExportToHtml") . "</a>";
-		$item->Visible = TRUE;
-
-		// Export to Xml
-		$item = &$this->ExportOptions->Add("xml");
-		$item->Body = "<a href=\"" . $this->ExportXmlUrl . "\" class=\"ewExportLink ewXml\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToXmlText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToXmlText")) . "\">" . $Language->Phrase("ExportToXml") . "</a>";
-		$item->Visible = TRUE;
-
-		// Export to Csv
-		$item = &$this->ExportOptions->Add("csv");
-		$item->Body = "<a href=\"" . $this->ExportCsvUrl . "\" class=\"ewExportLink ewCsv\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToCsvText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToCsvText")) . "\">" . $Language->Phrase("ExportToCsv") . "</a>";
-		$item->Visible = TRUE;
-
-		// Export to Pdf
-		$item = &$this->ExportOptions->Add("pdf");
-		$item->Body = "<a href=\"" . $this->ExportPdfUrl . "\" class=\"ewExportLink ewPdf\" title=\"" . ew_HtmlEncode($Language->Phrase("ExportToPDFText")) . "\" data-caption=\"" . ew_HtmlEncode($Language->Phrase("ExportToPDFText")) . "\">" . $Language->Phrase("ExportToPDF") . "</a>";
-		$item->Visible = FALSE;
-
-		// Export to Email
-		$item = &$this->ExportOptions->Add("email");
-		$url = "";
-		$item->Body = "<button id=\"emf_t96_employees\" class=\"ewExportLink ewEmail\" title=\"" . $Language->Phrase("ExportToEmailText") . "\" data-caption=\"" . $Language->Phrase("ExportToEmailText") . "\" onclick=\"ew_EmailDialogShow({lnk:'emf_t96_employees',hdr:ewLanguage.Phrase('ExportToEmailText'),f:document.ft96_employeeslist,sel:false" . $url . "});\">" . $Language->Phrase("ExportToEmail") . "</button>";
-		$item->Visible = TRUE;
-
-		// Drop down button for export
-		$this->ExportOptions->UseButtonGroup = TRUE;
-		$this->ExportOptions->UseImageAndText = TRUE;
-		$this->ExportOptions->UseDropDownButton = TRUE;
-		if ($this->ExportOptions->UseButtonGroup && ew_IsMobile())
-			$this->ExportOptions->UseDropDownButton = TRUE;
-		$this->ExportOptions->DropDownButtonPhrase = $Language->Phrase("ButtonExport");
-
-		// Add group option item
-		$item = &$this->ExportOptions->Add($this->ExportOptions->GroupOptionName);
-		$item->Body = "";
-		$item->Visible = FALSE;
-	}
-
-	// Export data in HTML/CSV/Word/Excel/XML/Email/PDF format
-	function ExportData() {
-		$utf8 = (strtolower(EW_CHARSET) == "utf-8");
-		$bSelectLimit = $this->UseSelectLimit;
-
-		// Load recordset
-		if ($bSelectLimit) {
-			$this->TotalRecs = $this->ListRecordCount();
-		} else {
-			if (!$this->Recordset)
-				$this->Recordset = $this->LoadRecordset();
-			$rs = &$this->Recordset;
-			if ($rs)
-				$this->TotalRecs = $rs->RecordCount();
-		}
-		$this->StartRec = 1;
-
-		// Export all
-		if ($this->ExportAll) {
-			set_time_limit(EW_EXPORT_ALL_TIME_LIMIT);
-			$this->DisplayRecs = $this->TotalRecs;
-			$this->StopRec = $this->TotalRecs;
-		} else { // Export one page only
-			$this->SetupStartRec(); // Set up start record position
-
-			// Set the last record to display
-			if ($this->DisplayRecs <= 0) {
-				$this->StopRec = $this->TotalRecs;
-			} else {
-				$this->StopRec = $this->StartRec + $this->DisplayRecs - 1;
-			}
-		}
-		if ($bSelectLimit)
-			$rs = $this->LoadRecordset($this->StartRec-1, $this->DisplayRecs <= 0 ? $this->TotalRecs : $this->DisplayRecs);
-		if (!$rs) {
-			header("Content-Type:"); // Remove header
-			header("Content-Disposition:");
-			$this->ShowMessage();
-			return;
-		}
-		$this->ExportDoc = ew_ExportDocument($this, "h");
-		$Doc = &$this->ExportDoc;
-		if ($bSelectLimit) {
-			$this->StartRec = 1;
-			$this->StopRec = $this->DisplayRecs <= 0 ? $this->TotalRecs : $this->DisplayRecs;
-		} else {
-
-			//$this->StartRec = $this->StartRec;
-			//$this->StopRec = $this->StopRec;
-
-		}
-
-		// Call Page Exporting server event
-		$this->ExportDoc->ExportCustom = !$this->Page_Exporting();
-		$ParentTable = "";
-		$sHeader = $this->PageHeader;
-		$this->Page_DataRendering($sHeader);
-		$Doc->Text .= $sHeader;
-		$this->ExportDocument($Doc, $rs, $this->StartRec, $this->StopRec, "");
-		$sFooter = $this->PageFooter;
-		$this->Page_DataRendered($sFooter);
-		$Doc->Text .= $sFooter;
-
-		// Close recordset
-		$rs->Close();
-
-		// Call Page Exported server event
-		$this->Page_Exported();
-
-		// Export header and footer
-		$Doc->ExportHeaderAndFooter();
-
-		// Clean output buffer
-		if (!EW_DEBUG_ENABLED && ob_get_length())
-			ob_end_clean();
-
-		// Write debug message if enabled
-		if (EW_DEBUG_ENABLED && $this->Export <> "pdf")
-			echo ew_DebugMsg();
-
-		// Output data
-		if ($this->Export == "email") {
-			echo $this->ExportEmail($Doc->Text);
-		} else {
-			$Doc->Export();
-		}
-	}
-
-	// Export email
-	function ExportEmail($EmailContent) {
-		global $gTmpImages, $Language;
-		$sSender = @$_POST["sender"];
-		$sRecipient = @$_POST["recipient"];
-		$sCc = @$_POST["cc"];
-		$sBcc = @$_POST["bcc"];
-
-		// Subject
-		$sSubject = @$_POST["subject"];
-		$sEmailSubject = $sSubject;
-
-		// Message
-		$sContent = @$_POST["message"];
-		$sEmailMessage = $sContent;
-
-		// Check sender
-		if ($sSender == "") {
-			return "<p class=\"text-danger\">" . $Language->Phrase("EnterSenderEmail") . "</p>";
-		}
-		if (!ew_CheckEmail($sSender)) {
-			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperSenderEmail") . "</p>";
-		}
-
-		// Check recipient
-		if (!ew_CheckEmailList($sRecipient, EW_MAX_EMAIL_RECIPIENT)) {
-			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperRecipientEmail") . "</p>";
-		}
-
-		// Check cc
-		if (!ew_CheckEmailList($sCc, EW_MAX_EMAIL_RECIPIENT)) {
-			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperCcEmail") . "</p>";
-		}
-
-		// Check bcc
-		if (!ew_CheckEmailList($sBcc, EW_MAX_EMAIL_RECIPIENT)) {
-			return "<p class=\"text-danger\">" . $Language->Phrase("EnterProperBccEmail") . "</p>";
-		}
-
-		// Check email sent count
-		if (!isset($_SESSION[EW_EXPORT_EMAIL_COUNTER]))
-			$_SESSION[EW_EXPORT_EMAIL_COUNTER] = 0;
-		if (intval($_SESSION[EW_EXPORT_EMAIL_COUNTER]) > EW_MAX_EMAIL_SENT_COUNT) {
-			return "<p class=\"text-danger\">" . $Language->Phrase("ExceedMaxEmailExport") . "</p>";
-		}
-
-		// Send email
-		$Email = new cEmail();
-		$Email->Sender = $sSender; // Sender
-		$Email->Recipient = $sRecipient; // Recipient
-		$Email->Cc = $sCc; // Cc
-		$Email->Bcc = $sBcc; // Bcc
-		$Email->Subject = $sEmailSubject; // Subject
-		$Email->Format = "html";
-		if ($sEmailMessage <> "")
-			$sEmailMessage = ew_RemoveXSS($sEmailMessage) . "<br><br>";
-		foreach ($gTmpImages as $tmpimage)
-			$Email->AddEmbeddedImage($tmpimage);
-		$Email->Content = $sEmailMessage . ew_CleanEmailContent($EmailContent); // Content
-		$EventArgs = array();
-		if ($this->Recordset) {
-			$this->RecCnt = $this->StartRec - 1;
-			$this->Recordset->MoveFirst();
-			if ($this->StartRec > 1)
-				$this->Recordset->Move($this->StartRec - 1);
-			$EventArgs["rs"] = &$this->Recordset;
-		}
-		$bEmailSent = FALSE;
-		if ($this->Email_Sending($Email, $EventArgs))
-			$bEmailSent = $Email->Send();
-
-		// Check email sent status
-		if ($bEmailSent) {
-
-			// Update email sent count
-			$_SESSION[EW_EXPORT_EMAIL_COUNTER]++;
-
-			// Sent email success
-			return "<p class=\"text-success\">" . $Language->Phrase("SendEmailSuccess") . "</p>"; // Set up success message
-		} else {
-
-			// Sent email failure
-			return "<p class=\"text-danger\">" . $Email->SendErrDescription . "</p>";
-		}
-	}
-
-	// Export QueryString
-	function ExportQueryString() {
-
-		// Initialize
-		$sQry = "export=html";
-
-		// Build QueryString for search
-		if ($this->BasicSearch->getKeyword() <> "") {
-			$sQry .= "&" . EW_TABLE_BASIC_SEARCH . "=" . urlencode($this->BasicSearch->getKeyword()) . "&" . EW_TABLE_BASIC_SEARCH_TYPE . "=" . urlencode($this->BasicSearch->getType());
-		}
-		$this->AddSearchQueryString($sQry, $this->EmployeeID); // EmployeeID
-		$this->AddSearchQueryString($sQry, $this->LastName); // LastName
-		$this->AddSearchQueryString($sQry, $this->FirstName); // FirstName
-		$this->AddSearchQueryString($sQry, $this->Title); // Title
-		$this->AddSearchQueryString($sQry, $this->TitleOfCourtesy); // TitleOfCourtesy
-		$this->AddSearchQueryString($sQry, $this->BirthDate); // BirthDate
-		$this->AddSearchQueryString($sQry, $this->HireDate); // HireDate
-		$this->AddSearchQueryString($sQry, $this->Address); // Address
-		$this->AddSearchQueryString($sQry, $this->City); // City
-		$this->AddSearchQueryString($sQry, $this->Region); // Region
-		$this->AddSearchQueryString($sQry, $this->PostalCode); // PostalCode
-		$this->AddSearchQueryString($sQry, $this->Country); // Country
-		$this->AddSearchQueryString($sQry, $this->HomePhone); // HomePhone
-		$this->AddSearchQueryString($sQry, $this->Extension); // Extension
-		$this->AddSearchQueryString($sQry, $this->_Email); // Email
-		$this->AddSearchQueryString($sQry, $this->Photo); // Photo
-		$this->AddSearchQueryString($sQry, $this->Notes); // Notes
-		$this->AddSearchQueryString($sQry, $this->ReportsTo); // ReportsTo
-		$this->AddSearchQueryString($sQry, $this->Password); // Password
-		$this->AddSearchQueryString($sQry, $this->UserLevel); // UserLevel
-		$this->AddSearchQueryString($sQry, $this->Username); // Username
-		$this->AddSearchQueryString($sQry, $this->Activated); // Activated
-		$this->AddSearchQueryString($sQry, $this->Profile); // Profile
-
-		// Build QueryString for pager
-		$sQry .= "&" . EW_TABLE_REC_PER_PAGE . "=" . urlencode($this->getRecordsPerPage()) . "&" . EW_TABLE_START_REC . "=" . urlencode($this->getStartRecordNumber());
-		return $sQry;
-	}
-
-	// Add search QueryString
-	function AddSearchQueryString(&$Qry, &$Fld) {
-		$FldSearchValue = $Fld->AdvancedSearch->getValue("x");
-		$FldParm = substr($Fld->FldVar,2);
-		if (strval($FldSearchValue) <> "") {
-			$Qry .= "&x_" . $FldParm . "=" . urlencode($FldSearchValue) .
-				"&z_" . $FldParm . "=" . urlencode($Fld->AdvancedSearch->getValue("z"));
-		}
-		$FldSearchValue2 = $Fld->AdvancedSearch->getValue("y");
-		if (strval($FldSearchValue2) <> "") {
-			$Qry .= "&v_" . $FldParm . "=" . urlencode($Fld->AdvancedSearch->getValue("v")) .
-				"&y_" . $FldParm . "=" . urlencode($FldSearchValue2) .
-				"&w_" . $FldParm . "=" . urlencode($Fld->AdvancedSearch->getValue("w"));
-		}
 	}
 
 	// Show link optionally based on User ID
@@ -2978,12 +1638,7 @@ class ct96_employees_list extends ct96_employees {
 	function SetupLookupFilters($fld, $pageId = null) {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
-		if ($pageId == "list") {
-			switch ($fld->FldVar) {
-			}
-		} elseif ($pageId == "extbs") {
-			switch ($fld->FldVar) {
-			}
+		switch ($fld->FldVar) {
 		}
 	}
 
@@ -2991,12 +1646,7 @@ class ct96_employees_list extends ct96_employees {
 	function SetupAutoSuggestFilters($fld, $pageId = null) {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
-		if ($pageId == "list") {
-			switch ($fld->FldVar) {
-			}
-		} elseif ($pageId == "extbs") {
-			switch ($fld->FldVar) {
-			}
+		switch ($fld->FldVar) {
 		}
 	}
 
@@ -3148,7 +1798,6 @@ Page_Rendering();
 $t96_employees_list->Page_Render();
 ?>
 <?php include_once "header.php" ?>
-<?php if ($t96_employees->Export == "") { ?>
 <script type="text/javascript">
 
 // Form object
@@ -3174,55 +1823,17 @@ ft96_employeeslist.Lists["x_Activated[]"] = {"LinkField":"","Ajax":null,"AutoFil
 ft96_employeeslist.Lists["x_Activated[]"].Options = <?php echo json_encode($t96_employees_list->Activated->Options()) ?>;
 
 // Form object for search
-var CurrentSearchForm = ft96_employeeslistsrch = new ew_Form("ft96_employeeslistsrch");
-
-// Validate function for search
-ft96_employeeslistsrch.Validate = function(fobj) {
-	if (!this.ValidateRequired)
-		return true; // Ignore validation
-	fobj = fobj || this.Form;
-	var infix = "";
-
-	// Fire Form_CustomValidate event
-	if (!this.Form_CustomValidate(fobj))
-		return false;
-	return true;
-}
-
-// Form_CustomValidate event
-ft96_employeeslistsrch.Form_CustomValidate = 
- function(fobj) { // DO NOT CHANGE THIS LINE!
-
- 	// Your custom validation code here, return false if invalid.
- 	return true;
- }
-
-// Use JavaScript validation or not
-ft96_employeeslistsrch.ValidateRequired = <?php echo json_encode(EW_CLIENT_VALIDATE) ?>;
-
-// Dynamic selection lists
-ft96_employeeslistsrch.Lists["x_Activated[]"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft96_employeeslistsrch.Lists["x_Activated[]"].Options = <?php echo json_encode($t96_employees_list->Activated->Options()) ?>;
 </script>
 <script type="text/javascript">
 
 // Write your client script here, no need to add script tags.
 </script>
-<?php } ?>
-<?php if ($t96_employees->Export == "") { ?>
 <div class="ewToolbar">
 <?php if ($t96_employees_list->TotalRecs > 0 && $t96_employees_list->ExportOptions->Visible()) { ?>
 <?php $t96_employees_list->ExportOptions->Render("body") ?>
 <?php } ?>
-<?php if ($t96_employees_list->SearchOptions->Visible()) { ?>
-<?php $t96_employees_list->SearchOptions->Render("body") ?>
-<?php } ?>
-<?php if ($t96_employees_list->FilterOptions->Visible()) { ?>
-<?php $t96_employees_list->FilterOptions->Render("body") ?>
-<?php } ?>
 <div class="clearfix"></div>
 </div>
-<?php } ?>
 <?php
 	$bSelectLimit = $t96_employees_list->UseSelectLimit;
 	if ($bSelectLimit) {
@@ -3251,67 +1862,12 @@ ft96_employeeslistsrch.Lists["x_Activated[]"].Options = <?php echo json_encode($
 	}
 $t96_employees_list->RenderOtherOptions();
 ?>
-<?php if ($Security->CanSearch()) { ?>
-<?php if ($t96_employees->Export == "" && $t96_employees->CurrentAction == "") { ?>
-<form name="ft96_employeeslistsrch" id="ft96_employeeslistsrch" class="form-inline ewForm ewExtSearchForm" action="<?php echo ew_CurrentPage() ?>">
-<?php $SearchPanelClass = ($t96_employees_list->SearchWhere <> "") ? " in" : " in"; ?>
-<div id="ft96_employeeslistsrch_SearchPanel" class="ewSearchPanel collapse<?php echo $SearchPanelClass ?>">
-<input type="hidden" name="cmd" value="search">
-<input type="hidden" name="t" value="t96_employees">
-	<div class="ewBasicSearch">
-<?php
-if ($gsSearchError == "")
-	$t96_employees_list->LoadAdvancedSearch(); // Load advanced search
-
-// Render for search
-$t96_employees->RowType = EW_ROWTYPE_SEARCH;
-
-// Render row
-$t96_employees->ResetAttrs();
-$t96_employees_list->RenderRow();
-?>
-<div id="xsr_1" class="ewRow">
-<?php if ($t96_employees->Activated->Visible) { // Activated ?>
-	<div id="xsc_Activated" class="ewCell form-group">
-		<label class="ewSearchCaption ewLabel"><?php echo $t96_employees->Activated->FldCaption() ?></label>
-		<span class="ewSearchOperator"><?php echo $Language->Phrase("=") ?><input type="hidden" name="z_Activated" id="z_Activated" value="="></span>
-		<span class="ewSearchField">
-<?php
-$selwrk = (ew_ConvertToBool($t96_employees->Activated->AdvancedSearch->SearchValue)) ? " checked" : "";
-?>
-<input type="checkbox" data-table="t96_employees" data-field="x_Activated" name="x_Activated[]" id="x_Activated[]" value="1"<?php echo $selwrk ?><?php echo $t96_employees->Activated->EditAttributes() ?>>
-</span>
-	</div>
-<?php } ?>
-</div>
-<div id="xsr_2" class="ewRow">
-	<div class="ewQuickSearch input-group">
-	<input type="text" name="<?php echo EW_TABLE_BASIC_SEARCH ?>" id="<?php echo EW_TABLE_BASIC_SEARCH ?>" class="form-control" value="<?php echo ew_HtmlEncode($t96_employees_list->BasicSearch->getKeyword()) ?>" placeholder="<?php echo ew_HtmlEncode($Language->Phrase("Search")) ?>">
-	<input type="hidden" name="<?php echo EW_TABLE_BASIC_SEARCH_TYPE ?>" id="<?php echo EW_TABLE_BASIC_SEARCH_TYPE ?>" value="<?php echo ew_HtmlEncode($t96_employees_list->BasicSearch->getType()) ?>">
-	<div class="input-group-btn">
-		<button type="button" data-toggle="dropdown" class="btn btn-default"><span id="searchtype"><?php echo $t96_employees_list->BasicSearch->getTypeNameShort() ?></span><span class="caret"></span></button>
-		<ul class="dropdown-menu pull-right" role="menu">
-			<li<?php if ($t96_employees_list->BasicSearch->getType() == "") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this)"><?php echo $Language->Phrase("QuickSearchAuto") ?></a></li>
-			<li<?php if ($t96_employees_list->BasicSearch->getType() == "=") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this,'=')"><?php echo $Language->Phrase("QuickSearchExact") ?></a></li>
-			<li<?php if ($t96_employees_list->BasicSearch->getType() == "AND") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this,'AND')"><?php echo $Language->Phrase("QuickSearchAll") ?></a></li>
-			<li<?php if ($t96_employees_list->BasicSearch->getType() == "OR") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this,'OR')"><?php echo $Language->Phrase("QuickSearchAny") ?></a></li>
-		</ul>
-	<button class="btn btn-primary ewButton" name="btnsubmit" id="btnsubmit" type="submit"><?php echo $Language->Phrase("SearchBtn") ?></button>
-	</div>
-	</div>
-</div>
-	</div>
-</div>
-</form>
-<?php } ?>
-<?php } ?>
 <?php $t96_employees_list->ShowPageHeader(); ?>
 <?php
 $t96_employees_list->ShowMessage();
 ?>
 <?php if ($t96_employees_list->TotalRecs > 0 || $t96_employees->CurrentAction <> "") { ?>
 <div class="box ewBox ewGrid<?php if ($t96_employees_list->IsAddOrEdit()) { ?> ewGridAddEdit<?php } ?> t96_employees">
-<?php if ($t96_employees->Export == "") { ?>
 <div class="box-header ewGridUpperPanel">
 <?php if ($t96_employees->CurrentAction <> "gridadd" && $t96_employees->CurrentAction <> "gridedit") { ?>
 <form name="ewPagerForm" class="form-inline ewForm ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
@@ -3370,7 +1926,6 @@ $t96_employees_list->ShowMessage();
 </div>
 <div class="clearfix"></div>
 </div>
-<?php } ?>
 <form name="ft96_employeeslist" id="ft96_employeeslist" class="form-inline ewForm ewListForm" action="<?php echo ew_CurrentPage() ?>" method="post">
 <?php if ($t96_employees_list->CheckToken) { ?>
 <input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t96_employees_list->Token ?>">
@@ -3406,7 +1961,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="LastName" class="<?php echo $t96_employees->LastName->HeaderCellClass() ?>"><div id="elh_t96_employees_LastName" class="t96_employees_LastName"><div class="ewTableHeaderCaption"><?php echo $t96_employees->LastName->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="LastName" class="<?php echo $t96_employees->LastName->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->LastName) ?>',2);"><div id="elh_t96_employees_LastName" class="t96_employees_LastName">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->LastName->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->LastName->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->LastName->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->LastName->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->LastName->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->LastName->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3415,7 +1970,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="FirstName" class="<?php echo $t96_employees->FirstName->HeaderCellClass() ?>"><div id="elh_t96_employees_FirstName" class="t96_employees_FirstName"><div class="ewTableHeaderCaption"><?php echo $t96_employees->FirstName->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="FirstName" class="<?php echo $t96_employees->FirstName->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->FirstName) ?>',2);"><div id="elh_t96_employees_FirstName" class="t96_employees_FirstName">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->FirstName->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->FirstName->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->FirstName->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->FirstName->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->FirstName->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->FirstName->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3424,7 +1979,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="Title" class="<?php echo $t96_employees->Title->HeaderCellClass() ?>"><div id="elh_t96_employees_Title" class="t96_employees_Title"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Title->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="Title" class="<?php echo $t96_employees->Title->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Title) ?>',2);"><div id="elh_t96_employees_Title" class="t96_employees_Title">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Title->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Title->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Title->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Title->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Title->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Title->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3433,7 +1988,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="TitleOfCourtesy" class="<?php echo $t96_employees->TitleOfCourtesy->HeaderCellClass() ?>"><div id="elh_t96_employees_TitleOfCourtesy" class="t96_employees_TitleOfCourtesy"><div class="ewTableHeaderCaption"><?php echo $t96_employees->TitleOfCourtesy->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="TitleOfCourtesy" class="<?php echo $t96_employees->TitleOfCourtesy->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->TitleOfCourtesy) ?>',2);"><div id="elh_t96_employees_TitleOfCourtesy" class="t96_employees_TitleOfCourtesy">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->TitleOfCourtesy->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->TitleOfCourtesy->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->TitleOfCourtesy->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->TitleOfCourtesy->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->TitleOfCourtesy->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->TitleOfCourtesy->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3460,7 +2015,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="Address" class="<?php echo $t96_employees->Address->HeaderCellClass() ?>"><div id="elh_t96_employees_Address" class="t96_employees_Address"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Address->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="Address" class="<?php echo $t96_employees->Address->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Address) ?>',2);"><div id="elh_t96_employees_Address" class="t96_employees_Address">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Address->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Address->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Address->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Address->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Address->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Address->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3469,7 +2024,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="City" class="<?php echo $t96_employees->City->HeaderCellClass() ?>"><div id="elh_t96_employees_City" class="t96_employees_City"><div class="ewTableHeaderCaption"><?php echo $t96_employees->City->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="City" class="<?php echo $t96_employees->City->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->City) ?>',2);"><div id="elh_t96_employees_City" class="t96_employees_City">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->City->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->City->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->City->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->City->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->City->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->City->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3478,7 +2033,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="Region" class="<?php echo $t96_employees->Region->HeaderCellClass() ?>"><div id="elh_t96_employees_Region" class="t96_employees_Region"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Region->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="Region" class="<?php echo $t96_employees->Region->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Region) ?>',2);"><div id="elh_t96_employees_Region" class="t96_employees_Region">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Region->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Region->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Region->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Region->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Region->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Region->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3487,7 +2042,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="PostalCode" class="<?php echo $t96_employees->PostalCode->HeaderCellClass() ?>"><div id="elh_t96_employees_PostalCode" class="t96_employees_PostalCode"><div class="ewTableHeaderCaption"><?php echo $t96_employees->PostalCode->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="PostalCode" class="<?php echo $t96_employees->PostalCode->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->PostalCode) ?>',2);"><div id="elh_t96_employees_PostalCode" class="t96_employees_PostalCode">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->PostalCode->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->PostalCode->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->PostalCode->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->PostalCode->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->PostalCode->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->PostalCode->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3496,7 +2051,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="Country" class="<?php echo $t96_employees->Country->HeaderCellClass() ?>"><div id="elh_t96_employees_Country" class="t96_employees_Country"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Country->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="Country" class="<?php echo $t96_employees->Country->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Country) ?>',2);"><div id="elh_t96_employees_Country" class="t96_employees_Country">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Country->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Country->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Country->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Country->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Country->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Country->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3505,7 +2060,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="HomePhone" class="<?php echo $t96_employees->HomePhone->HeaderCellClass() ?>"><div id="elh_t96_employees_HomePhone" class="t96_employees_HomePhone"><div class="ewTableHeaderCaption"><?php echo $t96_employees->HomePhone->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="HomePhone" class="<?php echo $t96_employees->HomePhone->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->HomePhone) ?>',2);"><div id="elh_t96_employees_HomePhone" class="t96_employees_HomePhone">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->HomePhone->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->HomePhone->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->HomePhone->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->HomePhone->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->HomePhone->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->HomePhone->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3514,7 +2069,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="Extension" class="<?php echo $t96_employees->Extension->HeaderCellClass() ?>"><div id="elh_t96_employees_Extension" class="t96_employees_Extension"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Extension->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="Extension" class="<?php echo $t96_employees->Extension->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Extension) ?>',2);"><div id="elh_t96_employees_Extension" class="t96_employees_Extension">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Extension->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Extension->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Extension->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Extension->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Extension->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Extension->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3523,7 +2078,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="_Email" class="<?php echo $t96_employees->_Email->HeaderCellClass() ?>"><div id="elh_t96_employees__Email" class="t96_employees__Email"><div class="ewTableHeaderCaption"><?php echo $t96_employees->_Email->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="_Email" class="<?php echo $t96_employees->_Email->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->_Email) ?>',2);"><div id="elh_t96_employees__Email" class="t96_employees__Email">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->_Email->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->_Email->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->_Email->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->_Email->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->_Email->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->_Email->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3532,7 +2087,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="Photo" class="<?php echo $t96_employees->Photo->HeaderCellClass() ?>"><div id="elh_t96_employees_Photo" class="t96_employees_Photo"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Photo->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="Photo" class="<?php echo $t96_employees->Photo->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Photo) ?>',2);"><div id="elh_t96_employees_Photo" class="t96_employees_Photo">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Photo->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Photo->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Photo->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Photo->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Photo->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Photo->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3550,7 +2105,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="Password" class="<?php echo $t96_employees->Password->HeaderCellClass() ?>"><div id="elh_t96_employees_Password" class="t96_employees_Password"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Password->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="Password" class="<?php echo $t96_employees->Password->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Password) ?>',2);"><div id="elh_t96_employees_Password" class="t96_employees_Password">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Password->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Password->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Password->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Password->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Password->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Password->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3568,7 +2123,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 		<th data-name="Username" class="<?php echo $t96_employees->Username->HeaderCellClass() ?>"><div id="elh_t96_employees_Username" class="t96_employees_Username"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Username->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="Username" class="<?php echo $t96_employees->Username->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Username) ?>',2);"><div id="elh_t96_employees_Username" class="t96_employees_Username">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Username->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Username->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Username->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Username->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Username->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Username->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
@@ -3845,7 +2400,6 @@ $t96_employees_list->ListOptions->Render("body", "right", $t96_employees_list->R
 if ($t96_employees_list->Recordset)
 	$t96_employees_list->Recordset->Close();
 ?>
-<?php if ($t96_employees->Export == "") { ?>
 <div class="box-footer ewGridLowerPanel">
 <?php if ($t96_employees->CurrentAction <> "gridadd" && $t96_employees->CurrentAction <> "gridedit") { ?>
 <form name="ewPagerForm" class="ewForm form-inline ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
@@ -3904,7 +2458,6 @@ if ($t96_employees_list->Recordset)
 </div>
 <div class="clearfix"></div>
 </div>
-<?php } ?>
 </div>
 <?php } ?>
 <?php if ($t96_employees_list->TotalRecs == 0 && $t96_employees->CurrentAction == "") { // Show other options ?>
@@ -3918,26 +2471,20 @@ if ($t96_employees_list->Recordset)
 </div>
 <div class="clearfix"></div>
 <?php } ?>
-<?php if ($t96_employees->Export == "") { ?>
 <script type="text/javascript">
-ft96_employeeslistsrch.FilterList = <?php echo $t96_employees_list->GetFilterList() ?>;
-ft96_employeeslistsrch.Init();
 ft96_employeeslist.Init();
 </script>
-<?php } ?>
 <?php
 $t96_employees_list->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
-<?php if ($t96_employees->Export == "") { ?>
 <script type="text/javascript">
 
 // Write your table-specific startup script here
 // document.write("page loaded");
 
 </script>
-<?php } ?>
 <?php include_once "footer.php" ?>
 <?php
 $t96_employees_list->Page_Terminate();

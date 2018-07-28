@@ -65,6 +65,12 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 		if ($this->UseTokenInUrl) $PageUrl .= "t=" . $this->TableVar . "&"; // Add page token
 		return $PageUrl;
 	}
+	var $AuditTrailOnAdd = TRUE;
+	var $AuditTrailOnEdit = TRUE;
+	var $AuditTrailOnDelete = TRUE;
+	var $AuditTrailOnView = FALSE;
+	var $AuditTrailOnViewData = FALSE;
+	var $AuditTrailOnSearch = FALSE;
 
 	// Message
 	function getMessage() {
@@ -335,7 +341,6 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 		$this->Banyaknya->SetVisibility();
 		$this->Harga->SetVisibility();
 		$this->Jumlah->SetVisibility();
-		$this->maingroup_id->SetVisibility();
 		$this->subgroup_id->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
@@ -645,9 +650,6 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 		if (!$this->Jumlah->FldIsDetailKey) {
 			$this->Jumlah->setFormValue($objForm->GetValue("x_Jumlah"));
 		}
-		if (!$this->maingroup_id->FldIsDetailKey) {
-			$this->maingroup_id->setFormValue($objForm->GetValue("x_maingroup_id"));
-		}
 		if (!$this->subgroup_id->FldIsDetailKey) {
 			$this->subgroup_id->setFormValue($objForm->GetValue("x_subgroup_id"));
 		}
@@ -665,7 +667,6 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 		$this->Banyaknya->CurrentValue = $this->Banyaknya->FormValue;
 		$this->Harga->CurrentValue = $this->Harga->FormValue;
 		$this->Jumlah->CurrentValue = $this->Jumlah->FormValue;
-		$this->maingroup_id->CurrentValue = $this->maingroup_id->FormValue;
 		$this->subgroup_id->CurrentValue = $this->subgroup_id->FormValue;
 	}
 
@@ -736,7 +737,6 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 		$this->Banyaknya->setDbValue($row['Banyaknya']);
 		$this->Harga->setDbValue($row['Harga']);
 		$this->Jumlah->setDbValue($row['Jumlah']);
-		$this->maingroup_id->setDbValue($row['maingroup_id']);
 		$this->subgroup_id->setDbValue($row['subgroup_id']);
 	}
 
@@ -751,7 +751,6 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 		$row['Banyaknya'] = NULL;
 		$row['Harga'] = NULL;
 		$row['Jumlah'] = NULL;
-		$row['maingroup_id'] = NULL;
 		$row['subgroup_id'] = NULL;
 		return $row;
 	}
@@ -769,7 +768,6 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 		$this->Banyaknya->DbValue = $row['Banyaknya'];
 		$this->Harga->DbValue = $row['Harga'];
 		$this->Jumlah->DbValue = $row['Jumlah'];
-		$this->maingroup_id->DbValue = $row['maingroup_id'];
 		$this->subgroup_id->DbValue = $row['subgroup_id'];
 	}
 
@@ -825,7 +823,6 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 		// Banyaknya
 		// Harga
 		// Jumlah
-		// maingroup_id
 		// subgroup_id
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
@@ -862,10 +859,6 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 		// Jumlah
 		$this->Jumlah->ViewValue = $this->Jumlah->CurrentValue;
 		$this->Jumlah->ViewCustomAttributes = "";
-
-		// maingroup_id
-		$this->maingroup_id->ViewValue = $this->maingroup_id->CurrentValue;
-		$this->maingroup_id->ViewCustomAttributes = "";
 
 		// subgroup_id
 		$this->subgroup_id->ViewValue = $this->subgroup_id->CurrentValue;
@@ -910,11 +903,6 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 			$this->Jumlah->LinkCustomAttributes = "";
 			$this->Jumlah->HrefValue = "";
 			$this->Jumlah->TooltipValue = "";
-
-			// maingroup_id
-			$this->maingroup_id->LinkCustomAttributes = "";
-			$this->maingroup_id->HrefValue = "";
-			$this->maingroup_id->TooltipValue = "";
 
 			// subgroup_id
 			$this->subgroup_id->LinkCustomAttributes = "";
@@ -973,12 +961,6 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 			$this->Jumlah->PlaceHolder = ew_RemoveHtml($this->Jumlah->FldCaption());
 			if (strval($this->Jumlah->EditValue) <> "" && is_numeric($this->Jumlah->EditValue)) $this->Jumlah->EditValue = ew_FormatNumber($this->Jumlah->EditValue, -2, -1, -2, 0);
 
-			// maingroup_id
-			$this->maingroup_id->EditAttrs["class"] = "form-control";
-			$this->maingroup_id->EditCustomAttributes = "";
-			$this->maingroup_id->EditValue = ew_HtmlEncode($this->maingroup_id->CurrentValue);
-			$this->maingroup_id->PlaceHolder = ew_RemoveHtml($this->maingroup_id->FldCaption());
-
 			// subgroup_id
 			$this->subgroup_id->EditAttrs["class"] = "form-control";
 			$this->subgroup_id->EditCustomAttributes = "";
@@ -1018,10 +1000,6 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 			// Jumlah
 			$this->Jumlah->LinkCustomAttributes = "";
 			$this->Jumlah->HrefValue = "";
-
-			// maingroup_id
-			$this->maingroup_id->LinkCustomAttributes = "";
-			$this->maingroup_id->HrefValue = "";
 
 			// subgroup_id
 			$this->subgroup_id->LinkCustomAttributes = "";
@@ -1083,12 +1061,6 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 		}
 		if (!ew_CheckNumber($this->Jumlah->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Jumlah->FldErrMsg());
-		}
-		if (!$this->maingroup_id->FldIsDetailKey && !is_null($this->maingroup_id->FormValue) && $this->maingroup_id->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->maingroup_id->FldCaption(), $this->maingroup_id->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->maingroup_id->FormValue)) {
-			ew_AddMessage($gsFormError, $this->maingroup_id->FldErrMsg());
 		}
 		if (!$this->subgroup_id->FldIsDetailKey && !is_null($this->subgroup_id->FormValue) && $this->subgroup_id->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->subgroup_id->FldCaption(), $this->subgroup_id->ReqErrMsg));
@@ -1152,9 +1124,6 @@ class ct06_pengeluaran_edit extends ct06_pengeluaran {
 
 			// Jumlah
 			$this->Jumlah->SetDbValueDef($rsnew, $this->Jumlah->CurrentValue, 0, $this->Jumlah->ReadOnly);
-
-			// maingroup_id
-			$this->maingroup_id->SetDbValueDef($rsnew, $this->maingroup_id->CurrentValue, 0, $this->maingroup_id->ReadOnly);
 
 			// subgroup_id
 			$this->subgroup_id->SetDbValueDef($rsnew, $this->subgroup_id->CurrentValue, 0, $this->subgroup_id->ReadOnly);
@@ -1364,12 +1333,6 @@ ft06_pengeluaranedit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Jumlah");
 			if (elm && !ew_CheckNumber(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pengeluaran->Jumlah->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_maingroup_id");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pengeluaran->maingroup_id->FldCaption(), $t06_pengeluaran->maingroup_id->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_maingroup_id");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pengeluaran->maingroup_id->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_subgroup_id");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pengeluaran->subgroup_id->FldCaption(), $t06_pengeluaran->subgroup_id->ReqErrMsg)) ?>");
@@ -1549,16 +1512,6 @@ $t06_pengeluaran_edit->ShowMessage();
 <input type="text" data-table="t06_pengeluaran" data-field="x_Jumlah" name="x_Jumlah" id="x_Jumlah" size="30" placeholder="<?php echo ew_HtmlEncode($t06_pengeluaran->Jumlah->getPlaceHolder()) ?>" value="<?php echo $t06_pengeluaran->Jumlah->EditValue ?>"<?php echo $t06_pengeluaran->Jumlah->EditAttributes() ?>>
 </span>
 <?php echo $t06_pengeluaran->Jumlah->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t06_pengeluaran->maingroup_id->Visible) { // maingroup_id ?>
-	<div id="r_maingroup_id" class="form-group">
-		<label id="elh_t06_pengeluaran_maingroup_id" for="x_maingroup_id" class="<?php echo $t06_pengeluaran_edit->LeftColumnClass ?>"><?php echo $t06_pengeluaran->maingroup_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="<?php echo $t06_pengeluaran_edit->RightColumnClass ?>"><div<?php echo $t06_pengeluaran->maingroup_id->CellAttributes() ?>>
-<span id="el_t06_pengeluaran_maingroup_id">
-<input type="text" data-table="t06_pengeluaran" data-field="x_maingroup_id" name="x_maingroup_id" id="x_maingroup_id" size="30" placeholder="<?php echo ew_HtmlEncode($t06_pengeluaran->maingroup_id->getPlaceHolder()) ?>" value="<?php echo $t06_pengeluaran->maingroup_id->EditValue ?>"<?php echo $t06_pengeluaran->maingroup_id->EditAttributes() ?>>
-</span>
-<?php echo $t06_pengeluaran->maingroup_id->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 <?php if ($t06_pengeluaran->subgroup_id->Visible) { // subgroup_id ?>

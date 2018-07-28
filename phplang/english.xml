@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/7/26" version="14.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/7/27" version="14.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -627,6 +627,9 @@
     <menu id="22">
       <phrase id="menutext" value="Setup" />
     </menu>
+    <menu id="33">
+      <phrase id="menutext" value="Sekolah" />
+    </menu>
     <menu id="1">
       <phrase id="menutext" value="Supplier" />
     </menu>
@@ -642,18 +645,66 @@
     <menu id="5">
       <phrase id="menutext" value="Sub Jenis Pengeluaran" />
     </menu>
-    <menu id="7">
+    <menu id="32">
       <phrase id="menutext" value="User" />
     </menu>
+    <menu id="7">
+      <phrase id="menutext" value="List" />
+    </menu>
     <menu id="8">
-      <phrase id="menutext" value="Level User" />
+      <phrase id="menutext" value="Level" />
     </menu>
     <menu id="9">
-      <phrase id="menutext" value="Hak Akses User" />
+      <phrase id="menutext" value="Hak Akses" />
     </menu>
     <menu id="23">
-      <phrase id="menutext" value="User Log" />
+      <phrase id="menutext" value="Log" />
     </menu>
+    <menu id="10012">
+      <phrase id="menutext" value="Laporan" />
+    </menu>
+    <menu id="10007">
+      <phrase id="menutext" value="Sekolah" />
+    </menu>
+    <menu id="10001">
+      <phrase id="menutext" value="Supplier" />
+    </menu>
+    <menu id="10002">
+      <phrase id="menutext" value="Satuan" />
+    </menu>
+    <menu id="10003">
+      <phrase id="menutext" value="Barang" />
+    </menu>
+    <menu id="10005">
+      <phrase id="menutext" value="Jenis Pengeluaran" />
+    </menu>
+    <menu id="10014">
+      <phrase id="menutext" value="Jenis Pengeluaran" />
+    </menu>
+    <menu id="10013">
+      <phrase id="menutext" value="Laporan" />
+    </menu>
+    <menu id="10004">
+      <phrase id="menutext" value="Jenis Pengeluaran" />
+    </menu>
+    <menu id="10006">
+      <phrase id="menutext" value="Pengeluaran" />
+    </menu>
+    <menu id="10008">
+      <phrase id="menutext" value="t 96 employees" />
+    </menu>
+    <menu id="10009">
+      <phrase id="menutext" value="t 97 userlevels" />
+    </menu>
+    <menu id="10010">
+      <phrase id="menutext" value="t 98 userlevelpermissions" />
+    </menu>
+    <menu id="10011">
+      <phrase id="menutext" value="t 99 audittrail" />
+    </menu>
+    <table id="cf01_home_php">
+      <phrase id="tblcaption" value="Home" />
+    </table>
     <table id="t01_supplier">
       <phrase id="tblcaption" value="Supplier" />
       <field id="id">
@@ -737,15 +788,27 @@
       <field id="jumlah">
         <phrase id="fldcaption" value="Jumlah" />
       </field>
-      <field id="maingroup_id">
-        <phrase id="fldcaption" value="maingroup id" />
-      </field>
       <field id="subgroup_id">
         <phrase id="fldcaption" value="subgroup id" />
       </field>
     </table>
+    <table id="t07_sekolah">
+      <phrase id="tblcaption" value="Sekolah" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="nama">
+        <phrase id="fldcaption" value="Nama" />
+      </field>
+      <field id="alamat">
+        <phrase id="fldcaption" value="Alamat" />
+      </field>
+      <field id="notelphp">
+        <phrase id="fldcaption" value="No. Telp." />
+      </field>
+    </table>
     <table id="t96_employees">
-      <phrase id="tblcaption" value="User" />
+      <phrase id="tblcaption" value="List" />
       <field id="employeeid">
         <phrase id="fldcaption" value="Employee ID" />
       </field>
@@ -821,7 +884,7 @@
       </field>
     </table>
     <table id="t97_userlevels">
-      <phrase id="tblcaption" value="Level User" />
+      <phrase id="tblcaption" value="Level" />
       <field id="userlevelid">
         <phrase id="fldcaption" value="userlevelid" />
       </field>
@@ -830,7 +893,7 @@
       </field>
     </table>
     <table id="t98_userlevelpermissions">
-      <phrase id="tblcaption" value="Hak Akses User" />
+      <phrase id="tblcaption" value="Hak Akses" />
       <field id="userlevelid">
         <phrase id="fldcaption" value="userlevelid" />
       </field>
@@ -841,11 +904,8 @@
         <phrase id="fldcaption" value="permission" />
       </field>
     </table>
-    <table id="cf01_home_php">
-      <phrase id="tblcaption" value="Home" />
-    </table>
     <table id="t99_audittrail">
-      <phrase id="tblcaption" value="User Log" />
+      <phrase id="tblcaption" value="Log" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
