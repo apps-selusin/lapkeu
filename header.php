@@ -60,6 +60,9 @@ if (!isset($Language)) {
 ?>
 <script type="text/javascript" src="<?php echo $jsfile ?>"></script>
 <?php } ?>
+<link rel="stylesheet" type="text/css" href="<?php echo $EW_RELATIVE_PATH ?>phpcss/bootstrap-datetimepicker.css">
+<script type="text/javascript" src="<?php echo $EW_RELATIVE_PATH ?>phpjs/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="<?php echo $EW_RELATIVE_PATH ?>phpjs/ewdatetimepicker.js"></script>
 <script type="text/javascript">
 var EW_LANGUAGE_ID = "<?php echo $gsLanguage ?>";
 var EW_DATE_SEPARATOR = "<?php echo $EW_DATE_SEPARATOR ?>"; // Date separator

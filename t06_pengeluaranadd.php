@@ -570,7 +570,7 @@ class ct06_pengeluaran_add extends ct06_pengeluaran {
 		}
 		if (!$this->Tanggal->FldIsDetailKey) {
 			$this->Tanggal->setFormValue($objForm->GetValue("x_Tanggal"));
-			$this->Tanggal->CurrentValue = ew_UnFormatDateTime($this->Tanggal->CurrentValue, 0);
+			$this->Tanggal->CurrentValue = ew_UnFormatDateTime($this->Tanggal->CurrentValue, 7);
 		}
 		if (!$this->NoNota->FldIsDetailKey) {
 			$this->NoNota->setFormValue($objForm->GetValue("x_NoNota"));
@@ -597,7 +597,7 @@ class ct06_pengeluaran_add extends ct06_pengeluaran {
 		global $objForm;
 		$this->supplier_id->CurrentValue = $this->supplier_id->FormValue;
 		$this->Tanggal->CurrentValue = $this->Tanggal->FormValue;
-		$this->Tanggal->CurrentValue = ew_UnFormatDateTime($this->Tanggal->CurrentValue, 0);
+		$this->Tanggal->CurrentValue = ew_UnFormatDateTime($this->Tanggal->CurrentValue, 7);
 		$this->NoNota->CurrentValue = $this->NoNota->FormValue;
 		$this->barang_id->CurrentValue = $this->barang_id->FormValue;
 		$this->Banyaknya->CurrentValue = $this->Banyaknya->FormValue;
@@ -641,9 +641,19 @@ class ct06_pengeluaran_add extends ct06_pengeluaran {
 			return;
 		$this->id->setDbValue($row['id']);
 		$this->supplier_id->setDbValue($row['supplier_id']);
+		if (array_key_exists('EV__supplier_id', $rs->fields)) {
+			$this->supplier_id->VirtualValue = $rs->fields('EV__supplier_id'); // Set up virtual field value
+		} else {
+			$this->supplier_id->VirtualValue = ""; // Clear value
+		}
 		$this->Tanggal->setDbValue($row['Tanggal']);
 		$this->NoNota->setDbValue($row['NoNota']);
 		$this->barang_id->setDbValue($row['barang_id']);
+		if (array_key_exists('EV__barang_id', $rs->fields)) {
+			$this->barang_id->VirtualValue = $rs->fields('EV__barang_id'); // Set up virtual field value
+		} else {
+			$this->barang_id->VirtualValue = ""; // Clear value
+		}
 		$this->Banyaknya->setDbValue($row['Banyaknya']);
 		$this->Harga->setDbValue($row['Harga']);
 		$this->Jumlah->setDbValue($row['Jumlah']);
@@ -743,12 +753,38 @@ class ct06_pengeluaran_add extends ct06_pengeluaran {
 		$this->id->ViewCustomAttributes = "";
 
 		// supplier_id
-		$this->supplier_id->ViewValue = $this->supplier_id->CurrentValue;
+		if ($this->supplier_id->VirtualValue <> "") {
+			$this->supplier_id->ViewValue = $this->supplier_id->VirtualValue;
+		} else {
+		if (strval($this->supplier_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->supplier_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, `Alamat` AS `Disp2Fld`, `NoTelpHp` AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_supplier`";
+		$sWhereWrk = "";
+		$this->supplier_id->LookupFilters = array("dx1" => '`Nama`', "dx2" => '`Alamat`', "dx3" => '`NoTelpHp`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->supplier_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+		$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$arwrk[2] = $rswrk->fields('Disp2Fld');
+				$arwrk[3] = $rswrk->fields('Disp3Fld');
+				$this->supplier_id->ViewValue = $this->supplier_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->supplier_id->ViewValue = $this->supplier_id->CurrentValue;
+			}
+		} else {
+			$this->supplier_id->ViewValue = NULL;
+		}
+		}
 		$this->supplier_id->ViewCustomAttributes = "";
 
 		// Tanggal
 		$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
-		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 0);
+		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 7);
 		$this->Tanggal->ViewCustomAttributes = "";
 
 		// NoNota
@@ -756,7 +792,32 @@ class ct06_pengeluaran_add extends ct06_pengeluaran {
 		$this->NoNota->ViewCustomAttributes = "";
 
 		// barang_id
-		$this->barang_id->ViewValue = $this->barang_id->CurrentValue;
+		if ($this->barang_id->VirtualValue <> "") {
+			$this->barang_id->ViewValue = $this->barang_id->VirtualValue;
+		} else {
+		if (strval($this->barang_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->barang_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, `Satuan` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v01_barang_satuan`";
+		$sWhereWrk = "";
+		$this->barang_id->LookupFilters = array("dx1" => '`Nama`', "dx2" => '`Satuan`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->barang_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+		$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$arwrk[2] = $rswrk->fields('Disp2Fld');
+				$this->barang_id->ViewValue = $this->barang_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->barang_id->ViewValue = $this->barang_id->CurrentValue;
+			}
+		} else {
+			$this->barang_id->ViewValue = NULL;
+		}
+		}
 		$this->barang_id->ViewCustomAttributes = "";
 
 		// Banyaknya
@@ -817,15 +878,37 @@ class ct06_pengeluaran_add extends ct06_pengeluaran {
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// supplier_id
-			$this->supplier_id->EditAttrs["class"] = "form-control";
 			$this->supplier_id->EditCustomAttributes = "";
-			$this->supplier_id->EditValue = ew_HtmlEncode($this->supplier_id->CurrentValue);
-			$this->supplier_id->PlaceHolder = ew_RemoveHtml($this->supplier_id->FldCaption());
+			if (trim(strval($this->supplier_id->CurrentValue)) == "") {
+				$sFilterWrk = "0=1";
+			} else {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->supplier_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			}
+			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, `Alamat` AS `Disp2Fld`, `NoTelpHp` AS `Disp3Fld`, '' AS `Disp4Fld`, '' AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t01_supplier`";
+			$sWhereWrk = "";
+			$this->supplier_id->LookupFilters = array("dx1" => '`Nama`', "dx2" => '`Alamat`', "dx3" => '`NoTelpHp`');
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->supplier_id, $sWhereWrk); // Call Lookup Selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = ew_HtmlEncode($rswrk->fields('DispFld'));
+				$arwrk[2] = ew_HtmlEncode($rswrk->fields('Disp2Fld'));
+				$arwrk[3] = ew_HtmlEncode($rswrk->fields('Disp3Fld'));
+				$this->supplier_id->ViewValue = $this->supplier_id->DisplayValue($arwrk);
+			} else {
+				$this->supplier_id->ViewValue = $Language->Phrase("PleaseSelect");
+			}
+			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
+			if ($rswrk) $rswrk->Close();
+			$this->supplier_id->EditValue = $arwrk;
 
 			// Tanggal
 			$this->Tanggal->EditAttrs["class"] = "form-control";
 			$this->Tanggal->EditCustomAttributes = "";
-			$this->Tanggal->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->Tanggal->CurrentValue, 8));
+			$this->Tanggal->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->Tanggal->CurrentValue, 7));
 			$this->Tanggal->PlaceHolder = ew_RemoveHtml($this->Tanggal->FldCaption());
 
 			// NoNota
@@ -835,10 +918,31 @@ class ct06_pengeluaran_add extends ct06_pengeluaran {
 			$this->NoNota->PlaceHolder = ew_RemoveHtml($this->NoNota->FldCaption());
 
 			// barang_id
-			$this->barang_id->EditAttrs["class"] = "form-control";
 			$this->barang_id->EditCustomAttributes = "";
-			$this->barang_id->EditValue = ew_HtmlEncode($this->barang_id->CurrentValue);
-			$this->barang_id->PlaceHolder = ew_RemoveHtml($this->barang_id->FldCaption());
+			if (trim(strval($this->barang_id->CurrentValue)) == "") {
+				$sFilterWrk = "0=1";
+			} else {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->barang_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			}
+			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, `Satuan` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, '' AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `v01_barang_satuan`";
+			$sWhereWrk = "";
+			$this->barang_id->LookupFilters = array("dx1" => '`Nama`', "dx2" => '`Satuan`');
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->barang_id, $sWhereWrk); // Call Lookup Selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = ew_HtmlEncode($rswrk->fields('DispFld'));
+				$arwrk[2] = ew_HtmlEncode($rswrk->fields('Disp2Fld'));
+				$this->barang_id->ViewValue = $this->barang_id->DisplayValue($arwrk);
+			} else {
+				$this->barang_id->ViewValue = $Language->Phrase("PleaseSelect");
+			}
+			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
+			if ($rswrk) $rswrk->Close();
+			$this->barang_id->EditValue = $arwrk;
 
 			// Banyaknya
 			$this->Banyaknya->EditAttrs["class"] = "form-control";
@@ -922,13 +1026,10 @@ class ct06_pengeluaran_add extends ct06_pengeluaran {
 		if (!$this->supplier_id->FldIsDetailKey && !is_null($this->supplier_id->FormValue) && $this->supplier_id->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->supplier_id->FldCaption(), $this->supplier_id->ReqErrMsg));
 		}
-		if (!ew_CheckInteger($this->supplier_id->FormValue)) {
-			ew_AddMessage($gsFormError, $this->supplier_id->FldErrMsg());
-		}
 		if (!$this->Tanggal->FldIsDetailKey && !is_null($this->Tanggal->FormValue) && $this->Tanggal->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Tanggal->FldCaption(), $this->Tanggal->ReqErrMsg));
 		}
-		if (!ew_CheckDateDef($this->Tanggal->FormValue)) {
+		if (!ew_CheckEuroDate($this->Tanggal->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Tanggal->FldErrMsg());
 		}
 		if (!$this->NoNota->FldIsDetailKey && !is_null($this->NoNota->FormValue) && $this->NoNota->FormValue == "") {
@@ -936,9 +1037,6 @@ class ct06_pengeluaran_add extends ct06_pengeluaran {
 		}
 		if (!$this->barang_id->FldIsDetailKey && !is_null($this->barang_id->FormValue) && $this->barang_id->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->barang_id->FldCaption(), $this->barang_id->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->barang_id->FormValue)) {
-			ew_AddMessage($gsFormError, $this->barang_id->FldErrMsg());
 		}
 		if (!$this->Banyaknya->FldIsDetailKey && !is_null($this->Banyaknya->FormValue) && $this->Banyaknya->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Banyaknya->FldCaption(), $this->Banyaknya->ReqErrMsg));
@@ -992,7 +1090,7 @@ class ct06_pengeluaran_add extends ct06_pengeluaran {
 		$this->supplier_id->SetDbValueDef($rsnew, $this->supplier_id->CurrentValue, 0, FALSE);
 
 		// Tanggal
-		$this->Tanggal->SetDbValueDef($rsnew, ew_UnFormatDateTime($this->Tanggal->CurrentValue, 0), ew_CurrentDate(), FALSE);
+		$this->Tanggal->SetDbValueDef($rsnew, ew_UnFormatDateTime($this->Tanggal->CurrentValue, 7), ew_CurrentDate(), FALSE);
 
 		// NoNota
 		$this->NoNota->SetDbValueDef($rsnew, $this->NoNota->CurrentValue, "", FALSE);
@@ -1057,6 +1155,32 @@ class ct06_pengeluaran_add extends ct06_pengeluaran {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
+		case "x_supplier_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, `Alamat` AS `Disp2Fld`, `NoTelpHp` AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_supplier`";
+			$sWhereWrk = "{filter}";
+			$fld->LookupFilters = array("dx1" => '`Nama`', "dx2" => '`Alamat`', "dx3" => '`NoTelpHp`');
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` IN ({filter_value})', "t0" => "3", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->supplier_id, $sWhereWrk); // Call Lookup Selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " ORDER BY `Nama` ASC";
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
+		case "x_barang_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, `Satuan` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v01_barang_satuan`";
+			$sWhereWrk = "{filter}";
+			$fld->LookupFilters = array("dx1" => '`Nama`', "dx2" => '`Satuan`');
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` IN ({filter_value})', "t0" => "3", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->barang_id, $sWhereWrk); // Call Lookup Selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " ORDER BY `Nama` ASC";
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 		}
 	}
 
@@ -1179,14 +1303,11 @@ ft06_pengeluaranadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_supplier_id");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pengeluaran->supplier_id->FldCaption(), $t06_pengeluaran->supplier_id->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_supplier_id");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pengeluaran->supplier_id->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_Tanggal");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pengeluaran->Tanggal->FldCaption(), $t06_pengeluaran->Tanggal->ReqErrMsg)) ?>");
 			elm = this.GetElements("x" + infix + "_Tanggal");
-			if (elm && !ew_CheckDateDef(elm.value))
+			if (elm && !ew_CheckEuroDate(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pengeluaran->Tanggal->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_NoNota");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
@@ -1194,9 +1315,6 @@ ft06_pengeluaranadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_barang_id");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pengeluaran->barang_id->FldCaption(), $t06_pengeluaran->barang_id->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_barang_id");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pengeluaran->barang_id->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_Banyaknya");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pengeluaran->Banyaknya->FldCaption(), $t06_pengeluaran->Banyaknya->ReqErrMsg)) ?>");
@@ -1250,8 +1368,12 @@ ft06_pengeluaranadd.Form_CustomValidate =
 ft06_pengeluaranadd.ValidateRequired = <?php echo json_encode(EW_CLIENT_VALIDATE) ?>;
 
 // Dynamic selection lists
-// Form object for search
+ft06_pengeluaranadd.Lists["x_supplier_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","x_Alamat","x_NoTelpHp",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_supplier"};
+ft06_pengeluaranadd.Lists["x_supplier_id"].Data = "<?php echo $t06_pengeluaran_add->supplier_id->LookupFilterQuery(FALSE, "add") ?>";
+ft06_pengeluaranadd.Lists["x_barang_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","x_Satuan","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v01_barang_satuan"};
+ft06_pengeluaranadd.Lists["x_barang_id"].Data = "<?php echo $t06_pengeluaran_add->barang_id->LookupFilterQuery(FALSE, "add") ?>";
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
@@ -1274,7 +1396,14 @@ $t06_pengeluaran_add->ShowMessage();
 		<label id="elh_t06_pengeluaran_supplier_id" for="x_supplier_id" class="<?php echo $t06_pengeluaran_add->LeftColumnClass ?>"><?php echo $t06_pengeluaran->supplier_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="<?php echo $t06_pengeluaran_add->RightColumnClass ?>"><div<?php echo $t06_pengeluaran->supplier_id->CellAttributes() ?>>
 <span id="el_t06_pengeluaran_supplier_id">
-<input type="text" data-table="t06_pengeluaran" data-field="x_supplier_id" name="x_supplier_id" id="x_supplier_id" size="30" placeholder="<?php echo ew_HtmlEncode($t06_pengeluaran->supplier_id->getPlaceHolder()) ?>" value="<?php echo $t06_pengeluaran->supplier_id->EditValue ?>"<?php echo $t06_pengeluaran->supplier_id->EditAttributes() ?>>
+<span class="ewLookupList">
+	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_supplier_id"><?php echo (strval($t06_pengeluaran->supplier_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t06_pengeluaran->supplier_id->ViewValue); ?></span>
+</span>
+<button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t06_pengeluaran->supplier_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x_supplier_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"<?php echo (($t06_pengeluaran->supplier_id->ReadOnly || $t06_pengeluaran->supplier_id->Disabled) ? " disabled" : "")?>><span class="glyphicon glyphicon-search ewIcon"></span></button>
+<input type="hidden" data-table="t06_pengeluaran" data-field="x_supplier_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t06_pengeluaran->supplier_id->DisplayValueSeparatorAttribute() ?>" name="x_supplier_id" id="x_supplier_id" value="<?php echo $t06_pengeluaran->supplier_id->CurrentValue ?>"<?php echo $t06_pengeluaran->supplier_id->EditAttributes() ?>>
+<?php if (AllowAdd(CurrentProjectID() . "t01_supplier") && !$t06_pengeluaran->supplier_id->ReadOnly) { ?>
+<button type="button" title="<?php echo ew_HtmlTitle($Language->Phrase("AddLink")) . "&nbsp;" . $t06_pengeluaran->supplier_id->FldCaption() ?>" onclick="ew_AddOptDialogShow({lnk:this,el:'x_supplier_id',url:'t01_supplieraddopt.php'});" class="ewAddOptBtn btn btn-default btn-sm" id="aol_x_supplier_id"><span class="glyphicon glyphicon-plus ewIcon"></span><span class="hide"><?php echo $Language->Phrase("AddLink") ?>&nbsp;<?php echo $t06_pengeluaran->supplier_id->FldCaption() ?></span></button>
+<?php } ?>
 </span>
 <?php echo $t06_pengeluaran->supplier_id->CustomMsg ?></div></div>
 	</div>
@@ -1284,7 +1413,12 @@ $t06_pengeluaran_add->ShowMessage();
 		<label id="elh_t06_pengeluaran_Tanggal" for="x_Tanggal" class="<?php echo $t06_pengeluaran_add->LeftColumnClass ?>"><?php echo $t06_pengeluaran->Tanggal->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="<?php echo $t06_pengeluaran_add->RightColumnClass ?>"><div<?php echo $t06_pengeluaran->Tanggal->CellAttributes() ?>>
 <span id="el_t06_pengeluaran_Tanggal">
-<input type="text" data-table="t06_pengeluaran" data-field="x_Tanggal" name="x_Tanggal" id="x_Tanggal" placeholder="<?php echo ew_HtmlEncode($t06_pengeluaran->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t06_pengeluaran->Tanggal->EditValue ?>"<?php echo $t06_pengeluaran->Tanggal->EditAttributes() ?>>
+<input type="text" data-table="t06_pengeluaran" data-field="x_Tanggal" data-format="7" name="x_Tanggal" id="x_Tanggal" placeholder="<?php echo ew_HtmlEncode($t06_pengeluaran->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t06_pengeluaran->Tanggal->EditValue ?>"<?php echo $t06_pengeluaran->Tanggal->EditAttributes() ?>>
+<?php if (!$t06_pengeluaran->Tanggal->ReadOnly && !$t06_pengeluaran->Tanggal->Disabled && !isset($t06_pengeluaran->Tanggal->EditAttrs["readonly"]) && !isset($t06_pengeluaran->Tanggal->EditAttrs["disabled"])) { ?>
+<script type="text/javascript">
+ew_CreateDateTimePicker("ft06_pengeluaranadd", "x_Tanggal", {"ignoreReadonly":true,"useCurrent":false,"format":7});
+</script>
+<?php } ?>
 </span>
 <?php echo $t06_pengeluaran->Tanggal->CustomMsg ?></div></div>
 	</div>
@@ -1304,7 +1438,11 @@ $t06_pengeluaran_add->ShowMessage();
 		<label id="elh_t06_pengeluaran_barang_id" for="x_barang_id" class="<?php echo $t06_pengeluaran_add->LeftColumnClass ?>"><?php echo $t06_pengeluaran->barang_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="<?php echo $t06_pengeluaran_add->RightColumnClass ?>"><div<?php echo $t06_pengeluaran->barang_id->CellAttributes() ?>>
 <span id="el_t06_pengeluaran_barang_id">
-<input type="text" data-table="t06_pengeluaran" data-field="x_barang_id" name="x_barang_id" id="x_barang_id" size="30" placeholder="<?php echo ew_HtmlEncode($t06_pengeluaran->barang_id->getPlaceHolder()) ?>" value="<?php echo $t06_pengeluaran->barang_id->EditValue ?>"<?php echo $t06_pengeluaran->barang_id->EditAttributes() ?>>
+<span class="ewLookupList">
+	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_barang_id"><?php echo (strval($t06_pengeluaran->barang_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t06_pengeluaran->barang_id->ViewValue); ?></span>
+</span>
+<button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t06_pengeluaran->barang_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x_barang_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"<?php echo (($t06_pengeluaran->barang_id->ReadOnly || $t06_pengeluaran->barang_id->Disabled) ? " disabled" : "")?>><span class="glyphicon glyphicon-search ewIcon"></span></button>
+<input type="hidden" data-table="t06_pengeluaran" data-field="x_barang_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t06_pengeluaran->barang_id->DisplayValueSeparatorAttribute() ?>" name="x_barang_id" id="x_barang_id" value="<?php echo $t06_pengeluaran->barang_id->CurrentValue ?>"<?php echo $t06_pengeluaran->barang_id->EditAttributes() ?>>
 </span>
 <?php echo $t06_pengeluaran->barang_id->CustomMsg ?></div></div>
 	</div>

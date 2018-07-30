@@ -62,15 +62,17 @@ class ct06_pengeluaran extends cTable {
 		$this->fields['id'] = &$this->id;
 
 		// supplier_id
-		$this->supplier_id = new cField('t06_pengeluaran', 't06_pengeluaran', 'x_supplier_id', 'supplier_id', '`supplier_id`', '`supplier_id`', 3, -1, FALSE, '`supplier_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->supplier_id = new cField('t06_pengeluaran', 't06_pengeluaran', 'x_supplier_id', 'supplier_id', '`supplier_id`', '`supplier_id`', 3, -1, FALSE, '`EV__supplier_id`', TRUE, TRUE, FALSE, 'FORMATTED TEXT', 'SELECT');
 		$this->supplier_id->Sortable = TRUE; // Allow sort
+		$this->supplier_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->supplier_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->supplier_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['supplier_id'] = &$this->supplier_id;
 
 		// Tanggal
-		$this->Tanggal = new cField('t06_pengeluaran', 't06_pengeluaran', 'x_Tanggal', 'Tanggal', '`Tanggal`', ew_CastDateFieldForLike('`Tanggal`', 0, "DB"), 133, 0, FALSE, '`Tanggal`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Tanggal = new cField('t06_pengeluaran', 't06_pengeluaran', 'x_Tanggal', 'Tanggal', '`Tanggal`', ew_CastDateFieldForLike('`Tanggal`', 7, "DB"), 133, 7, FALSE, '`Tanggal`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->Tanggal->Sortable = TRUE; // Allow sort
-		$this->Tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_FORMAT"], $Language->Phrase("IncorrectDate"));
+		$this->Tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_SEPARATOR"], $Language->Phrase("IncorrectDateDMY"));
 		$this->fields['Tanggal'] = &$this->Tanggal;
 
 		// NoNota
@@ -79,8 +81,10 @@ class ct06_pengeluaran extends cTable {
 		$this->fields['NoNota'] = &$this->NoNota;
 
 		// barang_id
-		$this->barang_id = new cField('t06_pengeluaran', 't06_pengeluaran', 'x_barang_id', 'barang_id', '`barang_id`', '`barang_id`', 3, -1, FALSE, '`barang_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->barang_id = new cField('t06_pengeluaran', 't06_pengeluaran', 'x_barang_id', 'barang_id', '`barang_id`', '`barang_id`', 3, -1, FALSE, '`EV__barang_id`', TRUE, TRUE, FALSE, 'FORMATTED TEXT', 'SELECT');
 		$this->barang_id->Sortable = TRUE; // Allow sort
+		$this->barang_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->barang_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->barang_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['barang_id'] = &$this->barang_id;
 
@@ -152,9 +156,31 @@ class ct06_pengeluaran extends cTable {
 			} else {
 				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
 			}
+			$sSortFieldList = ($ofld->FldVirtualExpression <> "") ? $ofld->FldVirtualExpression : $sSortField;
+			if ($ctrl) {
+				$sOrderByList = $this->getSessionOrderByList();
+				if (strpos($sOrderByList, $sSortFieldList . " " . $sLastSort) !== FALSE) {
+					$sOrderByList = str_replace($sSortFieldList . " " . $sLastSort, $sSortFieldList . " " . $sThisSort, $sOrderByList);
+				} else {
+					if ($sOrderByList <> "") $sOrderByList .= ", ";
+					$sOrderByList .= $sSortFieldList . " " . $sThisSort;
+				}
+				$this->setSessionOrderByList($sOrderByList); // Save to Session
+			} else {
+				$this->setSessionOrderByList($sSortFieldList . " " . $sThisSort); // Save to Session
+			}
 		} else {
 			if (!$ctrl) $ofld->setSort("");
 		}
+	}
+
+	// Session ORDER BY for List page
+	function getSessionOrderByList() {
+		return @$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_ORDER_BY_LIST];
+	}
+
+	function setSessionOrderByList($v) {
+		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_ORDER_BY_LIST] = $v;
 	}
 
 	// Table level SQL
@@ -183,6 +209,23 @@ class ct06_pengeluaran extends cTable {
 
 	function setSqlSelect($v) {
 		$this->_SqlSelect = $v;
+	}
+	var $_SqlSelectList = "";
+
+	function getSqlSelectList() { // Select for List page
+		$select = "";
+		$select = "SELECT * FROM (" .
+			"SELECT *, (SELECT CONCAT(COALESCE(`Nama`, ''),'" . ew_ValueSeparator(1, $this->supplier_id) . "',COALESCE(`Alamat`,''),'" . ew_ValueSeparator(2, $this->supplier_id) . "',COALESCE(`NoTelpHp`,'')) FROM `t01_supplier` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t06_pengeluaran`.`supplier_id` LIMIT 1) AS `EV__supplier_id`, (SELECT CONCAT(COALESCE(`Nama`, ''),'" . ew_ValueSeparator(1, $this->barang_id) . "',COALESCE(`Satuan`,'')) FROM `v01_barang_satuan` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t06_pengeluaran`.`barang_id` LIMIT 1) AS `EV__barang_id` FROM `t06_pengeluaran`" .
+			") `EW_TMP_TABLE`";
+		return ($this->_SqlSelectList <> "") ? $this->_SqlSelectList : $select;
+	}
+
+	function SqlSelectList() { // For backward compatibility
+		return $this->getSqlSelectList();
+	}
+
+	function setSqlSelectList($v) {
+		$this->_SqlSelectList = $v;
 	}
 	var $_SqlWhere = "";
 
@@ -295,16 +338,36 @@ class ct06_pengeluaran extends cTable {
 		ew_AddFilter($sFilter, $this->CurrentFilter);
 		$sFilter = $this->ApplyUserIDFilters($sFilter);
 		$this->Recordset_Selecting($sFilter);
-		$sSelect = $this->getSqlSelect();
-		$sSort = $this->UseSessionForListSQL ? $this->getSessionOrderBy() : "";
+		if ($this->UseVirtualFields()) {
+			$sSelect = $this->getSqlSelectList();
+			$sSort = $this->UseSessionForListSQL ? $this->getSessionOrderByList() : "";
+		} else {
+			$sSelect = $this->getSqlSelect();
+			$sSort = $this->UseSessionForListSQL ? $this->getSessionOrderBy() : "";
+		}
 		return ew_BuildSelectSql($sSelect, $this->getSqlWhere(), $this->getSqlGroupBy(),
 			$this->getSqlHaving(), $this->getSqlOrderBy(), $sFilter, $sSort);
 	}
 
 	// Get ORDER BY clause
 	function GetOrderBy() {
-		$sSort = $this->getSessionOrderBy();
+		$sSort = ($this->UseVirtualFields()) ? $this->getSessionOrderByList() : $this->getSessionOrderBy();
 		return ew_BuildSelectSql("", "", "", "", $this->getSqlOrderBy(), "", $sSort);
+	}
+
+	// Check if virtual fields is used in SQL
+	function UseVirtualFields() {
+		$sWhere = $this->UseSessionForListSQL ? $this->getSessionWhere() : $this->CurrentFilter;
+		$sOrderBy = $this->UseSessionForListSQL ? $this->getSessionOrderByList() : "";
+		if ($sWhere <> "")
+			$sWhere = " " . str_replace(array("(",")"), array("",""), $sWhere) . " ";
+		if ($sOrderBy <> "")
+			$sOrderBy = " " . str_replace(array("(",")"), array("",""), $sOrderBy) . " ";
+		if (strpos($sOrderBy, " " . $this->supplier_id->FldVirtualExpression . " ") !== FALSE)
+			return TRUE;
+		if (strpos($sOrderBy, " " . $this->barang_id->FldVirtualExpression . " ") !== FALSE)
+			return TRUE;
+		return FALSE;
 	}
 
 	// Try to get record count
@@ -355,7 +418,10 @@ class ct06_pengeluaran extends cTable {
 		$select = $this->TableType == 'CUSTOMVIEW' ? $this->getSqlSelect() : "SELECT * FROM " . $this->getSqlFrom();
 		$groupBy = $this->TableType == 'CUSTOMVIEW' ? $this->getSqlGroupBy() : "";
 		$having = $this->TableType == 'CUSTOMVIEW' ? $this->getSqlHaving() : "";
-		$sql = ew_BuildSelectSql($select, $this->getSqlWhere(), $groupBy, $having, "", $filter, "");
+		if ($this->UseVirtualFields())
+			$sql = ew_BuildSelectSql($this->getSqlSelectList(), $this->getSqlWhere(), $groupBy, $having, "", $filter, "");
+		else
+			$sql = ew_BuildSelectSql($select, $this->getSqlWhere(), $groupBy, $having, "", $filter, "");
 		$cnt = $this->TryGetRecordCount($sql);
 		if ($cnt == -1) {
 			$conn = &$this->Connection();
@@ -689,12 +755,38 @@ class ct06_pengeluaran extends cTable {
 		$this->id->ViewCustomAttributes = "";
 
 		// supplier_id
-		$this->supplier_id->ViewValue = $this->supplier_id->CurrentValue;
+		if ($this->supplier_id->VirtualValue <> "") {
+			$this->supplier_id->ViewValue = $this->supplier_id->VirtualValue;
+		} else {
+		if (strval($this->supplier_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->supplier_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, `Alamat` AS `Disp2Fld`, `NoTelpHp` AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_supplier`";
+		$sWhereWrk = "";
+		$this->supplier_id->LookupFilters = array("dx1" => '`Nama`', "dx2" => '`Alamat`', "dx3" => '`NoTelpHp`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->supplier_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+		$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$arwrk[2] = $rswrk->fields('Disp2Fld');
+				$arwrk[3] = $rswrk->fields('Disp3Fld');
+				$this->supplier_id->ViewValue = $this->supplier_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->supplier_id->ViewValue = $this->supplier_id->CurrentValue;
+			}
+		} else {
+			$this->supplier_id->ViewValue = NULL;
+		}
+		}
 		$this->supplier_id->ViewCustomAttributes = "";
 
 		// Tanggal
 		$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
-		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 0);
+		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 7);
 		$this->Tanggal->ViewCustomAttributes = "";
 
 		// NoNota
@@ -702,7 +794,32 @@ class ct06_pengeluaran extends cTable {
 		$this->NoNota->ViewCustomAttributes = "";
 
 		// barang_id
-		$this->barang_id->ViewValue = $this->barang_id->CurrentValue;
+		if ($this->barang_id->VirtualValue <> "") {
+			$this->barang_id->ViewValue = $this->barang_id->VirtualValue;
+		} else {
+		if (strval($this->barang_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->barang_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, `Satuan` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v01_barang_satuan`";
+		$sWhereWrk = "";
+		$this->barang_id->LookupFilters = array("dx1" => '`Nama`', "dx2" => '`Satuan`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->barang_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+		$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$arwrk[2] = $rswrk->fields('Disp2Fld');
+				$this->barang_id->ViewValue = $this->barang_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->barang_id->ViewValue = $this->barang_id->CurrentValue;
+			}
+		} else {
+			$this->barang_id->ViewValue = NULL;
+		}
+		}
 		$this->barang_id->ViewCustomAttributes = "";
 
 		// Banyaknya
@@ -789,13 +906,11 @@ class ct06_pengeluaran extends cTable {
 		// supplier_id
 		$this->supplier_id->EditAttrs["class"] = "form-control";
 		$this->supplier_id->EditCustomAttributes = "";
-		$this->supplier_id->EditValue = $this->supplier_id->CurrentValue;
-		$this->supplier_id->PlaceHolder = ew_RemoveHtml($this->supplier_id->FldCaption());
 
 		// Tanggal
 		$this->Tanggal->EditAttrs["class"] = "form-control";
 		$this->Tanggal->EditCustomAttributes = "";
-		$this->Tanggal->EditValue = ew_FormatDateTime($this->Tanggal->CurrentValue, 8);
+		$this->Tanggal->EditValue = ew_FormatDateTime($this->Tanggal->CurrentValue, 7);
 		$this->Tanggal->PlaceHolder = ew_RemoveHtml($this->Tanggal->FldCaption());
 
 		// NoNota
@@ -807,8 +922,6 @@ class ct06_pengeluaran extends cTable {
 		// barang_id
 		$this->barang_id->EditAttrs["class"] = "form-control";
 		$this->barang_id->EditCustomAttributes = "";
-		$this->barang_id->EditValue = $this->barang_id->CurrentValue;
-		$this->barang_id->PlaceHolder = ew_RemoveHtml($this->barang_id->FldCaption());
 
 		// Banyaknya
 		$this->Banyaknya->EditAttrs["class"] = "form-control";

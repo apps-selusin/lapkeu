@@ -469,7 +469,7 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		if ($this->UseSelectLimit) {
 			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
 			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderByList())));
 			} else {
 				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
 			}
@@ -518,9 +518,19 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 			return;
 		$this->id->setDbValue($row['id']);
 		$this->supplier_id->setDbValue($row['supplier_id']);
+		if (array_key_exists('EV__supplier_id', $rs->fields)) {
+			$this->supplier_id->VirtualValue = $rs->fields('EV__supplier_id'); // Set up virtual field value
+		} else {
+			$this->supplier_id->VirtualValue = ""; // Clear value
+		}
 		$this->Tanggal->setDbValue($row['Tanggal']);
 		$this->NoNota->setDbValue($row['NoNota']);
 		$this->barang_id->setDbValue($row['barang_id']);
+		if (array_key_exists('EV__barang_id', $rs->fields)) {
+			$this->barang_id->VirtualValue = $rs->fields('EV__barang_id'); // Set up virtual field value
+		} else {
+			$this->barang_id->VirtualValue = ""; // Clear value
+		}
 		$this->Banyaknya->setDbValue($row['Banyaknya']);
 		$this->Harga->setDbValue($row['Harga']);
 		$this->Jumlah->setDbValue($row['Jumlah']);
@@ -597,12 +607,38 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		$this->id->ViewCustomAttributes = "";
 
 		// supplier_id
-		$this->supplier_id->ViewValue = $this->supplier_id->CurrentValue;
+		if ($this->supplier_id->VirtualValue <> "") {
+			$this->supplier_id->ViewValue = $this->supplier_id->VirtualValue;
+		} else {
+		if (strval($this->supplier_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->supplier_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, `Alamat` AS `Disp2Fld`, `NoTelpHp` AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_supplier`";
+		$sWhereWrk = "";
+		$this->supplier_id->LookupFilters = array("dx1" => '`Nama`', "dx2" => '`Alamat`', "dx3" => '`NoTelpHp`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->supplier_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+		$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$arwrk[2] = $rswrk->fields('Disp2Fld');
+				$arwrk[3] = $rswrk->fields('Disp3Fld');
+				$this->supplier_id->ViewValue = $this->supplier_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->supplier_id->ViewValue = $this->supplier_id->CurrentValue;
+			}
+		} else {
+			$this->supplier_id->ViewValue = NULL;
+		}
+		}
 		$this->supplier_id->ViewCustomAttributes = "";
 
 		// Tanggal
 		$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
-		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 0);
+		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 7);
 		$this->Tanggal->ViewCustomAttributes = "";
 
 		// NoNota
@@ -610,7 +646,32 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		$this->NoNota->ViewCustomAttributes = "";
 
 		// barang_id
-		$this->barang_id->ViewValue = $this->barang_id->CurrentValue;
+		if ($this->barang_id->VirtualValue <> "") {
+			$this->barang_id->ViewValue = $this->barang_id->VirtualValue;
+		} else {
+		if (strval($this->barang_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->barang_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, `Satuan` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v01_barang_satuan`";
+		$sWhereWrk = "";
+		$this->barang_id->LookupFilters = array("dx1" => '`Nama`', "dx2" => '`Satuan`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->barang_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+		$sSqlWrk .= " ORDER BY `Nama` ASC";
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$arwrk[2] = $rswrk->fields('Disp2Fld');
+				$this->barang_id->ViewValue = $this->barang_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->barang_id->ViewValue = $this->barang_id->CurrentValue;
+			}
+		} else {
+			$this->barang_id->ViewValue = NULL;
+		}
+		}
 		$this->barang_id->ViewCustomAttributes = "";
 
 		// Banyaknya
@@ -887,8 +948,12 @@ ft06_pengeluarandelete.Form_CustomValidate =
 ft06_pengeluarandelete.ValidateRequired = <?php echo json_encode(EW_CLIENT_VALIDATE) ?>;
 
 // Dynamic selection lists
-// Form object for search
+ft06_pengeluarandelete.Lists["x_supplier_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","x_Alamat","x_NoTelpHp",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_supplier"};
+ft06_pengeluarandelete.Lists["x_supplier_id"].Data = "<?php echo $t06_pengeluaran_delete->supplier_id->LookupFilterQuery(FALSE, "delete") ?>";
+ft06_pengeluarandelete.Lists["x_barang_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","x_Satuan","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v01_barang_satuan"};
+ft06_pengeluarandelete.Lists["x_barang_id"].Data = "<?php echo $t06_pengeluaran_delete->barang_id->LookupFilterQuery(FALSE, "delete") ?>";
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
