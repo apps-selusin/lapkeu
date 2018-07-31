@@ -4,3 +4,9 @@
 8:10 PM 7/30/2018
 - entry pengeluaran
 
+7:41 AM 7/31/2018
+- to do ::
+- tanggal otomatis hari ini
+- rumus jumlah = banyaknya dikalikan harga
+- pemilihan jenis pengeluaran dan sub jenis pengeluaran
+
