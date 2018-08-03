@@ -121,7 +121,36 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt14.js");
 
 // Write your global startup script here
 // document.write("page loaded");
+	// Table 't06_pengeluaran' Field 'Banyaknya'
 
+	$('[data-table=t06_pengeluaran][data-field=x_Banyaknya]').on(
+		{ // keys = event types, values = handler functions
+			"change keyup": function(e) {
+				var $row = $(this).fields();
+				var qty = parseFloat($row["Banyaknya"].val());
+				var harga_asli = $row["Harga"].val();
+				var harga_clean = harga_asli.replace(/,/g, '');
+				var harga = parseFloat(harga_clean);
+				var st = qty * harga;
+				$row["Jumlah"].val(st);
+			}
+		}
+	);
+
+	// Table 't06_pengeluaran' Field 'Harga'
+	$('[data-table=t06_pengeluaran][data-field=x_Harga]').on(
+		{ // keys = event types, values = handler functions
+			"change keyup": function(e) {
+				var $row = $(this).fields();
+				var qty = parseFloat($row["Banyaknya"].val());
+				var harga_asli = $row["Harga"].val();
+				var harga_clean = harga_asli.replace(/,/g, '');
+				var harga = parseFloat(harga_clean);
+				var st = qty * harga;
+				$row["Jumlah"].val(st);
+			}
+		}
+	);
 </script>
 <?php } ?>
 </body>

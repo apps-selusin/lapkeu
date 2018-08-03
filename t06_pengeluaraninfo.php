@@ -21,6 +21,7 @@ class ct06_pengeluaran extends cTable {
 	var $Banyaknya;
 	var $Harga;
 	var $Jumlah;
+	var $maingroup_id;
 	var $subgroup_id;
 
 	//
@@ -106,9 +107,19 @@ class ct06_pengeluaran extends cTable {
 		$this->Jumlah->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
 		$this->fields['Jumlah'] = &$this->Jumlah;
 
+		// maingroup_id
+		$this->maingroup_id = new cField('t06_pengeluaran', 't06_pengeluaran', 'x_maingroup_id', 'maingroup_id', '`maingroup_id`', '`maingroup_id`', 3, -1, FALSE, '`EV__maingroup_id`', TRUE, TRUE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->maingroup_id->Sortable = TRUE; // Allow sort
+		$this->maingroup_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->maingroup_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
+		$this->maingroup_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
+		$this->fields['maingroup_id'] = &$this->maingroup_id;
+
 		// subgroup_id
-		$this->subgroup_id = new cField('t06_pengeluaran', 't06_pengeluaran', 'x_subgroup_id', 'subgroup_id', '`subgroup_id`', '`subgroup_id`', 3, -1, FALSE, '`subgroup_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->subgroup_id = new cField('t06_pengeluaran', 't06_pengeluaran', 'x_subgroup_id', 'subgroup_id', '`subgroup_id`', '`subgroup_id`', 3, -1, FALSE, '`EV__subgroup_id`', TRUE, TRUE, FALSE, 'FORMATTED TEXT', 'SELECT');
 		$this->subgroup_id->Sortable = TRUE; // Allow sort
+		$this->subgroup_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->subgroup_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->subgroup_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['subgroup_id'] = &$this->subgroup_id;
 	}
@@ -215,7 +226,7 @@ class ct06_pengeluaran extends cTable {
 	function getSqlSelectList() { // Select for List page
 		$select = "";
 		$select = "SELECT * FROM (" .
-			"SELECT *, (SELECT CONCAT(COALESCE(`Nama`, ''),'" . ew_ValueSeparator(1, $this->supplier_id) . "',COALESCE(`Alamat`,''),'" . ew_ValueSeparator(2, $this->supplier_id) . "',COALESCE(`NoTelpHp`,'')) FROM `t01_supplier` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t06_pengeluaran`.`supplier_id` LIMIT 1) AS `EV__supplier_id`, (SELECT CONCAT(COALESCE(`Nama`, ''),'" . ew_ValueSeparator(1, $this->barang_id) . "',COALESCE(`Satuan`,'')) FROM `v01_barang_satuan` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t06_pengeluaran`.`barang_id` LIMIT 1) AS `EV__barang_id` FROM `t06_pengeluaran`" .
+			"SELECT *, (SELECT CONCAT(COALESCE(`Nama`, ''),'" . ew_ValueSeparator(1, $this->supplier_id) . "',COALESCE(`Alamat`,''),'" . ew_ValueSeparator(2, $this->supplier_id) . "',COALESCE(`NoTelpHp`,'')) FROM `t01_supplier` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t06_pengeluaran`.`supplier_id` LIMIT 1) AS `EV__supplier_id`, (SELECT CONCAT(COALESCE(`Nama`, ''),'" . ew_ValueSeparator(1, $this->barang_id) . "',COALESCE(`Satuan`,'')) FROM `v01_barang_satuan` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t06_pengeluaran`.`barang_id` LIMIT 1) AS `EV__barang_id`, (SELECT `Nama` FROM `t04_maingroup` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t06_pengeluaran`.`maingroup_id` LIMIT 1) AS `EV__maingroup_id`, (SELECT `Nama` FROM `t05_subgroup` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t06_pengeluaran`.`subgroup_id` LIMIT 1) AS `EV__subgroup_id` FROM `t06_pengeluaran`" .
 			") `EW_TMP_TABLE`";
 		return ($this->_SqlSelectList <> "") ? $this->_SqlSelectList : $select;
 	}
@@ -366,6 +377,10 @@ class ct06_pengeluaran extends cTable {
 		if (strpos($sOrderBy, " " . $this->supplier_id->FldVirtualExpression . " ") !== FALSE)
 			return TRUE;
 		if (strpos($sOrderBy, " " . $this->barang_id->FldVirtualExpression . " ") !== FALSE)
+			return TRUE;
+		if (strpos($sOrderBy, " " . $this->maingroup_id->FldVirtualExpression . " ") !== FALSE)
+			return TRUE;
+		if (strpos($sOrderBy, " " . $this->subgroup_id->FldVirtualExpression . " ") !== FALSE)
 			return TRUE;
 		return FALSE;
 	}
@@ -729,6 +744,7 @@ class ct06_pengeluaran extends cTable {
 		$this->Banyaknya->setDbValue($rs->fields('Banyaknya'));
 		$this->Harga->setDbValue($rs->fields('Harga'));
 		$this->Jumlah->setDbValue($rs->fields('Jumlah'));
+		$this->maingroup_id->setDbValue($rs->fields('maingroup_id'));
 		$this->subgroup_id->setDbValue($rs->fields('subgroup_id'));
 	}
 
@@ -748,6 +764,7 @@ class ct06_pengeluaran extends cTable {
 		// Banyaknya
 		// Harga
 		// Jumlah
+		// maingroup_id
 		// subgroup_id
 		// id
 
@@ -834,8 +851,58 @@ class ct06_pengeluaran extends cTable {
 		$this->Jumlah->ViewValue = $this->Jumlah->CurrentValue;
 		$this->Jumlah->ViewCustomAttributes = "";
 
+		// maingroup_id
+		if ($this->maingroup_id->VirtualValue <> "") {
+			$this->maingroup_id->ViewValue = $this->maingroup_id->VirtualValue;
+		} else {
+		if (strval($this->maingroup_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->maingroup_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t04_maingroup`";
+		$sWhereWrk = "";
+		$this->maingroup_id->LookupFilters = array("dx1" => '`Nama`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->maingroup_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->maingroup_id->ViewValue = $this->maingroup_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->maingroup_id->ViewValue = $this->maingroup_id->CurrentValue;
+			}
+		} else {
+			$this->maingroup_id->ViewValue = NULL;
+		}
+		}
+		$this->maingroup_id->ViewCustomAttributes = "";
+
 		// subgroup_id
-		$this->subgroup_id->ViewValue = $this->subgroup_id->CurrentValue;
+		if ($this->subgroup_id->VirtualValue <> "") {
+			$this->subgroup_id->ViewValue = $this->subgroup_id->VirtualValue;
+		} else {
+		if (strval($this->subgroup_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->subgroup_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t05_subgroup`";
+		$sWhereWrk = "";
+		$this->subgroup_id->LookupFilters = array("dx1" => '`Nama`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->subgroup_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->subgroup_id->ViewValue = $this->subgroup_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->subgroup_id->ViewValue = $this->subgroup_id->CurrentValue;
+			}
+		} else {
+			$this->subgroup_id->ViewValue = NULL;
+		}
+		}
 		$this->subgroup_id->ViewCustomAttributes = "";
 
 		// id
@@ -877,6 +944,11 @@ class ct06_pengeluaran extends cTable {
 		$this->Jumlah->LinkCustomAttributes = "";
 		$this->Jumlah->HrefValue = "";
 		$this->Jumlah->TooltipValue = "";
+
+		// maingroup_id
+		$this->maingroup_id->LinkCustomAttributes = "";
+		$this->maingroup_id->HrefValue = "";
+		$this->maingroup_id->TooltipValue = "";
 
 		// subgroup_id
 		$this->subgroup_id->LinkCustomAttributes = "";
@@ -944,11 +1016,13 @@ class ct06_pengeluaran extends cTable {
 		$this->Jumlah->PlaceHolder = ew_RemoveHtml($this->Jumlah->FldCaption());
 		if (strval($this->Jumlah->EditValue) <> "" && is_numeric($this->Jumlah->EditValue)) $this->Jumlah->EditValue = ew_FormatNumber($this->Jumlah->EditValue, -2, -1, -2, 0);
 
+		// maingroup_id
+		$this->maingroup_id->EditAttrs["class"] = "form-control";
+		$this->maingroup_id->EditCustomAttributes = "";
+
 		// subgroup_id
 		$this->subgroup_id->EditAttrs["class"] = "form-control";
 		$this->subgroup_id->EditCustomAttributes = "";
-		$this->subgroup_id->EditValue = $this->subgroup_id->CurrentValue;
-		$this->subgroup_id->PlaceHolder = ew_RemoveHtml($this->subgroup_id->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -977,7 +1051,6 @@ class ct06_pengeluaran extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->supplier_id->Exportable) $Doc->ExportCaption($this->supplier_id);
 					if ($this->Tanggal->Exportable) $Doc->ExportCaption($this->Tanggal);
 					if ($this->NoNota->Exportable) $Doc->ExportCaption($this->NoNota);
@@ -985,6 +1058,7 @@ class ct06_pengeluaran extends cTable {
 					if ($this->Banyaknya->Exportable) $Doc->ExportCaption($this->Banyaknya);
 					if ($this->Harga->Exportable) $Doc->ExportCaption($this->Harga);
 					if ($this->Jumlah->Exportable) $Doc->ExportCaption($this->Jumlah);
+					if ($this->maingroup_id->Exportable) $Doc->ExportCaption($this->maingroup_id);
 					if ($this->subgroup_id->Exportable) $Doc->ExportCaption($this->subgroup_id);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
@@ -995,6 +1069,7 @@ class ct06_pengeluaran extends cTable {
 					if ($this->Banyaknya->Exportable) $Doc->ExportCaption($this->Banyaknya);
 					if ($this->Harga->Exportable) $Doc->ExportCaption($this->Harga);
 					if ($this->Jumlah->Exportable) $Doc->ExportCaption($this->Jumlah);
+					if ($this->maingroup_id->Exportable) $Doc->ExportCaption($this->maingroup_id);
 					if ($this->subgroup_id->Exportable) $Doc->ExportCaption($this->subgroup_id);
 				}
 				$Doc->EndExportRow();
@@ -1027,7 +1102,6 @@ class ct06_pengeluaran extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->supplier_id->Exportable) $Doc->ExportField($this->supplier_id);
 						if ($this->Tanggal->Exportable) $Doc->ExportField($this->Tanggal);
 						if ($this->NoNota->Exportable) $Doc->ExportField($this->NoNota);
@@ -1035,6 +1109,7 @@ class ct06_pengeluaran extends cTable {
 						if ($this->Banyaknya->Exportable) $Doc->ExportField($this->Banyaknya);
 						if ($this->Harga->Exportable) $Doc->ExportField($this->Harga);
 						if ($this->Jumlah->Exportable) $Doc->ExportField($this->Jumlah);
+						if ($this->maingroup_id->Exportable) $Doc->ExportField($this->maingroup_id);
 						if ($this->subgroup_id->Exportable) $Doc->ExportField($this->subgroup_id);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
@@ -1045,6 +1120,7 @@ class ct06_pengeluaran extends cTable {
 						if ($this->Banyaknya->Exportable) $Doc->ExportField($this->Banyaknya);
 						if ($this->Harga->Exportable) $Doc->ExportField($this->Harga);
 						if ($this->Jumlah->Exportable) $Doc->ExportField($this->Jumlah);
+						if ($this->maingroup_id->Exportable) $Doc->ExportField($this->maingroup_id);
 						if ($this->subgroup_id->Exportable) $Doc->ExportField($this->subgroup_id);
 					}
 					$Doc->EndExportRow($RowCnt);
@@ -1360,6 +1436,7 @@ class ct06_pengeluaran extends cTable {
 		// To view properties of field class, use:
 		//var_dump($this-><FieldName>);
 
+		$this->Jumlah->ReadOnly = true;
 	}
 
 	// User ID Filtering event

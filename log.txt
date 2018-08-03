@@ -10,3 +10,18 @@
 - rumus jumlah = banyaknya dikalikan harga
 - pemilihan jenis pengeluaran dan sub jenis pengeluaran
 
+2:14 PM 8/3/2018
+- do : tanggal dibuat ostosmastis hari ini
+
+2:24 PM 8/3/2018
+- done : tanggal ostosmastis hari ini
+
+2:33 PM 8/3/2018
+- do : rumus jumlah = banyaknya dikalikan harga
+
+4:23 PM 8/3/2018
+- done : rumus jumlah = banyaknya dikalikan harga
+
+4:23 PM 8/3/2018
+- do : pemilihan jenis pengeluaran dan sub jenis pengeluaran
+

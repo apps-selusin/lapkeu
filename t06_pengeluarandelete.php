@@ -326,9 +326,6 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		// 
 
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		if ($this->IsAdd() || $this->IsCopy() || $this->IsGridAdd())
-			$this->id->Visible = FALSE;
 		$this->supplier_id->SetVisibility();
 		$this->Tanggal->SetVisibility();
 		$this->NoNota->SetVisibility();
@@ -336,6 +333,7 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		$this->Banyaknya->SetVisibility();
 		$this->Harga->SetVisibility();
 		$this->Jumlah->SetVisibility();
+		$this->maingroup_id->SetVisibility();
 		$this->subgroup_id->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
@@ -534,7 +532,18 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		$this->Banyaknya->setDbValue($row['Banyaknya']);
 		$this->Harga->setDbValue($row['Harga']);
 		$this->Jumlah->setDbValue($row['Jumlah']);
+		$this->maingroup_id->setDbValue($row['maingroup_id']);
+		if (array_key_exists('EV__maingroup_id', $rs->fields)) {
+			$this->maingroup_id->VirtualValue = $rs->fields('EV__maingroup_id'); // Set up virtual field value
+		} else {
+			$this->maingroup_id->VirtualValue = ""; // Clear value
+		}
 		$this->subgroup_id->setDbValue($row['subgroup_id']);
+		if (array_key_exists('EV__subgroup_id', $rs->fields)) {
+			$this->subgroup_id->VirtualValue = $rs->fields('EV__subgroup_id'); // Set up virtual field value
+		} else {
+			$this->subgroup_id->VirtualValue = ""; // Clear value
+		}
 	}
 
 	// Return a row with default values
@@ -548,6 +557,7 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		$row['Banyaknya'] = NULL;
 		$row['Harga'] = NULL;
 		$row['Jumlah'] = NULL;
+		$row['maingroup_id'] = NULL;
 		$row['subgroup_id'] = NULL;
 		return $row;
 	}
@@ -565,6 +575,7 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		$this->Banyaknya->DbValue = $row['Banyaknya'];
 		$this->Harga->DbValue = $row['Harga'];
 		$this->Jumlah->DbValue = $row['Jumlah'];
+		$this->maingroup_id->DbValue = $row['maingroup_id'];
 		$this->subgroup_id->DbValue = $row['subgroup_id'];
 	}
 
@@ -598,6 +609,7 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		// Banyaknya
 		// Harga
 		// Jumlah
+		// maingroup_id
 		// subgroup_id
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
@@ -686,14 +698,59 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 		$this->Jumlah->ViewValue = $this->Jumlah->CurrentValue;
 		$this->Jumlah->ViewCustomAttributes = "";
 
-		// subgroup_id
-		$this->subgroup_id->ViewValue = $this->subgroup_id->CurrentValue;
-		$this->subgroup_id->ViewCustomAttributes = "";
+		// maingroup_id
+		if ($this->maingroup_id->VirtualValue <> "") {
+			$this->maingroup_id->ViewValue = $this->maingroup_id->VirtualValue;
+		} else {
+		if (strval($this->maingroup_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->maingroup_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t04_maingroup`";
+		$sWhereWrk = "";
+		$this->maingroup_id->LookupFilters = array("dx1" => '`Nama`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->maingroup_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->maingroup_id->ViewValue = $this->maingroup_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->maingroup_id->ViewValue = $this->maingroup_id->CurrentValue;
+			}
+		} else {
+			$this->maingroup_id->ViewValue = NULL;
+		}
+		}
+		$this->maingroup_id->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
+		// subgroup_id
+		if ($this->subgroup_id->VirtualValue <> "") {
+			$this->subgroup_id->ViewValue = $this->subgroup_id->VirtualValue;
+		} else {
+		if (strval($this->subgroup_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->subgroup_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t05_subgroup`";
+		$sWhereWrk = "";
+		$this->subgroup_id->LookupFilters = array("dx1" => '`Nama`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->subgroup_id, $sWhereWrk); // Call Lookup Selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->subgroup_id->ViewValue = $this->subgroup_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->subgroup_id->ViewValue = $this->subgroup_id->CurrentValue;
+			}
+		} else {
+			$this->subgroup_id->ViewValue = NULL;
+		}
+		}
+		$this->subgroup_id->ViewCustomAttributes = "";
 
 			// supplier_id
 			$this->supplier_id->LinkCustomAttributes = "";
@@ -729,6 +786,11 @@ class ct06_pengeluaran_delete extends ct06_pengeluaran {
 			$this->Jumlah->LinkCustomAttributes = "";
 			$this->Jumlah->HrefValue = "";
 			$this->Jumlah->TooltipValue = "";
+
+			// maingroup_id
+			$this->maingroup_id->LinkCustomAttributes = "";
+			$this->maingroup_id->HrefValue = "";
+			$this->maingroup_id->TooltipValue = "";
 
 			// subgroup_id
 			$this->subgroup_id->LinkCustomAttributes = "";
@@ -952,6 +1014,10 @@ ft06_pengeluarandelete.Lists["x_supplier_id"] = {"LinkField":"x_id","Ajax":true,
 ft06_pengeluarandelete.Lists["x_supplier_id"].Data = "<?php echo $t06_pengeluaran_delete->supplier_id->LookupFilterQuery(FALSE, "delete") ?>";
 ft06_pengeluarandelete.Lists["x_barang_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","x_Satuan","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v01_barang_satuan"};
 ft06_pengeluarandelete.Lists["x_barang_id"].Data = "<?php echo $t06_pengeluaran_delete->barang_id->LookupFilterQuery(FALSE, "delete") ?>";
+ft06_pengeluarandelete.Lists["x_maingroup_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_subgroup_id"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t04_maingroup"};
+ft06_pengeluarandelete.Lists["x_maingroup_id"].Data = "<?php echo $t06_pengeluaran_delete->maingroup_id->LookupFilterQuery(FALSE, "delete") ?>";
+ft06_pengeluarandelete.Lists["x_subgroup_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t05_subgroup"};
+ft06_pengeluarandelete.Lists["x_subgroup_id"].Data = "<?php echo $t06_pengeluaran_delete->subgroup_id->LookupFilterQuery(FALSE, "delete") ?>";
 
 // Form object for search
 </script>
@@ -978,9 +1044,6 @@ $t06_pengeluaran_delete->ShowMessage();
 <table class="table ewTable">
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t06_pengeluaran->id->Visible) { // id ?>
-		<th class="<?php echo $t06_pengeluaran->id->HeaderCellClass() ?>"><span id="elh_t06_pengeluaran_id" class="t06_pengeluaran_id"><?php echo $t06_pengeluaran->id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t06_pengeluaran->supplier_id->Visible) { // supplier_id ?>
 		<th class="<?php echo $t06_pengeluaran->supplier_id->HeaderCellClass() ?>"><span id="elh_t06_pengeluaran_supplier_id" class="t06_pengeluaran_supplier_id"><?php echo $t06_pengeluaran->supplier_id->FldCaption() ?></span></th>
 <?php } ?>
@@ -1001,6 +1064,9 @@ $t06_pengeluaran_delete->ShowMessage();
 <?php } ?>
 <?php if ($t06_pengeluaran->Jumlah->Visible) { // Jumlah ?>
 		<th class="<?php echo $t06_pengeluaran->Jumlah->HeaderCellClass() ?>"><span id="elh_t06_pengeluaran_Jumlah" class="t06_pengeluaran_Jumlah"><?php echo $t06_pengeluaran->Jumlah->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t06_pengeluaran->maingroup_id->Visible) { // maingroup_id ?>
+		<th class="<?php echo $t06_pengeluaran->maingroup_id->HeaderCellClass() ?>"><span id="elh_t06_pengeluaran_maingroup_id" class="t06_pengeluaran_maingroup_id"><?php echo $t06_pengeluaran->maingroup_id->FldCaption() ?></span></th>
 <?php } ?>
 <?php if ($t06_pengeluaran->subgroup_id->Visible) { // subgroup_id ?>
 		<th class="<?php echo $t06_pengeluaran->subgroup_id->HeaderCellClass() ?>"><span id="elh_t06_pengeluaran_subgroup_id" class="t06_pengeluaran_subgroup_id"><?php echo $t06_pengeluaran->subgroup_id->FldCaption() ?></span></th>
@@ -1026,14 +1092,6 @@ while (!$t06_pengeluaran_delete->Recordset->EOF) {
 	$t06_pengeluaran_delete->RenderRow();
 ?>
 	<tr<?php echo $t06_pengeluaran->RowAttributes() ?>>
-<?php if ($t06_pengeluaran->id->Visible) { // id ?>
-		<td<?php echo $t06_pengeluaran->id->CellAttributes() ?>>
-<span id="el<?php echo $t06_pengeluaran_delete->RowCnt ?>_t06_pengeluaran_id" class="t06_pengeluaran_id">
-<span<?php echo $t06_pengeluaran->id->ViewAttributes() ?>>
-<?php echo $t06_pengeluaran->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t06_pengeluaran->supplier_id->Visible) { // supplier_id ?>
 		<td<?php echo $t06_pengeluaran->supplier_id->CellAttributes() ?>>
 <span id="el<?php echo $t06_pengeluaran_delete->RowCnt ?>_t06_pengeluaran_supplier_id" class="t06_pengeluaran_supplier_id">
@@ -1087,6 +1145,14 @@ while (!$t06_pengeluaran_delete->Recordset->EOF) {
 <span id="el<?php echo $t06_pengeluaran_delete->RowCnt ?>_t06_pengeluaran_Jumlah" class="t06_pengeluaran_Jumlah">
 <span<?php echo $t06_pengeluaran->Jumlah->ViewAttributes() ?>>
 <?php echo $t06_pengeluaran->Jumlah->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t06_pengeluaran->maingroup_id->Visible) { // maingroup_id ?>
+		<td<?php echo $t06_pengeluaran->maingroup_id->CellAttributes() ?>>
+<span id="el<?php echo $t06_pengeluaran_delete->RowCnt ?>_t06_pengeluaran_maingroup_id" class="t06_pengeluaran_maingroup_id">
+<span<?php echo $t06_pengeluaran->maingroup_id->ViewAttributes() ?>>
+<?php echo $t06_pengeluaran->maingroup_id->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
