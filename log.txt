@@ -25,3 +25,9 @@
 4:23 PM 8/3/2018
 - do : pemilihan jenis pengeluaran dan sub jenis pengeluaran
 
+4:37 PM 8/3/2018
+- pending : pemilihan jenis pengeluaran dan sub jenis pengeluaran
+- to do   : 
+  - align right untuk banyaknya, harga, jumlah
+  - format ribuan untuk banyaknya, harga, jumlah
+

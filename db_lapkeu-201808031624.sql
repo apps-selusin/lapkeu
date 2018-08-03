@@ -326,25 +326,6 @@ INSERT INTO `t99_audittrail` (`id`, `datetime`, `script`, `user`, `action`, `tab
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view `v01_barang_satuan`
--- (See below for the actual view)
---
-CREATE TABLE `v01_barang_satuan` (
-`id` int(11)
-,`Nama` varchar(100)
-,`Satuan` varchar(25)
-);
-
--- --------------------------------------------------------
-
---
--- Structure for view `v01_barang_satuan`
---
-DROP TABLE IF EXISTS `v01_barang_satuan`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v01_barang_satuan`  AS  select `t03_barang`.`id` AS `id`,`t03_barang`.`Nama` AS `Nama`,`t02_satuan`.`Nama` AS `Satuan` from (`t03_barang` join `t02_satuan` on((`t03_barang`.`satuan_id` = `t02_satuan`.`id`))) ;
-
---
 -- Indexes for dumped tables
 --
 
