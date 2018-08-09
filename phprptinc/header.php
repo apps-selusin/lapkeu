@@ -105,8 +105,6 @@ var EWR_MOBILE_DETECT = new MobileDetect(window.navigator.userAgent);
 var EWR_IS_MOBILE = !!EWR_MOBILE_DETECT.mobile();
 <?php
 	echo $ReportLanguage->ToJson();
-	SetupLoginStatus(); // Setup login status
-	ewr_SetClientVar("login", LoginStatus());
 ?>
 var ewrVar = <?php echo json_encode($EWR_CLIENT_VAR); ?>;
 </script>

@@ -1,28 +1,28 @@
 <?php
 
 // Global variable for table object
-$t01_supplier = NULL;
+$r01_jenis_pengeluaran = NULL;
 
 //
-// Table class for t01_supplier
+// Table class for r01_jenis_pengeluaran
 //
-class crt01_supplier extends crTableBase {
+class crr01_jenis_pengeluaran extends crTableBase {
 	var $ShowGroupHeaderAsRow = FALSE;
 	var $ShowCompactSummaryFooter = TRUE;
 	var $id;
+	var $maingroup_id;
+	var $maingroup_nama;
 	var $Nama;
-	var $Alamat;
-	var $NoTelpHp;
 
 	//
 	// Table class constructor
 	//
 	function __construct() {
 		global $ReportLanguage, $grLanguage;
-		$this->TableVar = 't01_supplier';
-		$this->TableName = 't01_supplier';
-		$this->TableType = 'TABLE';
-		$this->TableReportType = 'rpt';
+		$this->TableVar = 'r01_jenis_pengeluaran';
+		$this->TableName = 'r01_jenis_pengeluaran';
+		$this->TableType = 'REPORT';
+		$this->TableReportType = 'summary';
 		$this->SourcTableIsCustomView = FALSE;
 		$this->DBID = 'DB';
 		$this->ExportAll = TRUE;
@@ -30,7 +30,7 @@ class crt01_supplier extends crTableBase {
 		$this->ExportPageOrientation = "portrait"; // Page orientation (PDF only)
 
 		// id
-		$this->id = new crField('t01_supplier', 't01_supplier', 'x_id', 'id', '`id`', 3, EWR_DATATYPE_NUMBER, -1);
+		$this->id = new crField('r01_jenis_pengeluaran', 'r01_jenis_pengeluaran', 'x_id', 'id', '`id`', 3, EWR_DATATYPE_NUMBER, -1);
 		$this->id->Sortable = TRUE; // Allow sort
 		$this->id->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectInteger");
 		$this->id->DateFilter = "";
@@ -38,29 +38,37 @@ class crt01_supplier extends crTableBase {
 		$this->id->SqlOrderBy = "";
 		$this->fields['id'] = &$this->id;
 
+		// maingroup_id
+		$this->maingroup_id = new crField('r01_jenis_pengeluaran', 'r01_jenis_pengeluaran', 'x_maingroup_id', 'maingroup_id', '`maingroup_id`', 3, EWR_DATATYPE_NUMBER, -1);
+		$this->maingroup_id->Sortable = TRUE; // Allow sort
+		$this->maingroup_id->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectInteger");
+		$this->maingroup_id->DateFilter = "";
+		$this->maingroup_id->SqlSelect = "";
+		$this->maingroup_id->SqlOrderBy = "";
+		$this->fields['maingroup_id'] = &$this->maingroup_id;
+
+		// maingroup_nama
+		$this->maingroup_nama = new crField('r01_jenis_pengeluaran', 'r01_jenis_pengeluaran', 'x_maingroup_nama', 'maingroup_nama', '(select nama from t04_maingroup a where a.id = maingroup_id)', 200, EWR_DATATYPE_STRING, -1);
+		$this->maingroup_nama->FldIsCustom = TRUE; // Custom field
+		$this->maingroup_nama->Sortable = TRUE; // Allow sort
+		$this->maingroup_nama->GroupingFieldId = 1;
+		$this->maingroup_nama->ShowGroupHeaderAsRow = $this->ShowGroupHeaderAsRow;
+		$this->maingroup_nama->ShowCompactSummaryFooter = $this->ShowCompactSummaryFooter;
+		$this->maingroup_nama->DateFilter = "";
+		$this->maingroup_nama->SqlSelect = "";
+		$this->maingroup_nama->SqlOrderBy = "";
+		$this->maingroup_nama->FldGroupByType = "";
+		$this->maingroup_nama->FldGroupInt = "0";
+		$this->maingroup_nama->FldGroupSql = "";
+		$this->fields['maingroup_nama'] = &$this->maingroup_nama;
+
 		// Nama
-		$this->Nama = new crField('t01_supplier', 't01_supplier', 'x_Nama', 'Nama', '`Nama`', 200, EWR_DATATYPE_STRING, -1);
+		$this->Nama = new crField('r01_jenis_pengeluaran', 'r01_jenis_pengeluaran', 'x_Nama', 'Nama', '`Nama`', 200, EWR_DATATYPE_STRING, -1);
 		$this->Nama->Sortable = TRUE; // Allow sort
 		$this->Nama->DateFilter = "";
 		$this->Nama->SqlSelect = "";
 		$this->Nama->SqlOrderBy = "";
 		$this->fields['Nama'] = &$this->Nama;
-
-		// Alamat
-		$this->Alamat = new crField('t01_supplier', 't01_supplier', 'x_Alamat', 'Alamat', '`Alamat`', 200, EWR_DATATYPE_STRING, -1);
-		$this->Alamat->Sortable = TRUE; // Allow sort
-		$this->Alamat->DateFilter = "";
-		$this->Alamat->SqlSelect = "";
-		$this->Alamat->SqlOrderBy = "";
-		$this->fields['Alamat'] = &$this->Alamat;
-
-		// NoTelpHp
-		$this->NoTelpHp = new crField('t01_supplier', 't01_supplier', 'x_NoTelpHp', 'NoTelpHp', '`NoTelpHp`', 200, EWR_DATATYPE_STRING, -1);
-		$this->NoTelpHp->Sortable = TRUE; // Allow sort
-		$this->NoTelpHp->DateFilter = "";
-		$this->NoTelpHp->SqlSelect = "";
-		$this->NoTelpHp->SqlOrderBy = "";
-		$this->fields['NoTelpHp'] = &$this->NoTelpHp;
 	}
 
 	// Set Field Visibility
@@ -132,7 +140,7 @@ class crt01_supplier extends crTableBase {
 	var $_SqlFrom = "";
 
 	function getSqlFrom() {
-		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t01_supplier`";
+		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t05_subgroup`";
 	}
 
 	function SqlFrom() { // For backward compatibility
@@ -147,7 +155,7 @@ class crt01_supplier extends crTableBase {
 	var $_SqlSelect = "";
 
 	function getSqlSelect() {
-		return ($this->_SqlSelect <> "") ? $this->_SqlSelect : "SELECT * FROM " . $this->getSqlFrom();
+		return ($this->_SqlSelect <> "") ? $this->_SqlSelect : "SELECT *, (select nama from t04_maingroup a where a.id = maingroup_id) AS `maingroup_nama` FROM " . $this->getSqlFrom();
 	}
 
 	function SqlSelect() { // For backward compatibility
@@ -208,7 +216,7 @@ class crt01_supplier extends crTableBase {
 	var $_SqlOrderBy = "";
 
 	function getSqlOrderBy() {
-		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "";
+		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "(select nama from t04_maingroup a where a.id = maingroup_id) ASC";
 	}
 
 	function SqlOrderBy() { // For backward compatibility
@@ -217,6 +225,53 @@ class crt01_supplier extends crTableBase {
 
 	function setSqlOrderBy($v) {
 		$this->_SqlOrderBy = $v;
+	}
+
+	// Table Level Group SQL
+	// First Group Field
+
+	var $_SqlFirstGroupField = "";
+
+	function getSqlFirstGroupField() {
+		return ($this->_SqlFirstGroupField <> "") ? $this->_SqlFirstGroupField : "(select nama from t04_maingroup a where a.id = maingroup_id)";
+	}
+
+	function SqlFirstGroupField() { // For backward compatibility
+		return $this->getSqlFirstGroupField();
+	}
+
+	function setSqlFirstGroupField($v) {
+		$this->_SqlFirstGroupField = $v;
+	}
+
+	// Select Group
+	var $_SqlSelectGroup = "";
+
+	function getSqlSelectGroup() {
+		return ($this->_SqlSelectGroup <> "") ? $this->_SqlSelectGroup : "SELECT DISTINCT " . $this->getSqlFirstGroupField() . " FROM " . $this->getSqlFrom();
+	}
+
+	function SqlSelectGroup() { // For backward compatibility
+		return $this->getSqlSelectGroup();
+	}
+
+	function setSqlSelectGroup($v) {
+		$this->_SqlSelectGroup = $v;
+	}
+
+	// Order By Group
+	var $_SqlOrderByGroup = "";
+
+	function getSqlOrderByGroup() {
+		return ($this->_SqlOrderByGroup <> "") ? $this->_SqlOrderByGroup : "(select nama from t04_maingroup a where a.id = maingroup_id) ASC";
+	}
+
+	function SqlOrderByGroup() { // For backward compatibility
+		return $this->getSqlOrderByGroup();
+	}
+
+	function setSqlOrderByGroup($v) {
+		$this->_SqlOrderByGroup = $v;
 	}
 
 	// Select Aggregate

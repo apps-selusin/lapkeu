@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/7/28" version="11.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/8/9" version="11.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -370,8 +370,17 @@
   <project>
     <phrase id="bodytitle" value="Laporan Keuangan" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <menu id="15">
+      <phrase id="menutext" value="v 02 terima keluar" />
+    </menu>
+    <menu id="16">
+      <phrase id="menutext" value="v 01 barang satuan" />
+    </menu>
     <menu id="12">
       <phrase id="menutext" value="Laporan" />
+    </menu>
+    <menu id="17">
+      <phrase id="menutext" value="Keuangan" />
     </menu>
     <menu id="7">
       <phrase id="menutext" value="Sekolah" />
@@ -385,10 +394,10 @@
     <menu id="3">
       <phrase id="menutext" value="Barang" />
     </menu>
-    <menu id="5">
+    <menu id="14">
       <phrase id="menutext" value="Jenis Pengeluaran" />
     </menu>
-    <menu id="13">
+    <menu id="5">
       <phrase id="menutext" value="Jenis Pengeluaran" />
     </menu>
     <menu id="4">
@@ -409,6 +418,21 @@
     <menu id="11">
       <phrase id="menutext" value="t 99 audittrail" />
     </menu>
+    <table id="r01_jenis_pengeluaran">
+      <phrase id="tblcaption" value="Jenis Pengeluaran" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="maingroup_id">
+        <phrase id="fldcaption" value="maingroup id" />
+      </field>
+      <field id="maingroup_nama">
+        <phrase id="fldcaption" value="Jenis Pengeluaran" />
+      </field>
+      <field id="nama">
+        <phrase id="fldcaption" value="Sub Jenis Pengeluaran" />
+      </field>
+    </table>
     <table id="t01_supplier">
       <phrase id="tblcaption" value="Supplier" />
       <field id="id">
@@ -500,6 +524,9 @@
       </field>
       <field id="subgroup_id">
         <phrase id="fldcaption" value="subgroup id" />
+      </field>
+      <field id="maingroup_id">
+        <phrase id="fldcaption" value="maingroup id" />
       </field>
     </table>
     <table id="t07_sekolah">
@@ -643,19 +670,76 @@
         <phrase id="fldcaption" value="newvalue" />
       </field>
     </table>
-    <table id="r05_subgroup">
-      <phrase id="tblcaption" value="Jenis Pengeluaran" />
+    <table id="v01_barang_satuan">
+      <phrase id="tblcaption" value="v 01 barang satuan" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
-      <field id="maingroup_id">
-        <phrase id="fldcaption" value="maingroup id" />
-      </field>
-      <field id="maingroup_nama">
-        <phrase id="fldcaption" value="Jenis Pengeluaran" />
-      </field>
       <field id="nama">
-        <phrase id="fldcaption" value="Sub Jenis Pengeluaran" />
+        <phrase id="fldcaption" value="Nama" />
+      </field>
+      <field id="satuan">
+        <phrase id="fldcaption" value="Satuan" />
+      </field>
+    </table>
+    <table id="v02_terima_keluar">
+      <phrase id="tblcaption" value="v 02 terima keluar" />
+      <field id="tanggal">
+        <phrase id="fldcaption" value="tanggal" />
+      </field>
+      <field id="ket1">
+        <phrase id="fldcaption" value="ket 1" />
+      </field>
+      <field id="ket2">
+        <phrase id="fldcaption" value="ket 2" />
+      </field>
+      <field id="ket3">
+        <phrase id="fldcaption" value="ket 3" />
+      </field>
+      <field id="ket4">
+        <phrase id="fldcaption" value="ket 4" />
+      </field>
+      <field id="ket5">
+        <phrase id="fldcaption" value="ket 5" />
+      </field>
+      <field id="nilai1">
+        <phrase id="fldcaption" value="nilai 1" />
+      </field>
+      <field id="ket6">
+        <phrase id="fldcaption" value="ket 6" />
+      </field>
+      <field id="nilai2">
+        <phrase id="fldcaption" value="nilai 2" />
+      </field>
+      <field id="terima_jumlah">
+        <phrase id="fldcaption" value="terima jumlah" />
+      </field>
+      <field id="keluar_jumlah">
+        <phrase id="fldcaption" value="keluar jumlah" />
+      </field>
+    </table>
+    <table id="r02_terima_keluar">
+      <phrase id="tblcaption" value="Keuangan" />
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="ket1">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+      <field id="ket2" />
+      <field id="ket3" />
+      <field id="ket4">
+        <phrase id="fldcaption" value="No. Kwitansi / Nota" />
+      </field>
+      <field id="ket5" />
+      <field id="nilai1" />
+      <field id="ket6" />
+      <field id="nilai2" />
+      <field id="terima_jumlah">
+        <phrase id="fldcaption" value="Penerimaan" />
+      </field>
+      <field id="keluar_jumlah">
+        <phrase id="fldcaption" value="Pengeluaran" />
       </field>
     </table>
   </project>

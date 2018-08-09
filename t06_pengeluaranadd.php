@@ -843,14 +843,20 @@ class ct06_pengeluaran_add extends ct06_pengeluaran {
 
 		// Banyaknya
 		$this->Banyaknya->ViewValue = $this->Banyaknya->CurrentValue;
+		$this->Banyaknya->ViewValue = ew_FormatNumber($this->Banyaknya->ViewValue, 2, -2, -2, -2);
+		$this->Banyaknya->CellCssStyle .= "text-align: right;";
 		$this->Banyaknya->ViewCustomAttributes = "";
 
 		// Harga
 		$this->Harga->ViewValue = $this->Harga->CurrentValue;
+		$this->Harga->ViewValue = ew_FormatNumber($this->Harga->ViewValue, 2, -2, -2, -2);
+		$this->Harga->CellCssStyle .= "text-align: right;";
 		$this->Harga->ViewCustomAttributes = "";
 
 		// Jumlah
 		$this->Jumlah->ViewValue = $this->Jumlah->CurrentValue;
+		$this->Jumlah->ViewValue = ew_FormatNumber($this->Jumlah->ViewValue, 2, -2, -2, -2);
+		$this->Jumlah->CellCssStyle .= "text-align: right;";
 		$this->Jumlah->ViewCustomAttributes = "";
 
 		// maingroup_id
@@ -1025,21 +1031,21 @@ class ct06_pengeluaran_add extends ct06_pengeluaran {
 			$this->Banyaknya->EditCustomAttributes = "";
 			$this->Banyaknya->EditValue = ew_HtmlEncode($this->Banyaknya->CurrentValue);
 			$this->Banyaknya->PlaceHolder = ew_RemoveHtml($this->Banyaknya->FldCaption());
-			if (strval($this->Banyaknya->EditValue) <> "" && is_numeric($this->Banyaknya->EditValue)) $this->Banyaknya->EditValue = ew_FormatNumber($this->Banyaknya->EditValue, -2, -1, -2, 0);
+			if (strval($this->Banyaknya->EditValue) <> "" && is_numeric($this->Banyaknya->EditValue)) $this->Banyaknya->EditValue = ew_FormatNumber($this->Banyaknya->EditValue, -2, -2, -2, -2);
 
 			// Harga
 			$this->Harga->EditAttrs["class"] = "form-control";
 			$this->Harga->EditCustomAttributes = "";
 			$this->Harga->EditValue = ew_HtmlEncode($this->Harga->CurrentValue);
 			$this->Harga->PlaceHolder = ew_RemoveHtml($this->Harga->FldCaption());
-			if (strval($this->Harga->EditValue) <> "" && is_numeric($this->Harga->EditValue)) $this->Harga->EditValue = ew_FormatNumber($this->Harga->EditValue, -2, -1, -2, 0);
+			if (strval($this->Harga->EditValue) <> "" && is_numeric($this->Harga->EditValue)) $this->Harga->EditValue = ew_FormatNumber($this->Harga->EditValue, -2, -2, -2, -2);
 
 			// Jumlah
 			$this->Jumlah->EditAttrs["class"] = "form-control";
 			$this->Jumlah->EditCustomAttributes = "";
 			$this->Jumlah->EditValue = ew_HtmlEncode($this->Jumlah->CurrentValue);
 			$this->Jumlah->PlaceHolder = ew_RemoveHtml($this->Jumlah->FldCaption());
-			if (strval($this->Jumlah->EditValue) <> "" && is_numeric($this->Jumlah->EditValue)) $this->Jumlah->EditValue = ew_FormatNumber($this->Jumlah->EditValue, -2, -1, -2, 0);
+			if (strval($this->Jumlah->EditValue) <> "" && is_numeric($this->Jumlah->EditValue)) $this->Jumlah->EditValue = ew_FormatNumber($this->Jumlah->EditValue, -2, -2, -2, -2);
 
 			// maingroup_id
 			$this->maingroup_id->EditCustomAttributes = "";
@@ -1552,7 +1558,7 @@ $t06_pengeluaran_add->ShowMessage();
 		<div class="<?php echo $t06_pengeluaran_add->RightColumnClass ?>"><div<?php echo $t06_pengeluaran->supplier_id->CellAttributes() ?>>
 <span id="el_t06_pengeluaran_supplier_id">
 <span class="ewLookupList">
-	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_supplier_id"><?php echo (strval($t06_pengeluaran->supplier_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t06_pengeluaran->supplier_id->ViewValue); ?></span>
+	<span onclick="jQuery(this).parent().next(":not([disabled])").click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_supplier_id"><?php echo (strval($t06_pengeluaran->supplier_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t06_pengeluaran->supplier_id->ViewValue); ?></span>
 </span>
 <button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t06_pengeluaran->supplier_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x_supplier_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"<?php echo (($t06_pengeluaran->supplier_id->ReadOnly || $t06_pengeluaran->supplier_id->Disabled) ? " disabled" : "")?>><span class="glyphicon glyphicon-search ewIcon"></span></button>
 <input type="hidden" data-table="t06_pengeluaran" data-field="x_supplier_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t06_pengeluaran->supplier_id->DisplayValueSeparatorAttribute() ?>" name="x_supplier_id" id="x_supplier_id" value="<?php echo $t06_pengeluaran->supplier_id->CurrentValue ?>"<?php echo $t06_pengeluaran->supplier_id->EditAttributes() ?>>
@@ -1594,7 +1600,7 @@ ew_CreateDateTimePicker("ft06_pengeluaranadd", "x_Tanggal", {"ignoreReadonly":tr
 		<div class="<?php echo $t06_pengeluaran_add->RightColumnClass ?>"><div<?php echo $t06_pengeluaran->barang_id->CellAttributes() ?>>
 <span id="el_t06_pengeluaran_barang_id">
 <span class="ewLookupList">
-	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_barang_id"><?php echo (strval($t06_pengeluaran->barang_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t06_pengeluaran->barang_id->ViewValue); ?></span>
+	<span onclick="jQuery(this).parent().next(":not([disabled])").click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_barang_id"><?php echo (strval($t06_pengeluaran->barang_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t06_pengeluaran->barang_id->ViewValue); ?></span>
 </span>
 <button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t06_pengeluaran->barang_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x_barang_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"<?php echo (($t06_pengeluaran->barang_id->ReadOnly || $t06_pengeluaran->barang_id->Disabled) ? " disabled" : "")?>><span class="glyphicon glyphicon-search ewIcon"></span></button>
 <input type="hidden" data-table="t06_pengeluaran" data-field="x_barang_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t06_pengeluaran->barang_id->DisplayValueSeparatorAttribute() ?>" name="x_barang_id" id="x_barang_id" value="<?php echo $t06_pengeluaran->barang_id->CurrentValue ?>"<?php echo $t06_pengeluaran->barang_id->EditAttributes() ?>>
@@ -1639,7 +1645,7 @@ ew_CreateDateTimePicker("ft06_pengeluaranadd", "x_Tanggal", {"ignoreReadonly":tr
 <span id="el_t06_pengeluaran_maingroup_id">
 <?php $t06_pengeluaran->maingroup_id->EditAttrs["onchange"] = "ew_UpdateOpt.call(this); " . @$t06_pengeluaran->maingroup_id->EditAttrs["onchange"]; ?>
 <span class="ewLookupList">
-	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_maingroup_id"><?php echo (strval($t06_pengeluaran->maingroup_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t06_pengeluaran->maingroup_id->ViewValue); ?></span>
+	<span onclick="jQuery(this).parent().next(":not([disabled])").click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_maingroup_id"><?php echo (strval($t06_pengeluaran->maingroup_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t06_pengeluaran->maingroup_id->ViewValue); ?></span>
 </span>
 <button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t06_pengeluaran->maingroup_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x_maingroup_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"<?php echo (($t06_pengeluaran->maingroup_id->ReadOnly || $t06_pengeluaran->maingroup_id->Disabled) ? " disabled" : "")?>><span class="glyphicon glyphicon-search ewIcon"></span></button>
 <input type="hidden" data-table="t06_pengeluaran" data-field="x_maingroup_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t06_pengeluaran->maingroup_id->DisplayValueSeparatorAttribute() ?>" name="x_maingroup_id" id="x_maingroup_id" value="<?php echo $t06_pengeluaran->maingroup_id->CurrentValue ?>"<?php echo $t06_pengeluaran->maingroup_id->EditAttributes() ?>>
@@ -1653,7 +1659,7 @@ ew_CreateDateTimePicker("ft06_pengeluaranadd", "x_Tanggal", {"ignoreReadonly":tr
 		<div class="<?php echo $t06_pengeluaran_add->RightColumnClass ?>"><div<?php echo $t06_pengeluaran->subgroup_id->CellAttributes() ?>>
 <span id="el_t06_pengeluaran_subgroup_id">
 <span class="ewLookupList">
-	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_subgroup_id"><?php echo (strval($t06_pengeluaran->subgroup_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t06_pengeluaran->subgroup_id->ViewValue); ?></span>
+	<span onclick="jQuery(this).parent().next(":not([disabled])").click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_subgroup_id"><?php echo (strval($t06_pengeluaran->subgroup_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t06_pengeluaran->subgroup_id->ViewValue); ?></span>
 </span>
 <button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t06_pengeluaran->subgroup_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x_subgroup_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"<?php echo (($t06_pengeluaran->subgroup_id->ReadOnly || $t06_pengeluaran->subgroup_id->Disabled) ? " disabled" : "")?>><span class="glyphicon glyphicon-search ewIcon"></span></button>
 <input type="hidden" data-table="t06_pengeluaran" data-field="x_subgroup_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t06_pengeluaran->subgroup_id->DisplayValueSeparatorAttribute() ?>" name="x_subgroup_id" id="x_subgroup_id" value="<?php echo $t06_pengeluaran->subgroup_id->CurrentValue ?>"<?php echo $t06_pengeluaran->subgroup_id->EditAttributes() ?>>

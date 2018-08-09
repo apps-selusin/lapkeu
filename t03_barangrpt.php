@@ -773,11 +773,7 @@ class crt03_barang_rpt extends crt03_barang {
 
 	// Get count
 	function GetCnt($sql) {
-		$conn = &$this->Connection();
-		$rscnt = $conn->Execute($sql);
-		$cnt = ($rscnt) ? $rscnt->RecordCount() : 0;
-		if ($rscnt) $rscnt->Close();
-		return $cnt;
+		return $this->getRecordCount($sql);
 	}
 
 	// Get recordset

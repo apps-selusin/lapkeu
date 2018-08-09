@@ -1,66 +1,145 @@
 <?php
 
 // Global variable for table object
-$t01_supplier = NULL;
+$r02_terima_keluar = NULL;
 
 //
-// Table class for t01_supplier
+// Table class for r02_terima_keluar
 //
-class crt01_supplier extends crTableBase {
+class crr02_terima_keluar extends crTableBase {
 	var $ShowGroupHeaderAsRow = FALSE;
 	var $ShowCompactSummaryFooter = TRUE;
-	var $id;
-	var $Nama;
-	var $Alamat;
-	var $NoTelpHp;
+	var $tanggal;
+	var $ket1;
+	var $ket2;
+	var $ket3;
+	var $ket4;
+	var $ket5;
+	var $nilai1;
+	var $ket6;
+	var $nilai2;
+	var $terima_jumlah;
+	var $keluar_jumlah;
 
 	//
 	// Table class constructor
 	//
 	function __construct() {
 		global $ReportLanguage, $grLanguage;
-		$this->TableVar = 't01_supplier';
-		$this->TableName = 't01_supplier';
-		$this->TableType = 'TABLE';
-		$this->TableReportType = 'rpt';
+		$this->TableVar = 'r02_terima_keluar';
+		$this->TableName = 'r02_terima_keluar';
+		$this->TableType = 'REPORT';
+		$this->TableReportType = 'summary';
 		$this->SourcTableIsCustomView = FALSE;
 		$this->DBID = 'DB';
 		$this->ExportAll = TRUE;
 		$this->ExportPageBreakCount = 0;
 		$this->ExportPageOrientation = "portrait"; // Page orientation (PDF only)
 
-		// id
-		$this->id = new crField('t01_supplier', 't01_supplier', 'x_id', 'id', '`id`', 3, EWR_DATATYPE_NUMBER, -1);
-		$this->id->Sortable = TRUE; // Allow sort
-		$this->id->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectInteger");
-		$this->id->DateFilter = "";
-		$this->id->SqlSelect = "";
-		$this->id->SqlOrderBy = "";
-		$this->fields['id'] = &$this->id;
+		// tanggal
+		$this->tanggal = new crField('r02_terima_keluar', 'r02_terima_keluar', 'x_tanggal', 'tanggal', '`tanggal`', 133, EWR_DATATYPE_DATE, 7);
+		$this->tanggal->Sortable = TRUE; // Allow sort
+		$this->tanggal->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectField");
+		$this->tanggal->DateFilter = "";
+		$this->tanggal->SqlSelect = "";
+		$this->tanggal->SqlOrderBy = "";
+		$this->fields['tanggal'] = &$this->tanggal;
 
-		// Nama
-		$this->Nama = new crField('t01_supplier', 't01_supplier', 'x_Nama', 'Nama', '`Nama`', 200, EWR_DATATYPE_STRING, -1);
-		$this->Nama->Sortable = TRUE; // Allow sort
-		$this->Nama->DateFilter = "";
-		$this->Nama->SqlSelect = "";
-		$this->Nama->SqlOrderBy = "";
-		$this->fields['Nama'] = &$this->Nama;
+		// ket1
+		$this->ket1 = new crField('r02_terima_keluar', 'r02_terima_keluar', 'x_ket1', 'ket1', '`ket1`', 200, EWR_DATATYPE_STRING, -1);
+		$this->ket1->Sortable = TRUE; // Allow sort
+		$this->ket1->GroupingFieldId = 1;
+		$this->ket1->ShowGroupHeaderAsRow = $this->ShowGroupHeaderAsRow;
+		$this->ket1->ShowCompactSummaryFooter = $this->ShowCompactSummaryFooter;
+		$this->ket1->DateFilter = "";
+		$this->ket1->SqlSelect = "";
+		$this->ket1->SqlOrderBy = "";
+		$this->ket1->FldGroupByType = "";
+		$this->ket1->FldGroupInt = "0";
+		$this->ket1->FldGroupSql = "";
+		$this->fields['ket1'] = &$this->ket1;
 
-		// Alamat
-		$this->Alamat = new crField('t01_supplier', 't01_supplier', 'x_Alamat', 'Alamat', '`Alamat`', 200, EWR_DATATYPE_STRING, -1);
-		$this->Alamat->Sortable = TRUE; // Allow sort
-		$this->Alamat->DateFilter = "";
-		$this->Alamat->SqlSelect = "";
-		$this->Alamat->SqlOrderBy = "";
-		$this->fields['Alamat'] = &$this->Alamat;
+		// ket2
+		$this->ket2 = new crField('r02_terima_keluar', 'r02_terima_keluar', 'x_ket2', 'ket2', '`ket2`', 200, EWR_DATATYPE_STRING, -1);
+		$this->ket2->Sortable = TRUE; // Allow sort
+		$this->ket2->GroupingFieldId = 2;
+		$this->ket2->ShowGroupHeaderAsRow = $this->ShowGroupHeaderAsRow;
+		$this->ket2->ShowCompactSummaryFooter = $this->ShowCompactSummaryFooter;
+		$this->ket2->DateFilter = "";
+		$this->ket2->SqlSelect = "";
+		$this->ket2->SqlOrderBy = "";
+		$this->ket2->FldGroupByType = "";
+		$this->ket2->FldGroupInt = "0";
+		$this->ket2->FldGroupSql = "";
+		$this->fields['ket2'] = &$this->ket2;
 
-		// NoTelpHp
-		$this->NoTelpHp = new crField('t01_supplier', 't01_supplier', 'x_NoTelpHp', 'NoTelpHp', '`NoTelpHp`', 200, EWR_DATATYPE_STRING, -1);
-		$this->NoTelpHp->Sortable = TRUE; // Allow sort
-		$this->NoTelpHp->DateFilter = "";
-		$this->NoTelpHp->SqlSelect = "";
-		$this->NoTelpHp->SqlOrderBy = "";
-		$this->fields['NoTelpHp'] = &$this->NoTelpHp;
+		// ket3
+		$this->ket3 = new crField('r02_terima_keluar', 'r02_terima_keluar', 'x_ket3', 'ket3', '`ket3`', 200, EWR_DATATYPE_STRING, -1);
+		$this->ket3->Sortable = TRUE; // Allow sort
+		$this->ket3->DateFilter = "";
+		$this->ket3->SqlSelect = "";
+		$this->ket3->SqlOrderBy = "";
+		$this->fields['ket3'] = &$this->ket3;
+
+		// ket4
+		$this->ket4 = new crField('r02_terima_keluar', 'r02_terima_keluar', 'x_ket4', 'ket4', '`ket4`', 200, EWR_DATATYPE_STRING, -1);
+		$this->ket4->Sortable = TRUE; // Allow sort
+		$this->ket4->DateFilter = "";
+		$this->ket4->SqlSelect = "";
+		$this->ket4->SqlOrderBy = "";
+		$this->fields['ket4'] = &$this->ket4;
+
+		// ket5
+		$this->ket5 = new crField('r02_terima_keluar', 'r02_terima_keluar', 'x_ket5', 'ket5', '`ket5`', 200, EWR_DATATYPE_STRING, -1);
+		$this->ket5->Sortable = TRUE; // Allow sort
+		$this->ket5->DateFilter = "";
+		$this->ket5->SqlSelect = "";
+		$this->ket5->SqlOrderBy = "";
+		$this->fields['ket5'] = &$this->ket5;
+
+		// nilai1
+		$this->nilai1 = new crField('r02_terima_keluar', 'r02_terima_keluar', 'x_nilai1', 'nilai1', '`nilai1`', 5, EWR_DATATYPE_NUMBER, -1);
+		$this->nilai1->Sortable = TRUE; // Allow sort
+		$this->nilai1->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectFloat");
+		$this->nilai1->DateFilter = "";
+		$this->nilai1->SqlSelect = "";
+		$this->nilai1->SqlOrderBy = "";
+		$this->fields['nilai1'] = &$this->nilai1;
+
+		// ket6
+		$this->ket6 = new crField('r02_terima_keluar', 'r02_terima_keluar', 'x_ket6', 'ket6', '`ket6`', 200, EWR_DATATYPE_STRING, -1);
+		$this->ket6->Sortable = TRUE; // Allow sort
+		$this->ket6->DateFilter = "";
+		$this->ket6->SqlSelect = "";
+		$this->ket6->SqlOrderBy = "";
+		$this->fields['ket6'] = &$this->ket6;
+
+		// nilai2
+		$this->nilai2 = new crField('r02_terima_keluar', 'r02_terima_keluar', 'x_nilai2', 'nilai2', '`nilai2`', 5, EWR_DATATYPE_NUMBER, -1);
+		$this->nilai2->Sortable = TRUE; // Allow sort
+		$this->nilai2->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectFloat");
+		$this->nilai2->DateFilter = "";
+		$this->nilai2->SqlSelect = "";
+		$this->nilai2->SqlOrderBy = "";
+		$this->fields['nilai2'] = &$this->nilai2;
+
+		// terima_jumlah
+		$this->terima_jumlah = new crField('r02_terima_keluar', 'r02_terima_keluar', 'x_terima_jumlah', 'terima_jumlah', '`terima_jumlah`', 4, EWR_DATATYPE_NUMBER, -1);
+		$this->terima_jumlah->Sortable = TRUE; // Allow sort
+		$this->terima_jumlah->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectFloat");
+		$this->terima_jumlah->DateFilter = "";
+		$this->terima_jumlah->SqlSelect = "";
+		$this->terima_jumlah->SqlOrderBy = "";
+		$this->fields['terima_jumlah'] = &$this->terima_jumlah;
+
+		// keluar_jumlah
+		$this->keluar_jumlah = new crField('r02_terima_keluar', 'r02_terima_keluar', 'x_keluar_jumlah', 'keluar_jumlah', '`keluar_jumlah`', 5, EWR_DATATYPE_NUMBER, -1);
+		$this->keluar_jumlah->Sortable = TRUE; // Allow sort
+		$this->keluar_jumlah->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectFloat");
+		$this->keluar_jumlah->DateFilter = "";
+		$this->keluar_jumlah->SqlSelect = "";
+		$this->keluar_jumlah->SqlOrderBy = "";
+		$this->fields['keluar_jumlah'] = &$this->keluar_jumlah;
 	}
 
 	// Set Field Visibility
@@ -132,7 +211,7 @@ class crt01_supplier extends crTableBase {
 	var $_SqlFrom = "";
 
 	function getSqlFrom() {
-		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t01_supplier`";
+		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`v02_terima_keluar`";
 	}
 
 	function SqlFrom() { // For backward compatibility
@@ -208,7 +287,7 @@ class crt01_supplier extends crTableBase {
 	var $_SqlOrderBy = "";
 
 	function getSqlOrderBy() {
-		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "";
+		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "`ket1` ASC, `ket2` ASC";
 	}
 
 	function SqlOrderBy() { // For backward compatibility
@@ -219,11 +298,58 @@ class crt01_supplier extends crTableBase {
 		$this->_SqlOrderBy = $v;
 	}
 
+	// Table Level Group SQL
+	// First Group Field
+
+	var $_SqlFirstGroupField = "";
+
+	function getSqlFirstGroupField() {
+		return ($this->_SqlFirstGroupField <> "") ? $this->_SqlFirstGroupField : "`ket1`";
+	}
+
+	function SqlFirstGroupField() { // For backward compatibility
+		return $this->getSqlFirstGroupField();
+	}
+
+	function setSqlFirstGroupField($v) {
+		$this->_SqlFirstGroupField = $v;
+	}
+
+	// Select Group
+	var $_SqlSelectGroup = "";
+
+	function getSqlSelectGroup() {
+		return ($this->_SqlSelectGroup <> "") ? $this->_SqlSelectGroup : "SELECT DISTINCT " . $this->getSqlFirstGroupField() . " FROM " . $this->getSqlFrom();
+	}
+
+	function SqlSelectGroup() { // For backward compatibility
+		return $this->getSqlSelectGroup();
+	}
+
+	function setSqlSelectGroup($v) {
+		$this->_SqlSelectGroup = $v;
+	}
+
+	// Order By Group
+	var $_SqlOrderByGroup = "";
+
+	function getSqlOrderByGroup() {
+		return ($this->_SqlOrderByGroup <> "") ? $this->_SqlOrderByGroup : "`ket1` ASC";
+	}
+
+	function SqlOrderByGroup() { // For backward compatibility
+		return $this->getSqlOrderByGroup();
+	}
+
+	function setSqlOrderByGroup($v) {
+		$this->_SqlOrderByGroup = $v;
+	}
+
 	// Select Aggregate
 	var $_SqlSelectAgg = "";
 
 	function getSqlSelectAgg() {
-		return ($this->_SqlSelectAgg <> "") ? $this->_SqlSelectAgg : "SELECT * FROM " . $this->getSqlFrom();
+		return ($this->_SqlSelectAgg <> "") ? $this->_SqlSelectAgg : "SELECT SUM(`terima_jumlah`) AS `sum_terima_jumlah`, SUM(`keluar_jumlah`) AS `sum_keluar_jumlah` FROM " . $this->getSqlFrom();
 	}
 
 	function SqlSelectAgg() { // For backward compatibility

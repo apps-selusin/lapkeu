@@ -4319,7 +4319,7 @@ class cAdvancedSecurity {
 			$this->setSessionParentUserID($parentUserID);
 		if (!is_null($userLevel)) {
 			$this->setSessionUserLevelID(intval($userLevel));
-			SetupUserLevel();
+			$this->SetupUserLevel();
 		}
 	}
 

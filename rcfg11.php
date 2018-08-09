@@ -109,7 +109,7 @@ define("EWR_SESSION_TIMEOUT_COUNTDOWN", 60, TRUE); // Session timeout count down
 // General
 $EWR_ROOT_RELATIVE_PATH = "."; // Relative path of app root
 define("EWR_UNFORMAT_YEAR", 50, TRUE); // Unformat year
-define("EWR_RANDOM_KEY", 'u6hAA56bJkZnhM7V', TRUE); // Random key for encryption
+define("EWR_RANDOM_KEY", 'jEqsCH4Lae0Giz3q', TRUE); // Random key for encryption
 define("EWR_PROJECT_STYLESHEET_FILENAME", "phprptcss/prj_lapkeu.css", TRUE); // Project stylesheet file name
 define("EWR_CHART_WIDTH", 600, TRUE);
 define("EWR_CHART_HEIGHT", 500, TRUE);
@@ -347,6 +347,7 @@ define("EWR_EMAIL_LOG_FIELD_NAME_SENDER", "", TRUE); // Email log Sender field n
 define("EWR_EMAIL_LOG_FIELD_NAME_RECIPIENT", "", TRUE); // Email log Recipient field name
 define("EWR_EMAIL_LOG_FIELD_NAME_SUBJECT", "", TRUE); // Email log Subject field name
 define("EWR_EMAIL_LOG_FIELD_NAME_MESSAGE", "", TRUE); // Email log Message field name
+define("EWR_PAGE_BREAK_HTML", "<p style=\"page-break-after:always;\">&nbsp;</p>\r\n", TRUE);
 
 // Export records
 $EWR_EXPORT = array(
@@ -809,9 +810,6 @@ define("EWR_COOKIE_EXPIRY_TIME", time() + 365*24*60*60, TRUE); // Change cookie 
 // Use Custom Template in report
 define("EWR_USE_CUSTOM_TEMPLATE", TRUE, TRUE);
 
-// Page break content
-define("EWR_EXPORT_PAGE_BREAK_CONTENT", "<div class=\"ewPageBreak\">&nbsp;</div>", TRUE);
-
 // Page Title Style
 define("EWR_PAGE_TITLE_STYLE", "Breadcrumbs", TRUE);
 
@@ -894,6 +892,10 @@ define("EWR_GANTT_INTERVAL_WEEK", 2, TRUE);
 define("EWR_GANTT_INTERVAL_DAY", 1, TRUE);
 define("EWR_GANTT_INTERVAL_NONE", 0, TRUE);
 define("EWR_GANTT_WEEK_START", 1, TRUE); // 0 (for Sunday) through 6 (for Saturday)
+
+// PDF (Make sure width/height not larger than page width/height or "infinite table loop" error)
+$EWR_PDF_MAX_IMAGE_WIDTH = 500; // Portrait
+$EWR_PDF_MAX_IMAGE_HEIGHT = 650; // Portrait
 ?>
 <?php
 $EWR_USE_SUBMENU_FOR_ROOT_HEADER = FALSE;

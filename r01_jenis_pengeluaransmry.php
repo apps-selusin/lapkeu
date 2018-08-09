@@ -6,25 +6,25 @@ ob_start();
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "phprptinc/ewmysql.php") ?>
 <?php include_once "rphpfn11.php" ?>
 <?php include_once "rusrfn11.php" ?>
-<?php include_once "t02_satuanrptinfo.php" ?>
+<?php include_once "r01_jenis_pengeluaransmryinfo.php" ?>
 <?php
 
 //
 // Page class
 //
 
-$t02_satuan_rpt = NULL; // Initialize page object first
+$r01_jenis_pengeluaran_summary = NULL; // Initialize page object first
 
-class crt02_satuan_rpt extends crt02_satuan {
+class crr01_jenis_pengeluaran_summary extends crr01_jenis_pengeluaran {
 
 	// Page ID
-	var $PageID = 'rpt';
+	var $PageID = 'summary';
 
 	// Project ID
 	var $ProjectID = "{3CDC6268-D928-4495-B72A-CA5D35EAE344}";
 
 	// Page object name
-	var $PageObjName = 't02_satuan_rpt';
+	var $PageObjName = 'r01_jenis_pengeluaran_summary';
 
 	// Page headings
 	var $Heading = '';
@@ -225,10 +225,10 @@ class crt02_satuan_rpt extends crt02_satuan {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t02_satuan)
-		if (!isset($GLOBALS["t02_satuan"])) {
-			$GLOBALS["t02_satuan"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t02_satuan"];
+		// Table object (r01_jenis_pengeluaran)
+		if (!isset($GLOBALS["r01_jenis_pengeluaran"])) {
+			$GLOBALS["r01_jenis_pengeluaran"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["r01_jenis_pengeluaran"];
 		}
 
 		// Initialize URLs
@@ -239,11 +239,11 @@ class crt02_satuan_rpt extends crt02_satuan {
 
 		// Page ID
 		if (!defined("EWR_PAGE_ID"))
-			define("EWR_PAGE_ID", 'rpt', TRUE);
+			define("EWR_PAGE_ID", 'summary', TRUE);
 
 		// Table name (for backward compatibility)
 		if (!defined("EWR_TABLE_NAME"))
-			define("EWR_TABLE_NAME", 't02_satuan', TRUE);
+			define("EWR_TABLE_NAME", 'r01_jenis_pengeluaran', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["grTimer"]))
@@ -274,7 +274,7 @@ class crt02_satuan_rpt extends crt02_satuan {
 		// Filter options
 		$this->FilterOptions = new crListOptions();
 		$this->FilterOptions->Tag = "div";
-		$this->FilterOptions->TagClassName = "ewFilterOption ft02_satuanrpt";
+		$this->FilterOptions->TagClassName = "ewFilterOption fr01_jenis_pengeluaransummary";
 
 		// Generate report options
 		$this->GenerateOptions = new crListOptions();
@@ -296,7 +296,7 @@ class crt02_satuan_rpt extends crt02_satuan {
 		$Security = new crAdvancedSecurity();
 		if (!$Security->IsLoggedIn()) $Security->AutoLogin(); // Auto login
 		$Security->TablePermission_Loading();
-		$Security->LoadCurrentUserLevel($this->ProjectID . 't02_satuan');
+		$Security->LoadCurrentUserLevel($this->ProjectID . 'r01_jenis_pengeluaran');
 		$Security->TablePermission_Loaded();
 		if (!$Security->CanList()) {
 			$Security->SaveLastUrl();
@@ -380,7 +380,7 @@ class crt02_satuan_rpt extends crt02_satuan {
 		// Export to Email
 		$item = &$this->ExportOptions->Add("email");
 		$url = $this->PageUrl() . "export=email";
-		$item->Body = "<a class=\"ewrExportLink ewEmail\" title=\"" . ewr_HtmlEncode($ReportLanguage->Phrase("ExportToEmail", TRUE)) . "\" data-caption=\"" . ewr_HtmlEncode($ReportLanguage->Phrase("ExportToEmail", TRUE)) . "\" id=\"emf_t02_satuan\" href=\"javascript:void(0);\" onclick=\"ewr_EmailDialogShow({lnk:'emf_t02_satuan',hdr:ewLanguage.Phrase('ExportToEmail'),url:'$url',exportid:'$exportid',el:this});\">" . $ReportLanguage->Phrase("ExportToEmail") . "</a>";
+		$item->Body = "<a class=\"ewrExportLink ewEmail\" title=\"" . ewr_HtmlEncode($ReportLanguage->Phrase("ExportToEmail", TRUE)) . "\" data-caption=\"" . ewr_HtmlEncode($ReportLanguage->Phrase("ExportToEmail", TRUE)) . "\" id=\"emf_r01_jenis_pengeluaran\" href=\"javascript:void(0);\" onclick=\"ewr_EmailDialogShow({lnk:'emf_r01_jenis_pengeluaran',hdr:ewLanguage.Phrase('ExportToEmail'),url:'$url',exportid:'$exportid',el:this});\">" . $ReportLanguage->Phrase("ExportToEmail") . "</a>";
 		$item->Visible = TRUE;
 		$ReportTypes["email"] = $item->Visible ? $ReportLanguage->Phrase("ReportFormEmail") : "";
 		$ReportOptions["ReportTypes"] = $ReportTypes;
@@ -398,10 +398,10 @@ class crt02_satuan_rpt extends crt02_satuan {
 
 		// Filter button
 		$item = &$this->FilterOptions->Add("savecurrentfilter");
-		$item->Body = "<a class=\"ewSaveFilter\" data-form=\"ft02_satuanrpt\" href=\"#\">" . $ReportLanguage->Phrase("SaveCurrentFilter") . "</a>";
+		$item->Body = "<a class=\"ewSaveFilter\" data-form=\"fr01_jenis_pengeluaransummary\" href=\"#\">" . $ReportLanguage->Phrase("SaveCurrentFilter") . "</a>";
 		$item->Visible = TRUE;
 		$item = &$this->FilterOptions->Add("deletefilter");
-		$item->Body = "<a class=\"ewDeleteFilter\" data-form=\"ft02_satuanrpt\" href=\"#\">" . $ReportLanguage->Phrase("DeleteFilter") . "</a>";
+		$item->Body = "<a class=\"ewDeleteFilter\" data-form=\"fr01_jenis_pengeluaransummary\" href=\"#\">" . $ReportLanguage->Phrase("DeleteFilter") . "</a>";
 		$item->Visible = TRUE;
 		$this->FilterOptions->UseDropDownButton = TRUE;
 		$this->FilterOptions->UseButtonGroup = !$this->FilterOptions->UseDropDownButton; // v8
@@ -435,7 +435,7 @@ class crt02_satuan_rpt extends crt02_satuan {
 		// Filter panel button
 		$item = &$this->SearchOptions->Add("searchtoggle");
 		$SearchToggleClass = $this->FilterApplied ? " active" : " active";
-		$item->Body = "<button type=\"button\" class=\"btn btn-default ewSearchToggle" . $SearchToggleClass . "\" title=\"" . $ReportLanguage->Phrase("SearchBtn", TRUE) . "\" data-caption=\"" . $ReportLanguage->Phrase("SearchBtn", TRUE) . "\" data-toggle=\"button\" data-form=\"ft02_satuanrpt\">" . $ReportLanguage->Phrase("SearchBtn") . "</button>";
+		$item->Body = "<button type=\"button\" class=\"btn btn-default ewSearchToggle" . $SearchToggleClass . "\" title=\"" . $ReportLanguage->Phrase("SearchBtn", TRUE) . "\" data-caption=\"" . $ReportLanguage->Phrase("SearchBtn", TRUE) . "\" data-toggle=\"button\" data-form=\"fr01_jenis_pengeluaransummary\">" . $ReportLanguage->Phrase("SearchBtn") . "</button>";
 		$item->Visible = FALSE;
 
 		// Reset filter
@@ -581,7 +581,7 @@ class crt02_satuan_rpt extends crt02_satuan {
 		// 2nd dimension = no of fields
 
 		$nDtls = 2;
-		$nGrps = 1;
+		$nGrps = 2;
 		$this->Val = &ewr_InitArray($nDtls, 0);
 		$this->Cnt = &ewr_Init2DArray($nGrps, $nDtls, 0);
 		$this->Smry = &ewr_Init2DArray($nGrps, $nDtls, 0);
@@ -637,9 +637,10 @@ class crt02_satuan_rpt extends crt02_satuan {
 		// Get sort
 		$this->Sort = $this->GetSort($this->GenOptions);
 
-		// Get total count
-		$sSql = ewr_BuildReportSql($this->getSqlSelect(), $this->getSqlWhere(), $this->getSqlGroupBy(), $this->getSqlHaving(), $this->getSqlOrderBy(), $this->Filter, $this->Sort);
-		$this->TotalGrps = $this->GetCnt($sSql);
+		// Get total group count
+		$sGrpSort = ewr_UpdateSortFields($this->getSqlOrderByGroup(), $this->Sort, 2); // Get grouping field only
+		$sSql = ewr_BuildReportSql($this->getSqlSelectGroup(), $this->getSqlWhere(), $this->getSqlGroupBy(), $this->getSqlHaving(), $this->getSqlOrderByGroup(), $this->Filter, $sGrpSort);
+		$this->TotalGrps = $this->GetGrpCnt($sSql);
 		if ($this->DisplayGrps <= 0 || $this->DrillDown || $grDashboardReport) // Display all groups
 			$this->DisplayGrps = $this->TotalGrps;
 		$this->StartGrp = 1;
@@ -677,9 +678,39 @@ class crt02_satuan_rpt extends crt02_satuan {
 			$this->GenerateOptions->HideAllOptions();
 		}
 
-		// Get current page records
-		$rs = $this->GetRs($sSql, $this->StartGrp, $this->DisplayGrps);
+		// Get current page groups
+		$rsgrp = $this->GetGrpRs($sSql, $this->StartGrp, $this->DisplayGrps);
+
+		// Init detail recordset
+		$rs = NULL;
 		$this->SetupFieldCount();
+	}
+
+	// Get summary count
+	function GetSummaryCount($lvl, $curValue = TRUE) {
+		$cnt = 0;
+		foreach ($this->DetailRows as $row) {
+			$wrkmaingroup_nama = $row["maingroup_nama"];
+			if ($lvl >= 1) {
+				$val = $curValue ? $this->maingroup_nama->CurrentValue : $this->maingroup_nama->OldValue;
+				$grpval = $curValue ? $this->maingroup_nama->GroupValue() : $this->maingroup_nama->GroupOldValue();
+				if (is_null($val) && !is_null($wrkmaingroup_nama) || !is_null($val) && is_null($wrkmaingroup_nama) ||
+					$grpval <> $this->maingroup_nama->getGroupValueBase($wrkmaingroup_nama))
+				continue;
+			}
+			$cnt++;
+		}
+		return $cnt;
+	}
+
+	// Check level break
+	function ChkLvlBreak($lvl) {
+		switch ($lvl) {
+			case 1:
+				return (is_null($this->maingroup_nama->CurrentValue) && !is_null($this->maingroup_nama->OldValue)) ||
+					(!is_null($this->maingroup_nama->CurrentValue) && is_null($this->maingroup_nama->OldValue)) ||
+					($this->maingroup_nama->GroupValue() <> $this->maingroup_nama->GroupOldValue());
+		}
 	}
 
 	// Accummulate summary
@@ -770,17 +801,53 @@ class crt02_satuan_rpt extends crt02_satuan {
 		}
 	}
 
-	// Get count
-	function GetCnt($sql) {
+	// Get group count
+	function GetGrpCnt($sql) {
 		return $this->getRecordCount($sql);
 	}
 
-	// Get recordset
-	function GetRs($wrksql, $start, $grps) {
+	// Get group recordset
+	function GetGrpRs($wrksql, $start = -1, $grps = -1) {
 		$conn = &$this->Connection();
 		$conn->raiseErrorFn = $GLOBALS["EWR_ERROR_FN"];
 		$rswrk = $conn->SelectLimit($wrksql, $grps, $start - 1);
 		$conn->raiseErrorFn = '';
+		return $rswrk;
+	}
+
+	// Get group row values
+	function GetGrpRow($opt) {
+		global $rsgrp;
+		if (!$rsgrp)
+			return;
+		if ($opt == 1) { // Get first group
+
+			//$rsgrp->MoveFirst(); // NOTE: no need to move position
+			$this->maingroup_nama->setDbValue(""); // Init first value
+		} else { // Get next group
+			$rsgrp->MoveNext();
+		}
+		if (!$rsgrp->EOF)
+			$this->maingroup_nama->setDbValue($rsgrp->fields[0]);
+		if ($rsgrp->EOF) {
+			$this->maingroup_nama->setDbValue("");
+		}
+	}
+
+	// Get detail recordset
+	function GetDetailRs($wrksql) {
+		$conn = &$this->Connection();
+		$conn->raiseErrorFn = $GLOBALS["EWR_ERROR_FN"];
+		$rswrk = $conn->Execute($wrksql);
+		$dbtype = ewr_GetConnectionType($this->DBID);
+		if ($dbtype == "MYSQL" || $dbtype == "POSTGRESQL") {
+			$this->DetailRows = ($rswrk) ? $rswrk->GetRows() : array();
+		} else { // Cannot MoveFirst, use another recordset
+			$rstmp = $conn->Execute($wrksql);
+			$this->DetailRows = ($rstmp) ? $rstmp->GetRows() : array();
+			$rstmp->Close();
+		}
+		$conn->raiseErrorFn = "";
 		return $rswrk;
 	}
 
@@ -790,18 +857,32 @@ class crt02_satuan_rpt extends crt02_satuan {
 		if (!$rs)
 			return;
 		if ($opt == 1) { // Get first row
+			$rs->MoveFirst(); // Move first
+			if ($this->GrpCount == 1) {
 				$this->FirstRowData = array();
 				$this->FirstRowData['id'] = ewr_Conv($rs->fields('id'), 3);
+				$this->FirstRowData['maingroup_id'] = ewr_Conv($rs->fields('maingroup_id'), 3);
+				$this->FirstRowData['maingroup_nama'] = ewr_Conv($rs->fields('maingroup_nama'), 200);
 				$this->FirstRowData['Nama'] = ewr_Conv($rs->fields('Nama'), 200);
+			}
 		} else { // Get next row
 			$rs->MoveNext();
 		}
 		if (!$rs->EOF) {
 			$this->id->setDbValue($rs->fields('id'));
+			$this->maingroup_id->setDbValue($rs->fields('maingroup_id'));
+			if ($opt <> 1) {
+				if (is_array($this->maingroup_nama->GroupDbValues))
+					$this->maingroup_nama->setDbValue(@$this->maingroup_nama->GroupDbValues[$rs->fields('maingroup_nama')]);
+				else
+					$this->maingroup_nama->setDbValue(ewr_GroupValue($this->maingroup_nama, $rs->fields('maingroup_nama')));
+			}
 			$this->Nama->setDbValue($rs->fields('Nama'));
 			$this->Val[1] = $this->Nama->CurrentValue;
 		} else {
 			$this->id->setDbValue("");
+			$this->maingroup_id->setDbValue("");
+			$this->maingroup_nama->setDbValue("");
 			$this->Nama->setDbValue("");
 		}
 	}
@@ -989,17 +1070,41 @@ class crt02_satuan_rpt extends crt02_satuan {
 
 		if ($this->RowType == EWR_ROWTYPE_TOTAL && !($this->RowTotalType == EWR_ROWTOTAL_GROUP && $this->RowTotalSubType == EWR_ROWTOTAL_HEADER)) { // Summary row
 			ewr_PrependClass($this->RowAttrs["class"], ($this->RowTotalType == EWR_ROWTOTAL_PAGE || $this->RowTotalType == EWR_ROWTOTAL_GRAND) ? "ewRptGrpAggregate" : ""); // Set up row class
+			if ($this->RowTotalType == EWR_ROWTOTAL_GROUP) $this->RowAttrs["data-group"] = $this->maingroup_nama->GroupOldValue(); // Set up group attribute
+
+			// maingroup_nama
+			$this->maingroup_nama->GroupViewValue = $this->maingroup_nama->GroupOldValue();
+			$this->maingroup_nama->CellAttrs["class"] = ($this->RowGroupLevel == 1) ? "ewRptGrpSummary1" : "ewRptGrpField1";
+			$this->maingroup_nama->GroupViewValue = ewr_DisplayGroupValue($this->maingroup_nama, $this->maingroup_nama->GroupViewValue);
+			$this->maingroup_nama->GroupSummaryOldValue = $this->maingroup_nama->GroupSummaryValue;
+			$this->maingroup_nama->GroupSummaryValue = $this->maingroup_nama->GroupViewValue;
+			$this->maingroup_nama->GroupSummaryViewValue = ($this->maingroup_nama->GroupSummaryOldValue <> $this->maingroup_nama->GroupSummaryValue) ? $this->maingroup_nama->GroupSummaryValue : "&nbsp;";
+
+			// maingroup_nama
+			$this->maingroup_nama->HrefValue = "";
 
 			// Nama
 			$this->Nama->HrefValue = "";
 		} else {
 			if ($this->RowTotalType == EWR_ROWTOTAL_GROUP && $this->RowTotalSubType == EWR_ROWTOTAL_HEADER) {
+			$this->RowAttrs["data-group"] = $this->maingroup_nama->GroupValue(); // Set up group attribute
 			} else {
+			$this->RowAttrs["data-group"] = $this->maingroup_nama->GroupValue(); // Set up group attribute
 			}
+
+			// maingroup_nama
+			$this->maingroup_nama->GroupViewValue = $this->maingroup_nama->GroupValue();
+			$this->maingroup_nama->CellAttrs["class"] = "ewRptGrpField1";
+			$this->maingroup_nama->GroupViewValue = ewr_DisplayGroupValue($this->maingroup_nama, $this->maingroup_nama->GroupViewValue);
+			if ($this->maingroup_nama->GroupValue() == $this->maingroup_nama->GroupOldValue() && !$this->ChkLvlBreak(1))
+				$this->maingroup_nama->GroupViewValue = "&nbsp;";
 
 			// Nama
 			$this->Nama->ViewValue = $this->Nama->CurrentValue;
 			$this->Nama->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
+
+			// maingroup_nama
+			$this->maingroup_nama->HrefValue = "";
 
 			// Nama
 			$this->Nama->HrefValue = "";
@@ -1007,7 +1112,25 @@ class crt02_satuan_rpt extends crt02_satuan {
 
 		// Call Cell_Rendered event
 		if ($this->RowType == EWR_ROWTYPE_TOTAL) { // Summary row
+
+			// maingroup_nama
+			$CurrentValue = $this->maingroup_nama->GroupViewValue;
+			$ViewValue = &$this->maingroup_nama->GroupViewValue;
+			$ViewAttrs = &$this->maingroup_nama->ViewAttrs;
+			$CellAttrs = &$this->maingroup_nama->CellAttrs;
+			$HrefValue = &$this->maingroup_nama->HrefValue;
+			$LinkAttrs = &$this->maingroup_nama->LinkAttrs;
+			$this->Cell_Rendered($this->maingroup_nama, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
 		} else {
+
+			// maingroup_nama
+			$CurrentValue = $this->maingroup_nama->GroupValue();
+			$ViewValue = &$this->maingroup_nama->GroupViewValue;
+			$ViewAttrs = &$this->maingroup_nama->ViewAttrs;
+			$CellAttrs = &$this->maingroup_nama->CellAttrs;
+			$HrefValue = &$this->maingroup_nama->HrefValue;
+			$LinkAttrs = &$this->maingroup_nama->LinkAttrs;
+			$this->Cell_Rendered($this->maingroup_nama, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
 
 			// Nama
 			$CurrentValue = $this->Nama->CurrentValue;
@@ -1029,6 +1152,7 @@ class crt02_satuan_rpt extends crt02_satuan {
 		$this->GrpColumnCount = 0;
 		$this->SubGrpColumnCount = 0;
 		$this->DtlColumnCount = 0;
+		if ($this->maingroup_nama->Visible) $this->GrpColumnCount += 1;
 		if ($this->Nama->Visible) $this->DtlColumnCount += 1;
 	}
 
@@ -1038,7 +1162,7 @@ class crt02_satuan_rpt extends crt02_satuan {
 		$ReportBreadcrumb = new crBreadcrumb();
 		$url = substr(ewr_CurrentUrl(), strrpos(ewr_CurrentUrl(), "/")+1);
 		$url = preg_replace('/\?cmd=reset(all){0,1}$/i', '', $url); // Remove cmd=reset / cmd=resetall
-		$ReportBreadcrumb->Add("rpt", $this->TableVar, $url, "", $this->TableVar, TRUE);
+		$ReportBreadcrumb->Add("summary", $this->TableVar, $url, "", $this->TableVar, TRUE);
 	}
 
 	function SetupExportOptionsExt() {
@@ -1065,7 +1189,7 @@ class crt02_satuan_rpt extends crt02_satuan {
 	// Get sort parameters based on sort links clicked
 	function GetSort($options = array()) {
 		if ($this->DrillDown)
-			return "";
+			return "`Nama` ASC";
 		$bResetSort = @$options["resetsort"] == "1" || @$_GET["cmd"] == "resetsort";
 		$orderBy = (@$options["order"] <> "") ? @$options["order"] : @$_GET["order"];
 		$orderType = (@$options["ordertype"] <> "") ? @$options["ordertype"] : @$_GET["ordertype"];
@@ -1077,16 +1201,24 @@ class crt02_satuan_rpt extends crt02_satuan {
 		if ($bResetSort) {
 			$this->setOrderBy("");
 			$this->setStartGroup(1);
+			$this->maingroup_nama->setSort("");
 			$this->Nama->setSort("");
 
 		// Check for an Order parameter
 		} elseif ($orderBy <> "") {
 			$this->CurrentOrder = $orderBy;
 			$this->CurrentOrderType = $orderType;
+			$this->UpdateSort($this->maingroup_nama, $bCtrl); // maingroup_nama
 			$this->UpdateSort($this->Nama, $bCtrl); // Nama
 			$sSortSql = $this->SortSql();
 			$this->setOrderBy($sSortSql);
 			$this->setStartGroup(1);
+		}
+
+		// Set up default sort
+		if ($this->getOrderBy() == "") {
+			$this->setOrderBy("`Nama` ASC");
+			$this->Nama->setSort("ASC");
 		}
 		return $this->getOrderBy();
 	}
@@ -1383,9 +1515,9 @@ class crt02_satuan_rpt extends crt02_satuan {
 <?php
 
 // Create page object
-if (!isset($t02_satuan_rpt)) $t02_satuan_rpt = new crt02_satuan_rpt();
+if (!isset($r01_jenis_pengeluaran_summary)) $r01_jenis_pengeluaran_summary = new crr01_jenis_pengeluaran_summary();
 if (isset($Page)) $OldPage = $Page;
-$Page = &$t02_satuan_rpt;
+$Page = &$r01_jenis_pengeluaran_summary;
 
 // Page init
 $Page->Page_Init();
@@ -1409,11 +1541,11 @@ $Page->Page_Render();
 <script type="text/javascript">
 
 // Create page object
-var t02_satuan_rpt = new ewr_Page("t02_satuan_rpt");
+var r01_jenis_pengeluaran_summary = new ewr_Page("r01_jenis_pengeluaran_summary");
 
 // Page properties
-t02_satuan_rpt.PageID = "rpt"; // Page ID
-var EWR_PAGE_ID = t02_satuan_rpt.PageID;
+r01_jenis_pengeluaran_summary.PageID = "summary"; // Page ID
+var EWR_PAGE_ID = r01_jenis_pengeluaran_summary.PageID;
 </script>
 <?php } ?>
 <?php if ($Page->Export == "" && !$Page->DrillDown && !$grDashboardReport) { ?>
@@ -1472,19 +1604,34 @@ $Page->RecIndex = 0;
 
 // Get first row
 if ($Page->TotalGrps > 0) {
-	$Page->GetRow(1);
+	$Page->GetGrpRow(1);
 	$Page->GrpCount = 1;
 }
-$Page->GrpIdx = ewr_InitArray(2, -1);
-$Page->GrpIdx[0] = -1;
-$Page->GrpIdx[1] = $Page->StopGrp - $Page->StartGrp + 1;
-while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowHeader) {
+$Page->GrpIdx = ewr_InitArray($Page->StopGrp - $Page->StartGrp + 1, -1);
+while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowHeader) {
 
 	// Show dummy header for custom template
 	// Show header
 
 	if ($Page->ShowHeader) {
 ?>
+<?php if ($Page->GrpCount > 1) { ?>
+</tbody>
+</table>
+<?php if ($Page->Export <> "pdf") { ?>
+</div>
+<?php } ?>
+<?php if ($Page->Export == "" && !($Page->DrillDown && $Page->TotalGrps > 0)) { ?>
+<div class="box-footer ewGridLowerPanel">
+<?php include "r01_jenis_pengeluaransmrypager.php" ?>
+<div class="clearfix"></div>
+</div>
+<?php } ?>
+<?php if ($Page->Export <> "pdf") { ?>
+</div>
+<?php } ?>
+<span data-class="tpb<?php echo $Page->GrpCount-1 ?>_r01_jenis_pengeluaran"><?php echo $Page->PageBreakContent ?></span>
+<?php } ?>
 <?php if ($Page->Export <> "pdf") { ?>
 <?php if ($Page->Export == "word" || $Page->Export == "excel") { ?>
 <div class="ewGrid"<?php echo $Page->ReportTableStyle ?>>
@@ -1494,23 +1641,45 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 <?php } ?>
 <!-- Report grid (begin) -->
 <?php if ($Page->Export <> "pdf") { ?>
-<div id="gmp_t02_satuan" class="<?php if (ewr_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
+<div id="gmp_r01_jenis_pengeluaran" class="<?php if (ewr_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
 <?php } ?>
 <table class="<?php echo $Page->ReportTableClass ?>">
 <thead>
 	<!-- Table header -->
 	<tr class="ewTableHeader">
+<?php if ($Page->maingroup_nama->Visible) { ?>
+	<?php if ($Page->maingroup_nama->ShowGroupHeaderAsRow) { ?>
+	<td data-field="maingroup_nama">&nbsp;</td>
+	<?php } else { ?>
+<?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
+	<td data-field="maingroup_nama"><div class="r01_jenis_pengeluaran_maingroup_nama"><span class="ewTableHeaderCaption"><?php echo $Page->maingroup_nama->FldCaption() ?></span></div></td>
+<?php } else { ?>
+	<td data-field="maingroup_nama">
+<?php if ($Page->SortUrl($Page->maingroup_nama) == "") { ?>
+		<div class="ewTableHeaderBtn r01_jenis_pengeluaran_maingroup_nama">
+			<span class="ewTableHeaderCaption"><?php echo $Page->maingroup_nama->FldCaption() ?></span>
+		</div>
+<?php } else { ?>
+		<div class="ewTableHeaderBtn ewPointer r01_jenis_pengeluaran_maingroup_nama" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->maingroup_nama) ?>',2);">
+			<span class="ewTableHeaderCaption"><?php echo $Page->maingroup_nama->FldCaption() ?></span>
+			<span class="ewTableHeaderSort"><?php if ($Page->maingroup_nama->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->maingroup_nama->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
+		</div>
+<?php } ?>
+	</td>
+<?php } ?>
+	<?php } ?>
+<?php } ?>
 <?php if ($Page->Nama->Visible) { ?>
 <?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
-	<td data-field="Nama"><div class="t02_satuan_Nama"><span class="ewTableHeaderCaption"><?php echo $Page->Nama->FldCaption() ?></span></div></td>
+	<td data-field="Nama"><div class="r01_jenis_pengeluaran_Nama"><span class="ewTableHeaderCaption"><?php echo $Page->Nama->FldCaption() ?></span></div></td>
 <?php } else { ?>
 	<td data-field="Nama">
 <?php if ($Page->SortUrl($Page->Nama) == "") { ?>
-		<div class="ewTableHeaderBtn t02_satuan_Nama">
+		<div class="ewTableHeaderBtn r01_jenis_pengeluaran_Nama">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Nama->FldCaption() ?></span>
 		</div>
 <?php } else { ?>
-		<div class="ewTableHeaderBtn ewPointer t02_satuan_Nama" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Nama) ?>',2);">
+		<div class="ewTableHeaderBtn ewPointer r01_jenis_pengeluaran_Nama" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Nama) ?>',2);">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Nama->FldCaption() ?></span>
 			<span class="ewTableHeaderSort"><?php if ($Page->Nama->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->Nama->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
 		</div>
@@ -1525,9 +1694,60 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 		if ($Page->TotalGrps == 0) break; // Show header only
 		$Page->ShowHeader = FALSE;
 	}
-	$Page->RecCount++;
-	$Page->RecIndex++;
+
+	// Build detail SQL
+	$sWhere = ewr_DetailFilterSql($Page->maingroup_nama, $Page->getSqlFirstGroupField(), $Page->maingroup_nama->GroupValue(), $Page->DBID);
+	if ($Page->PageFirstGroupFilter <> "") $Page->PageFirstGroupFilter .= " OR ";
+	$Page->PageFirstGroupFilter .= $sWhere;
+	if ($Page->Filter != "")
+		$sWhere = "($Page->Filter) AND ($sWhere)";
+	$sSql = ewr_BuildReportSql($Page->getSqlSelect(), $Page->getSqlWhere(), $Page->getSqlGroupBy(), $Page->getSqlHaving(), $Page->getSqlOrderBy(), $sWhere, $Page->Sort);
+	$rs = $Page->GetDetailRs($sSql);
+	$rsdtlcnt = ($rs) ? $rs->RecordCount() : 0;
+	if ($rsdtlcnt > 0)
+		$Page->GetRow(1);
+	$Page->GrpIdx[$Page->GrpCount] = $rsdtlcnt;
+	while ($rs && !$rs->EOF) { // Loop detail records
+		$Page->RecCount++;
+		$Page->RecIndex++;
 ?>
+<?php if ($Page->maingroup_nama->Visible && $Page->ChkLvlBreak(1) && $Page->maingroup_nama->ShowGroupHeaderAsRow) { ?>
+<?php
+
+		// Render header row
+		$Page->ResetAttrs();
+		$Page->RowType = EWR_ROWTYPE_TOTAL;
+		$Page->RowTotalType = EWR_ROWTOTAL_GROUP;
+		$Page->RowTotalSubType = EWR_ROWTOTAL_HEADER;
+		$Page->RowGroupLevel = 1;
+		$Page->maingroup_nama->Count = $Page->GetSummaryCount(1);
+		$Page->RenderRow();
+?>
+	<tr<?php echo $Page->RowAttributes(); ?>>
+<?php if ($Page->maingroup_nama->Visible) { ?>
+		<td data-field="maingroup_nama"<?php echo $Page->maingroup_nama->CellAttributes(); ?>><span class="ewGroupToggle icon-collapse"></span></td>
+<?php } ?>
+		<td data-field="maingroup_nama" colspan="<?php echo ($Page->GrpColumnCount + $Page->DtlColumnCount - 1) ?>"<?php echo $Page->maingroup_nama->CellAttributes() ?>>
+<?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
+		<span class="ewSummaryCaption r01_jenis_pengeluaran_maingroup_nama"><span class="ewTableHeaderCaption"><?php echo $Page->maingroup_nama->FldCaption() ?></span></span>
+<?php } else { ?>
+	<?php if ($Page->SortUrl($Page->maingroup_nama) == "") { ?>
+		<span class="ewSummaryCaption r01_jenis_pengeluaran_maingroup_nama">
+			<span class="ewTableHeaderCaption"><?php echo $Page->maingroup_nama->FldCaption() ?></span>
+		</span>
+	<?php } else { ?>
+		<span class="ewTableHeaderBtn ewPointer ewSummaryCaption r01_jenis_pengeluaran_maingroup_nama" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->maingroup_nama) ?>',2);">
+			<span class="ewTableHeaderCaption"><?php echo $Page->maingroup_nama->FldCaption() ?></span>
+			<span class="ewTableHeaderSort"><?php if ($Page->maingroup_nama->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->maingroup_nama->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
+		</span>
+	<?php } ?>
+<?php } ?>
+		<?php echo $ReportLanguage->Phrase("SummaryColon") ?>
+<span data-class="tpx<?php echo $Page->GrpCount ?>_r01_jenis_pengeluaran_maingroup_nama"<?php echo $Page->maingroup_nama->ViewAttributes() ?>><?php echo $Page->maingroup_nama->GroupViewValue ?></span>
+		<span class="ewSummaryCount">(<span class="ewAggregateCaption"><?php echo $ReportLanguage->Phrase("RptCnt") ?></span><?php echo $ReportLanguage->Phrase("AggregateEqual") ?><span class="ewAggregateValue"><?php echo ewr_FormatNumber($Page->maingroup_nama->Count,0,-2,-2,-2) ?></span>)</span>
+		</td>
+	</tr>
+<?php } ?>
 <?php
 
 		// Render detail row
@@ -1536,6 +1756,14 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 		$Page->RenderRow();
 ?>
 	<tr<?php echo $Page->RowAttributes(); ?>>
+<?php if ($Page->maingroup_nama->Visible) { ?>
+	<?php if ($Page->maingroup_nama->ShowGroupHeaderAsRow) { ?>
+		<td data-field="maingroup_nama"<?php echo $Page->maingroup_nama->CellAttributes(); ?>>&nbsp;</td>
+	<?php } else { ?>
+		<td data-field="maingroup_nama"<?php echo $Page->maingroup_nama->CellAttributes(); ?>>
+<span data-class="tpx<?php echo $Page->GrpCount ?>_r01_jenis_pengeluaran_maingroup_nama"<?php echo $Page->maingroup_nama->ViewAttributes() ?>><?php echo $Page->maingroup_nama->GroupViewValue ?></span></td>
+	<?php } ?>
+<?php } ?>
 <?php if ($Page->Nama->Visible) { ?>
 		<td data-field="Nama"<?php echo $Page->Nama->CellAttributes() ?>>
 <span<?php echo $Page->Nama->ViewAttributes() ?>><?php echo $Page->Nama->ListViewValue() ?></span></td>
@@ -1548,12 +1776,47 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 
 		// Get next record
 		$Page->GetRow(2);
+
+		// Show Footers
+?>
+<?php
+	} // End detail records loop
+?>
+<?php
+
+	// Next group
+	$Page->GetGrpRow(2);
+
+	// Show header if page break
+	if ($Page->Export <> "")
+		$Page->ShowHeader = ($Page->ExportPageBreakCount == 0) ? FALSE : ($Page->GrpCount % $Page->ExportPageBreakCount == 0);
+
+	// Page_Breaking server event
+	if ($Page->ShowHeader)
+		$Page->Page_Breaking($Page->ShowHeader, $Page->PageBreakContent);
 	$Page->GrpCount++;
+
+	// Handle EOF
+	if (!$rsgrp || $rsgrp->EOF)
+		$Page->ShowHeader = FALSE;
 } // End while
 ?>
 <?php if ($Page->TotalGrps > 0) { ?>
 </tbody>
 <tfoot>
+<?php
+	$Page->ResetAttrs();
+	$Page->RowType = EWR_ROWTYPE_TOTAL;
+	$Page->RowTotalType = EWR_ROWTOTAL_GRAND;
+	$Page->RowTotalSubType = EWR_ROWTOTAL_FOOTER;
+	$Page->RowAttrs["class"] = "ewRptGrandSummary";
+	$Page->RenderRow();
+?>
+<?php if ($Page->maingroup_nama->ShowCompactSummaryFooter) { ?>
+	<tr<?php echo $Page->RowAttributes() ?>><td colspan="<?php echo ($Page->GrpColumnCount + $Page->DtlColumnCount) ?>"><?php echo $ReportLanguage->Phrase("RptGrandSummary") ?> (<span class="ewAggregateCaption"><?php echo $ReportLanguage->Phrase("RptCnt") ?></span><?php echo $ReportLanguage->Phrase("AggregateEqual") ?><span class="ewAggregateValue"><?php echo ewr_FormatNumber($Page->TotCount,0,-2,-2,-2) ?></span>)</td></tr>
+<?php } else { ?>
+	<tr<?php echo $Page->RowAttributes() ?>><td colspan="<?php echo ($Page->GrpColumnCount + $Page->DtlColumnCount) ?>"><?php echo $ReportLanguage->Phrase("RptGrandSummary") ?> <span class="ewDirLtr">(<?php echo ewr_FormatNumber($Page->TotCount,0,-2,-2,-2); ?><?php echo $ReportLanguage->Phrase("RptDtlRec") ?>)</span></td></tr>
+<?php } ?>
 	</tfoot>
 <?php } elseif (!$Page->ShowHeader && FALSE) { // No header displayed ?>
 <?php if ($Page->Export <> "pdf") { ?>
@@ -1565,7 +1828,7 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 <?php } ?>
 <!-- Report grid (begin) -->
 <?php if ($Page->Export <> "pdf") { ?>
-<div id="gmp_t02_satuan" class="<?php if (ewr_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
+<div id="gmp_r01_jenis_pengeluaran" class="<?php if (ewr_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
 <?php } ?>
 <table class="<?php echo $Page->ReportTableClass ?>">
 <?php } ?>
@@ -1576,7 +1839,7 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 <?php } ?>
 <?php if ($Page->Export == "" && !($Page->DrillDown && $Page->TotalGrps > 0)) { ?>
 <div class="box-footer ewGridLowerPanel">
-<?php include "t02_satuanrptpager.php" ?>
+<?php include "r01_jenis_pengeluaransmrypager.php" ?>
 <div class="clearfix"></div>
 </div>
 <?php } ?>
