@@ -618,6 +618,12 @@
   <project>
     <phrase id="bodytitle" value="Laporan Keuangan" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <menu id="10020">
+      <phrase id="menutext" value="v 01 barang satuan" />
+    </menu>
+    <menu id="10021">
+      <phrase id="menutext" value="v 02 terima keluar" />
+    </menu>
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
@@ -983,6 +989,45 @@
       </field>
       <field id="satuan">
         <phrase id="fldcaption" value="Nama" />
+      </field>
+    </table>
+    <table id="v02_terima_keluar">
+      <phrase id="tblcaption" value="v 02 terima keluar" />
+      <field id="tanggal">
+        <phrase id="fldcaption" value="tanggal" />
+      </field>
+      <field id="ket1">
+        <phrase id="fldcaption" value="ket 1" />
+      </field>
+      <field id="ket2">
+        <phrase id="fldcaption" value="ket 2" />
+      </field>
+      <field id="ket3">
+        <phrase id="fldcaption" value="ket 3" />
+      </field>
+      <field id="ket4">
+        <phrase id="fldcaption" value="ket 4" />
+      </field>
+      <field id="ket5">
+        <phrase id="fldcaption" value="ket 5" />
+      </field>
+      <field id="nilai1">
+        <phrase id="fldcaption" value="nilai 1" />
+      </field>
+      <field id="ket6">
+        <phrase id="fldcaption" value="ket 6" />
+      </field>
+      <field id="nilai2">
+        <phrase id="fldcaption" value="nilai 2" />
+      </field>
+      <field id="terima_jumlah">
+        <phrase id="fldcaption" value="terima jumlah" />
+      </field>
+      <field id="keluar_jumlah">
+        <phrase id="fldcaption" value="keluar jumlah" />
+      </field>
+      <field id="saldo">
+        <phrase id="fldcaption" value="saldo" />
       </field>
     </table>
   </project>

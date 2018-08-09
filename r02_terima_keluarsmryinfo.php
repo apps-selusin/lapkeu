@@ -20,6 +20,7 @@ class crr02_terima_keluar extends crTableBase {
 	var $nilai2;
 	var $terima_jumlah;
 	var $keluar_jumlah;
+	var $saldo;
 
 	//
 	// Table class constructor
@@ -140,6 +141,15 @@ class crr02_terima_keluar extends crTableBase {
 		$this->keluar_jumlah->SqlSelect = "";
 		$this->keluar_jumlah->SqlOrderBy = "";
 		$this->fields['keluar_jumlah'] = &$this->keluar_jumlah;
+
+		// saldo
+		$this->saldo = new crField('r02_terima_keluar', 'r02_terima_keluar', 'x_saldo', 'saldo', '`saldo`', 4, EWR_DATATYPE_NUMBER, -1);
+		$this->saldo->Sortable = TRUE; // Allow sort
+		$this->saldo->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectFloat");
+		$this->saldo->DateFilter = "";
+		$this->saldo->SqlSelect = "";
+		$this->saldo->SqlOrderBy = "";
+		$this->fields['saldo'] = &$this->saldo;
 	}
 
 	// Set Field Visibility
@@ -504,6 +514,13 @@ class crr02_terima_keluar extends crTableBase {
 		// To view properties of field class, use:
 		//var_dump($this-><FieldName>);
 
+		if ($this->terima_jumlah->CurrentValue > 0) {
+			$GLOBALS["final_saldo"] = $GLOBALS["final_saldo"] + $this->terima_jumlah->CurrentValue;
+		}
+		else {
+			$GLOBALS["final_saldo"] = $GLOBALS["final_saldo"] - $this->keluar_jumlah->CurrentValue;
+		}
+		$this->saldo->ViewValue = number_format($GLOBALS["final_saldo"]);
 	}
 
 	// User ID Filtering event

@@ -25,7 +25,7 @@ define("EW_CONFIG_FILE_FOLDER", EW_PROJECT_NAME, TRUE); // Config file name
 define("EW_PROJECT_ID", "{239A2A32-109A-412F-A3CB-FF6290C167FC}", TRUE); // Project ID (GUID)
 $EW_RELATED_PROJECT_ID = "";
 $EW_RELATED_LANGUAGE_FOLDER = "";
-define("EW_RANDOM_KEY", '0oABj7d7I1dloiov', TRUE); // Random key for encryption
+define("EW_RANDOM_KEY", '4WS8ufG9P1oEp9P9', TRUE); // Random key for encryption
 define("EW_PROJECT_STYLESHEET_FILENAME", "phpcss/prj_lapkeu.css", TRUE); // Project stylesheet file name
 define("EW_CHARSET", "utf-8", TRUE); // Project charset
 define("EW_EMAIL_CHARSET", EW_CHARSET, TRUE); // Email charset
@@ -35,7 +35,7 @@ define("EW_HIGHLIGHT_COMPARE", TRUE, TRUE); // Highlight compare mode, TRUE(case
 if (!function_exists('xml_parser_create') && !class_exists("DOMDocument")) die("This script requires PHP XML Parser or DOM.");
 define('EW_USE_DOM_XML', ((!function_exists('xml_parser_create') && class_exists("DOMDocument")) || FALSE), TRUE);
 if (!isset($ADODB_OUTP)) $ADODB_OUTP = 'ew_SetDebugMsg';
-define("EW_FONT_SIZE", 14, TRUE);
+define("EW_FONT_SIZE", 12, TRUE);
 define("EW_TMP_IMAGE_FONT", "DejaVuSans", TRUE); // Font for temp files
 $EW_LAZY_LOAD = TRUE; // Lazy loading of images
 $EW_RELATED_PROJECT_ID = "";

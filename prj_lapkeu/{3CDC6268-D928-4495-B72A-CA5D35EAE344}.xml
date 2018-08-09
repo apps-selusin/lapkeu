@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <configuration date="2018/08/09" author="e.World Technology Ltd.">
-  <project id="{3CDC6268-D928-4495-B72A-CA5D35EAE344}" file="C:\xampp\htdocs\lapkeu\prj_lapkeu.prp" name="prj_lapkeu" product="PHPReportMaker" version="11.0" datetime="2018/08/09 15:10:00" languagefolder="phprptlang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
+  <project id="{3CDC6268-D928-4495-B72A-CA5D35EAE344}" file="C:\xampp\htdocs\lapkeu\prj_lapkeu.prp" name="prj_lapkeu" product="PHPReportMaker" version="11.0" datetime="2018/08/09 18:44:24" languagefolder="phprptlang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
     <table id="r01_jenis_pengeluaran" name="r01_jenis_pengeluaran" caption="Jenis Pengeluaran" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t01_supplier" name="t01_supplier" caption="Supplier" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t02_satuan" name="t02_satuan" caption="Satuan" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -9,6 +9,7 @@
     <table id="t05_subgroup" name="t05_subgroup" caption="Jenis Pengeluaran" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t06_pengeluaran" name="t06_pengeluaran" caption="Pengeluaran" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t07_sekolah" name="t07_sekolah" caption="Sekolah" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="t08_penerimaan" name="t08_penerimaan" caption="t 08 penerimaan" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t96_employees" name="t96_employees" caption="t 96 employees" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t97_userlevels" name="t97_userlevels" caption="t 97 userlevels" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t98_userlevelpermissions" name="t98_userlevelpermissions" caption="t 98 userlevelpermissions" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
