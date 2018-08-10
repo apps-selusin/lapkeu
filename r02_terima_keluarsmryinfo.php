@@ -21,6 +21,7 @@ class crr02_terima_keluar extends crTableBase {
 	var $terima_jumlah;
 	var $keluar_jumlah;
 	var $saldo;
+	var $id;
 
 	//
 	// Table class constructor
@@ -150,6 +151,15 @@ class crr02_terima_keluar extends crTableBase {
 		$this->saldo->SqlSelect = "";
 		$this->saldo->SqlOrderBy = "";
 		$this->fields['saldo'] = &$this->saldo;
+
+		// id
+		$this->id = new crField('r02_terima_keluar', 'r02_terima_keluar', 'x_id', 'id', '`id`', 3, EWR_DATATYPE_NUMBER, -1);
+		$this->id->Sortable = TRUE; // Allow sort
+		$this->id->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectInteger");
+		$this->id->DateFilter = "";
+		$this->id->SqlSelect = "";
+		$this->id->SqlOrderBy = "";
+		$this->fields['id'] = &$this->id;
 	}
 
 	// Set Field Visibility

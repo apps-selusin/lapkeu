@@ -750,6 +750,9 @@
       <field id="saldo">
         <phrase id="fldcaption" value="saldo" />
       </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
     </table>
     <table id="r02_terima_keluar">
       <phrase id="tblcaption" value="Laporan Keuangan" />
@@ -776,6 +779,9 @@
       </field>
       <field id="saldo">
         <phrase id="fldcaption" value="Saldo" />
+      </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
       </field>
     </table>
     <table id="v03_pengeluaran">

@@ -801,12 +801,13 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 		$this->terima_jumlah->SetVisibility();
 		$this->keluar_jumlah->SetVisibility();
 		$this->saldo->SetVisibility();
+		$this->id->SetVisibility();
 
 		// Aggregate variables
 		// 1st dimension = no of groups (level 0 used for grand total)
 		// 2nd dimension = no of fields
 
-		$nDtls = 11;
+		$nDtls = 12;
 		$nGrps = 3;
 		$this->Val = &ewr_InitArray($nDtls, 0);
 		$this->Cnt = &ewr_Init2DArray($nGrps, $nDtls, 0);
@@ -819,7 +820,7 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 		$this->GrandMx = &ewr_InitArray($nDtls, NULL);
 
 		// Set up array if accumulation required: array(Accum, SkipNullOrZero)
-		$this->Col = array(array(FALSE, FALSE), array(FALSE,FALSE), array(FALSE,TRUE), array(FALSE,TRUE), array(FALSE,TRUE), array(FALSE,TRUE), array(FALSE,TRUE), array(FALSE,TRUE), array(TRUE,TRUE), array(TRUE,TRUE), array(FALSE,FALSE));
+		$this->Col = array(array(FALSE, FALSE), array(FALSE,FALSE), array(FALSE,TRUE), array(FALSE,TRUE), array(FALSE,TRUE), array(FALSE,TRUE), array(FALSE,TRUE), array(FALSE,TRUE), array(TRUE,TRUE), array(TRUE,TRUE), array(FALSE,FALSE), array(FALSE,FALSE));
 
 		// Set up groups per page dynamically
 		$this->SetUpDisplayGrps();
@@ -1110,6 +1111,7 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 				$this->FirstRowData['terima_jumlah'] = ewr_Conv($rs->fields('terima_jumlah'), 4);
 				$this->FirstRowData['keluar_jumlah'] = ewr_Conv($rs->fields('keluar_jumlah'), 5);
 				$this->FirstRowData['saldo'] = ewr_Conv($rs->fields('saldo'), 4);
+				$this->FirstRowData['id'] = ewr_Conv($rs->fields('id'), 3);
 			}
 		} else { // Get next row
 			$rs->MoveNext();
@@ -1132,6 +1134,7 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 			$this->terima_jumlah->setDbValue($rs->fields('terima_jumlah'));
 			$this->keluar_jumlah->setDbValue($rs->fields('keluar_jumlah'));
 			$this->saldo->setDbValue($rs->fields('saldo'));
+			$this->id->setDbValue($rs->fields('id'));
 			$this->Val[1] = $this->tanggal->CurrentValue;
 			$this->Val[2] = $this->ket3->CurrentValue;
 			$this->Val[3] = $this->ket4->CurrentValue;
@@ -1142,6 +1145,7 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 			$this->Val[8] = $this->terima_jumlah->CurrentValue;
 			$this->Val[9] = $this->keluar_jumlah->CurrentValue;
 			$this->Val[10] = $this->saldo->CurrentValue;
+			$this->Val[11] = $this->id->CurrentValue;
 		} else {
 			$this->tanggal->setDbValue("");
 			$this->ket1->setDbValue("");
@@ -1155,6 +1159,7 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 			$this->terima_jumlah->setDbValue("");
 			$this->keluar_jumlah->setDbValue("");
 			$this->saldo->setDbValue("");
+			$this->id->setDbValue("");
 		}
 	}
 
@@ -1332,6 +1337,7 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 				$this->GrandCnt[9] = $this->TotCount;
 				$this->GrandSmry[9] = $rsagg->fields("sum_keluar_jumlah");
 				$this->GrandCnt[10] = $this->TotCount;
+				$this->GrandCnt[11] = $this->TotCount;
 				$rsagg->Close();
 				$bGotSummary = TRUE;
 			}
@@ -1427,6 +1433,9 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 
 			// saldo
 			$this->saldo->HrefValue = "";
+
+			// id
+			$this->id->HrefValue = "";
 		} else {
 			if ($this->RowTotalType == EWR_ROWTOTAL_GROUP && $this->RowTotalSubType == EWR_ROWTOTAL_HEADER) {
 			$this->RowAttrs["data-group"] = $this->ket1->GroupValue(); // Set up group attribute
@@ -1501,6 +1510,10 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 			$this->saldo->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
 			$this->saldo->CellAttrs["style"] = "text-align:right;";
 
+			// id
+			$this->id->ViewValue = $this->id->CurrentValue;
+			$this->id->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
+
 			// ket1
 			$this->ket1->HrefValue = "";
 
@@ -1536,6 +1549,9 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 
 			// saldo
 			$this->saldo->HrefValue = "";
+
+			// id
+			$this->id->HrefValue = "";
 		}
 
 		// Call Cell_Rendered event
@@ -1685,6 +1701,15 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 			$HrefValue = &$this->saldo->HrefValue;
 			$LinkAttrs = &$this->saldo->LinkAttrs;
 			$this->Cell_Rendered($this->saldo, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
+
+			// id
+			$CurrentValue = $this->id->CurrentValue;
+			$ViewValue = &$this->id->ViewValue;
+			$ViewAttrs = &$this->id->ViewAttrs;
+			$CellAttrs = &$this->id->CellAttrs;
+			$HrefValue = &$this->id->HrefValue;
+			$LinkAttrs = &$this->id->LinkAttrs;
+			$this->Cell_Rendered($this->id, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
 		}
 
 		// Call Row_Rendered event
@@ -1709,6 +1734,7 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 		if ($this->terima_jumlah->Visible) $this->DtlColumnCount += 1;
 		if ($this->keluar_jumlah->Visible) $this->DtlColumnCount += 1;
 		if ($this->saldo->Visible) $this->DtlColumnCount += 1;
+		if ($this->id->Visible) $this->DtlColumnCount += 1;
 	}
 
 	// Set up Breadcrumb
@@ -1744,7 +1770,7 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 	// Get sort parameters based on sort links clicked
 	function GetSort($options = array()) {
 		if ($this->DrillDown)
-			return "`tanggal` ASC";
+			return "`id` ASC, `tanggal` ASC";
 		$bResetSort = @$options["resetsort"] == "1" || @$_GET["cmd"] == "resetsort";
 		$orderBy = (@$options["order"] <> "") ? @$options["order"] : @$_GET["order"];
 		$orderType = (@$options["ordertype"] <> "") ? @$options["ordertype"] : @$_GET["ordertype"];
@@ -1768,6 +1794,7 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 			$this->terima_jumlah->setSort("");
 			$this->keluar_jumlah->setSort("");
 			$this->saldo->setSort("");
+			$this->id->setSort("");
 
 		// Check for an Order parameter
 		} elseif ($orderBy <> "") {
@@ -1785,6 +1812,7 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 			$this->UpdateSort($this->terima_jumlah, $bCtrl); // terima_jumlah
 			$this->UpdateSort($this->keluar_jumlah, $bCtrl); // keluar_jumlah
 			$this->UpdateSort($this->saldo, $bCtrl); // saldo
+			$this->UpdateSort($this->id, $bCtrl); // id
 			$sSortSql = $this->SortSql();
 			$this->setOrderBy($sSortSql);
 			$this->setStartGroup(1);
@@ -1792,7 +1820,8 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 
 		// Set up default sort
 		if ($this->getOrderBy() == "") {
-			$this->setOrderBy("`tanggal` ASC");
+			$this->setOrderBy("`id` ASC, `tanggal` ASC");
+			$this->id->setSort("ASC");
 			$this->tanggal->setSort("ASC");
 		}
 		return $this->getOrderBy();
@@ -2448,6 +2477,24 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 	</td>
 <?php } ?>
 <?php } ?>
+<?php if ($Page->id->Visible) { ?>
+<?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
+	<td data-field="id"><div class="r02_terima_keluar_id"><span class="ewTableHeaderCaption"><?php echo $Page->id->FldCaption() ?></span></div></td>
+<?php } else { ?>
+	<td data-field="id">
+<?php if ($Page->SortUrl($Page->id) == "") { ?>
+		<div class="ewTableHeaderBtn r02_terima_keluar_id">
+			<span class="ewTableHeaderCaption"><?php echo $Page->id->FldCaption() ?></span>
+		</div>
+<?php } else { ?>
+		<div class="ewTableHeaderBtn ewPointer r02_terima_keluar_id" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->id) ?>',2);">
+			<span class="ewTableHeaderCaption"><?php echo $Page->id->FldCaption() ?></span>
+			<span class="ewTableHeaderSort"><?php if ($Page->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
+		</div>
+<?php } ?>
+	</td>
+<?php } ?>
+<?php } ?>
 	</tr>
 </thead>
 <tbody>
@@ -2613,6 +2660,10 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 		<td data-field="saldo"<?php echo $Page->saldo->CellAttributes() ?>>
 <span<?php echo $Page->saldo->ViewAttributes() ?>><?php echo $Page->saldo->ListViewValue() ?></span></td>
 <?php } ?>
+<?php if ($Page->id->Visible) { ?>
+		<td data-field="id"<?php echo $Page->id->CellAttributes() ?>>
+<span<?php echo $Page->id->ViewAttributes() ?>><?php echo $Page->id->ListViewValue() ?></span></td>
+<?php } ?>
 	</tr>
 <?php
 
@@ -2698,6 +2749,9 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 <?php if ($Page->saldo->Visible) { ?>
 		<td data-field="saldo"<?php echo $Page->saldo->CellAttributes() ?>></td>
 <?php } ?>
+<?php if ($Page->id->Visible) { ?>
+		<td data-field="id"<?php echo $Page->id->CellAttributes() ?>></td>
+<?php } ?>
 	</tr>
 <?php } else { ?>
 	<tr<?php echo $Page->RowAttributes() ?>><td colspan="<?php echo ($Page->GrpColumnCount + $Page->DtlColumnCount) ?>"><?php echo $ReportLanguage->Phrase("RptGrandSummary") ?> <span class="ewDirLtr">(<?php echo ewr_FormatNumber($Page->TotCount,0,-2,-2,-2); ?><?php echo $ReportLanguage->Phrase("RptDtlRec") ?>)</span></td></tr>
@@ -2736,6 +2790,9 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 <?php } ?>
 <?php if ($Page->saldo->Visible) { ?>
 		<td data-field="saldo"<?php echo $Page->saldo->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->id->Visible) { ?>
+		<td data-field="id"<?php echo $Page->id->CellAttributes() ?>>&nbsp;</td>
 <?php } ?>
 	</tr>
 <?php } ?>
