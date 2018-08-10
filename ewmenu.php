@@ -2,6 +2,8 @@
 
 // Menu
 $RootMenu = new cMenu("RootMenu", TRUE);
+$RootMenu->AddMenuItem(10122, "mi_t05_subgroup", $Language->MenuPhrase("10122", "MenuText"), "t05_subgrouplist.php?cmd=resetall", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t05_subgroup'), FALSE, FALSE, "");
+$RootMenu->AddMenuItem(10123, "mi_t98_userlevelpermissions", $Language->MenuPhrase("10123", "MenuText"), "t98_userlevelpermissionslist.php", -1, "", IsAdmin(), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(11, "mi_cf01_home_php", $Language->MenuPhrase("11", "MenuText"), "cf01_home.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf01_home.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10016, "mi_t08_penerimaan", $Language->MenuPhrase("10016", "MenuText"), "t08_penerimaanlist.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t08_penerimaan'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(6, "mi_t06_pengeluaran", $Language->MenuPhrase("6", "MenuText"), "t06_pengeluaranlist.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t06_pengeluaran'), FALSE, FALSE, "");
@@ -27,6 +29,7 @@ $RootMenu->AddMenuItem(10001, "mri_t015fsupplier", $Language->MenuPhrase("10001"
 $RootMenu->AddMenuItem(10002, "mri_t025fsatuan", $Language->MenuPhrase("10002", "MenuText"), "t02_satuanrpt.php", 10118, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}t02_satuan'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(10003, "mri_t035fbarang", $Language->MenuPhrase("10003", "MenuText"), "t03_barangrpt.php", 10118, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}t03_barang'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(10014, "mri_r015fjenis5fpengeluaran", $Language->MenuPhrase("10014", "MenuText"), "r01_jenis_pengeluaransmry.php", 10118, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}r01_jenis_pengeluaran'), FALSE, FALSE, "");
+$RootMenu->AddMenuItem(10011, "mri_t995faudittrail", $Language->MenuPhrase("10011", "MenuText"), "t99_audittrailrpt.php", 10118, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}t99_audittrail'), FALSE, FALSE, "");
 echo $RootMenu->ToScript();
 ?>
 <div class="ewVertical" id="ewMenu"></div>

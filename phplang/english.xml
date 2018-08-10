@@ -618,6 +618,15 @@
   <project>
     <phrase id="bodytitle" value="Laporan Keuangan" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <menu id="10122">
+      <phrase id="menutext" value="Sub Jenis Pengeluaran" />
+    </menu>
+    <menu id="10123">
+      <phrase id="menutext" value="Hak Akses" />
+    </menu>
+    <menu id="10125">
+      <phrase id="menutext" value="v 02 terima keluar" />
+    </menu>
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
@@ -693,6 +702,12 @@
     <menu id="10014">
       <phrase id="menutext" value="Jenis Pengeluaran" />
     </menu>
+    <menu id="10011">
+      <phrase id="menutext" value="User Log" />
+    </menu>
+    <menu id="10020">
+      <phrase id="menutext" value="v 03 pengeluaran" />
+    </menu>
     <menu id="10018">
       <phrase id="menutext" value="t 08 penerimaan" />
     </menu>
@@ -702,7 +717,7 @@
     <menu id="10015">
       <phrase id="menutext" value="v 02 terima keluar" />
     </menu>
-    <menu id="10121">
+    <menu id="10124">
       <phrase id="menutext" value="v 01 barang satuan" />
     </menu>
     <menu id="10004">
@@ -719,9 +734,6 @@
     </menu>
     <menu id="10010">
       <phrase id="menutext" value="t 98 userlevelpermissions" />
-    </menu>
-    <menu id="10011">
-      <phrase id="menutext" value="t 99 audittrail" />
     </menu>
     <table id="cf01_home_php">
       <phrase id="tblcaption" value="Home" />

@@ -422,7 +422,7 @@
       <phrase id="menutext" value="t 98 userlevelpermissions" />
     </menu>
     <menu id="11">
-      <phrase id="menutext" value="t 99 audittrail" />
+      <phrase id="menutext" value="User Log" />
     </menu>
     <table id="r01_jenis_pengeluaran">
       <phrase id="tblcaption" value="Jenis Pengeluaran" />
@@ -668,7 +668,7 @@
       </field>
     </table>
     <table id="t99_audittrail">
-      <phrase id="tblcaption" value="t 99 audittrail" />
+      <phrase id="tblcaption" value="User Log" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
