@@ -17,7 +17,6 @@ $RootMenu->AddMenuItem(1, "mi_t01_supplier", $Language->MenuPhrase("1", "MenuTex
 $RootMenu->AddMenuItem(2, "mi_t02_satuan", $Language->MenuPhrase("2", "MenuText"), "t02_satuanlist.php", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t02_satuan'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(3, "mi_t03_barang", $Language->MenuPhrase("3", "MenuText"), "t03_baranglist.php", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t03_barang'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(4, "mi_t04_maingroup", $Language->MenuPhrase("4", "MenuText"), "t04_maingrouplist.php", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t04_maingroup'), FALSE, FALSE, "");
-$RootMenu->AddMenuItem(10122, "mi_t05_subgroup", $Language->MenuPhrase("10122", "MenuText"), "t05_subgrouplist.php?cmd=resetall", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t05_subgroup'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(32, "mci_User", $Language->MenuPhrase("32", "MenuText"), "", 22, "", IsLoggedIn(), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(7, "mi_t96_employees", $Language->MenuPhrase("7", "MenuText"), "t96_employeeslist.php", 32, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t96_employees'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(8, "mi_t97_userlevels", $Language->MenuPhrase("8", "MenuText"), "t97_userlevelslist.php", 32, "", IsAdmin(), FALSE, FALSE, "");
