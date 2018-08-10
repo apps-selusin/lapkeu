@@ -109,7 +109,7 @@ define("EWR_SESSION_TIMEOUT_COUNTDOWN", 60, TRUE); // Session timeout count down
 // General
 $EWR_ROOT_RELATIVE_PATH = "."; // Relative path of app root
 define("EWR_UNFORMAT_YEAR", 50, TRUE); // Unformat year
-define("EWR_RANDOM_KEY", 'YG4igCc8ZogX4ZSY', TRUE); // Random key for encryption
+define("EWR_RANDOM_KEY", 'HN6ArxfxA7Tti0sv', TRUE); // Random key for encryption
 define("EWR_PROJECT_STYLESHEET_FILENAME", "phprptcss/prj_lapkeu.css", TRUE); // Project stylesheet file name
 define("EWR_CHART_WIDTH", 600, TRUE);
 define("EWR_CHART_HEIGHT", 500, TRUE);
