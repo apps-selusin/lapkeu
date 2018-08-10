@@ -1054,7 +1054,7 @@ class crt99_audittrail_rpt extends crt99_audittrail {
 
 			// datetime
 			$this->datetime->ViewValue = $this->datetime->CurrentValue;
-			$this->datetime->ViewValue = ewr_FormatDateTime($this->datetime->ViewValue, 0);
+			$this->datetime->ViewValue = ewr_FormatDateTime($this->datetime->ViewValue, 1);
 			$this->datetime->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
 
 			// script

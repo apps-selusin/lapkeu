@@ -45,7 +45,7 @@ class crt99_audittrail extends crTableBase {
 		$this->fields['id'] = &$this->id;
 
 		// datetime
-		$this->datetime = new crField('t99_audittrail', 't99_audittrail', 'x_datetime', 'datetime', '`datetime`', 135, EWR_DATATYPE_DATE, 0);
+		$this->datetime = new crField('t99_audittrail', 't99_audittrail', 'x_datetime', 'datetime', '`datetime`', 135, EWR_DATATYPE_DATE, 1);
 		$this->datetime->Sortable = TRUE; // Allow sort
 		$this->datetime->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EWR_DATE_FORMAT"], $ReportLanguage->Phrase("IncorrectDate"));
 		$this->datetime->DateFilter = "";
