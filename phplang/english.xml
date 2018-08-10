@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/8/9" version="14.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/8/10" version="14.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -621,17 +621,23 @@
     <menu id="10020">
       <phrase id="menutext" value="v 01 barang satuan" />
     </menu>
+    <menu id="11">
+      <phrase id="menutext" value="Home" />
+    </menu>
     <menu id="10021">
       <phrase id="menutext" value="v 02 terima keluar" />
     </menu>
-    <menu id="11">
-      <phrase id="menutext" value="Home" />
+    <menu id="10055">
+      <phrase id="menutext" value="Keuangan" />
     </menu>
     <menu id="10016">
       <phrase id="menutext" value="Penerimaan" />
     </menu>
     <menu id="6">
       <phrase id="menutext" value="Pengeluaran" />
+    </menu>
+    <menu id="10019">
+      <phrase id="menutext" value="Laporan" />
     </menu>
     <menu id="22">
       <phrase id="menutext" value="Setup" />
@@ -670,10 +676,7 @@
       <phrase id="menutext" value="Log" />
     </menu>
     <menu id="10012">
-      <phrase id="menutext" value="Laporan" />
-    </menu>
-    <menu id="10019">
-      <phrase id="menutext" value="Keuangan" />
+      <phrase id="menutext" value="List" />
     </menu>
     <menu id="10007">
       <phrase id="menutext" value="Sekolah" />
