@@ -50,7 +50,7 @@ $objPHPExcel->getProperties()->setCreator("Maarten Balliauw")
 // Create a first sheet, representing sales data
 echo date('H:i:s') , " Add some data" , EOL;
 $objPHPExcel->setActiveSheetIndex(0);
-$objPHPExcel->getActiveSheet()->setCellValue('B1', 'Invoice');
+$objPHPExcel->getActiveSheet()->setCellValue('B1', 'Laporan Keuangan');
 $objPHPExcel->getActiveSheet()->setCellValue('D1', PHPExcel_Shared_Date::PHPToExcel( gmmktime(0,0,0,date('m'),date('d'),date('Y')) ));
 $objPHPExcel->getActiveSheet()->getStyle('D1')->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_XLSX15);
 $objPHPExcel->getActiveSheet()->setCellValue('E1', '#12566');
