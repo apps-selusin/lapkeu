@@ -618,9 +618,6 @@
   <project>
     <phrase id="bodytitle" value="Laporan Keuangan" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
-    <menu id="10020">
-      <phrase id="menutext" value="v 01 barang satuan" />
-    </menu>
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
@@ -632,6 +629,9 @@
     </menu>
     <menu id="10088">
       <phrase id="menutext" value="Laporan" />
+    </menu>
+    <menu id="10019">
+      <phrase id="menutext" value="Pengeluaran" />
     </menu>
     <menu id="10055">
       <phrase id="menutext" value="Keuangan" />
@@ -660,9 +660,6 @@
     <menu id="3">
       <phrase id="menutext" value="Barang" />
     </menu>
-    <menu id="5">
-      <phrase id="menutext" value="Sub Jenis Pengeluaran" />
-    </menu>
     <menu id="4">
       <phrase id="menutext" value="Jenis Pengeluaran" />
     </menu>
@@ -671,9 +668,6 @@
     </menu>
     <menu id="7">
       <phrase id="menutext" value="List" />
-    </menu>
-    <menu id="9">
-      <phrase id="menutext" value="Hak Akses" />
     </menu>
     <menu id="8">
       <phrase id="menutext" value="Level" />
@@ -699,9 +693,6 @@
     <menu id="10014">
       <phrase id="menutext" value="Jenis Pengeluaran" />
     </menu>
-    <menu id="10021">
-      <phrase id="menutext" value="v 02 terima keluar" />
-    </menu>
     <menu id="10018">
       <phrase id="menutext" value="t 08 penerimaan" />
     </menu>
@@ -711,7 +702,7 @@
     <menu id="10015">
       <phrase id="menutext" value="v 02 terima keluar" />
     </menu>
-    <menu id="10119">
+    <menu id="10121">
       <phrase id="menutext" value="v 01 barang satuan" />
     </menu>
     <menu id="10004">
