@@ -374,13 +374,13 @@
       <phrase id="menutext" value="v 03 pengeluaran" />
     </menu>
     <menu id="21">
-      <phrase id="menutext" value="Pengeluaran" />
+      <phrase id="menutext" value="Laporan Pengeluaran" />
     </menu>
     <menu id="18">
       <phrase id="menutext" value="t 08 penerimaan" />
     </menu>
     <menu id="17">
-      <phrase id="menutext" value="Keuangan" />
+      <phrase id="menutext" value="Laporan Keuangan" />
     </menu>
     <menu id="5">
       <phrase id="menutext" value="Jenis Pengeluaran" />
@@ -752,7 +752,7 @@
       </field>
     </table>
     <table id="r02_terima_keluar">
-      <phrase id="tblcaption" value="Keuangan" />
+      <phrase id="tblcaption" value="Laporan Keuangan" />
       <field id="tanggal">
         <phrase id="fldcaption" value="Tanggal" />
       </field>
@@ -812,7 +812,7 @@
       </field>
     </table>
     <table id="r03_pengeluaran">
-      <phrase id="tblcaption" value="Pengeluaran" />
+      <phrase id="tblcaption" value="Laporan Pengeluaran" />
       <field id="tanggal">
         <phrase id="fldcaption" value="Tanggal" />
       </field>
