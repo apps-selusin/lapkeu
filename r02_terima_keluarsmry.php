@@ -1744,7 +1744,7 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 	// Get sort parameters based on sort links clicked
 	function GetSort($options = array()) {
 		if ($this->DrillDown)
-			return "";
+			return "`tanggal` ASC";
 		$bResetSort = @$options["resetsort"] == "1" || @$_GET["cmd"] == "resetsort";
 		$orderBy = (@$options["order"] <> "") ? @$options["order"] : @$_GET["order"];
 		$orderType = (@$options["ordertype"] <> "") ? @$options["ordertype"] : @$_GET["ordertype"];
@@ -1788,6 +1788,12 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 			$sSortSql = $this->SortSql();
 			$this->setOrderBy($sSortSql);
 			$this->setStartGroup(1);
+		}
+
+		// Set up default sort
+		if ($this->getOrderBy() == "") {
+			$this->setOrderBy("`tanggal` ASC");
+			$this->tanggal->setSort("ASC");
 		}
 		return $this->getOrderBy();
 	}
