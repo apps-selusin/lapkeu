@@ -373,20 +373,17 @@
     <menu id="18">
       <phrase id="menutext" value="t 08 penerimaan" />
     </menu>
-    <menu id="15">
-      <phrase id="menutext" value="v 02 terima keluar" />
-    </menu>
-    <menu id="16">
-      <phrase id="menutext" value="v 01 barang satuan" />
-    </menu>
-    <menu id="12">
-      <phrase id="menutext" value="Laporan" />
-    </menu>
     <menu id="17">
       <phrase id="menutext" value="Keuangan" />
     </menu>
+    <menu id="5">
+      <phrase id="menutext" value="Jenis Pengeluaran" />
+    </menu>
     <menu id="7">
       <phrase id="menutext" value="Sekolah" />
+    </menu>
+    <menu id="15">
+      <phrase id="menutext" value="v 02 terima keluar" />
     </menu>
     <menu id="1">
       <phrase id="menutext" value="Supplier" />
@@ -394,13 +391,13 @@
     <menu id="2">
       <phrase id="menutext" value="Satuan" />
     </menu>
+    <menu id="16">
+      <phrase id="menutext" value="v 01 barang satuan" />
+    </menu>
     <menu id="3">
       <phrase id="menutext" value="Barang" />
     </menu>
     <menu id="14">
-      <phrase id="menutext" value="Jenis Pengeluaran" />
-    </menu>
-    <menu id="5">
       <phrase id="menutext" value="Jenis Pengeluaran" />
     </menu>
     <menu id="4">

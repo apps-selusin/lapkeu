@@ -636,14 +636,14 @@
     <menu id="10088">
       <phrase id="menutext" value="Laporan" />
     </menu>
-    <menu id="10019">
+    <menu id="10017">
       <phrase id="menutext" value="Draft" />
     </menu>
     <menu id="10089">
       <phrase id="menutext" value="Excel" />
     </menu>
-    <menu id="10021">
-      <phrase id="menutext" value="v 02 terima keluar" />
+    <menu id="10120">
+      <phrase id="menutext" value="Excel Draft" />
     </menu>
     <menu id="22">
       <phrase id="menutext" value="Setup" />
@@ -660,11 +660,11 @@
     <menu id="3">
       <phrase id="menutext" value="Barang" />
     </menu>
-    <menu id="4">
-      <phrase id="menutext" value="Jenis Pengeluaran" />
-    </menu>
     <menu id="5">
       <phrase id="menutext" value="Sub Jenis Pengeluaran" />
+    </menu>
+    <menu id="4">
+      <phrase id="menutext" value="Jenis Pengeluaran" />
     </menu>
     <menu id="32">
       <phrase id="menutext" value="User" />
@@ -672,16 +672,16 @@
     <menu id="7">
       <phrase id="menutext" value="List" />
     </menu>
-    <menu id="8">
-      <phrase id="menutext" value="Level" />
-    </menu>
     <menu id="9">
       <phrase id="menutext" value="Hak Akses" />
+    </menu>
+    <menu id="8">
+      <phrase id="menutext" value="Level" />
     </menu>
     <menu id="23">
       <phrase id="menutext" value="Log" />
     </menu>
-    <menu id="10012">
+    <menu id="10118">
       <phrase id="menutext" value="List" />
     </menu>
     <menu id="10007">
@@ -699,20 +699,20 @@
     <menu id="10014">
       <phrase id="menutext" value="Jenis Pengeluaran" />
     </menu>
+    <menu id="10021">
+      <phrase id="menutext" value="v 02 terima keluar" />
+    </menu>
+    <menu id="10018">
+      <phrase id="menutext" value="t 08 penerimaan" />
+    </menu>
     <menu id="10005">
       <phrase id="menutext" value="Jenis Pengeluaran" />
     </menu>
-    <menu id="10013">
-      <phrase id="menutext" value="Laporan" />
-    </menu>
-    <menu id="10017">
-      <phrase id="menutext" value="v 01 barang satuan" />
-    </menu>
-    <menu id="10018">
-      <phrase id="menutext" value="Laporan" />
-    </menu>
     <menu id="10015">
       <phrase id="menutext" value="v 02 terima keluar" />
+    </menu>
+    <menu id="10119">
+      <phrase id="menutext" value="v 01 barang satuan" />
     </menu>
     <menu id="10004">
       <phrase id="menutext" value="Jenis Pengeluaran" />
@@ -1038,6 +1038,9 @@
       <field id="saldo">
         <phrase id="fldcaption" value="saldo" />
       </field>
+    </table>
+    <table id="r04_terima_keluar_php">
+      <phrase id="tblcaption" value="Excel Draft" />
     </table>
   </project>
 </ew-language>
