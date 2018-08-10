@@ -3,10 +3,12 @@
 // Menu
 $RootMenu = new cMenu("RootMenu", TRUE);
 $RootMenu->AddMenuItem(11, "mi_cf01_home_php", $Language->MenuPhrase("11", "MenuText"), "cf01_home.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf01_home.php'), FALSE, TRUE, "");
-$RootMenu->AddMenuItem(10055, "mci_Keuangan", $Language->MenuPhrase("10055", "MenuText"), "", -1, "", TRUE, FALSE, TRUE, "");
+$RootMenu->AddMenuItem(10055, "mci_Keuangan", $Language->MenuPhrase("10055", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10016, "mi_t08_penerimaan", $Language->MenuPhrase("10016", "MenuText"), "t08_penerimaanlist.php", 10055, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t08_penerimaan'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(6, "mi_t06_pengeluaran", $Language->MenuPhrase("6", "MenuText"), "t06_pengeluaranlist.php", 10055, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t06_pengeluaran'), FALSE, FALSE, "");
-$RootMenu->AddMenuItem(10019, "mri_r025fterima5fkeluar", $Language->MenuPhrase("10019", "MenuText"), "r02_terima_keluarsmry.php", 10055, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}r02_terima_keluar'), FALSE, FALSE, "");
+$RootMenu->AddMenuItem(10088, "mci_Laporan", $Language->MenuPhrase("10088", "MenuText"), "", 10055, "", IsLoggedIn(), FALSE, TRUE, "");
+$RootMenu->AddMenuItem(10019, "mri_r025fterima5fkeluar", $Language->MenuPhrase("10019", "MenuText"), "r02_terima_keluarsmry.php", 10088, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}r02_terima_keluar'), FALSE, FALSE, "");
+$RootMenu->AddMenuItem(10089, "mci_Excel", $Language->MenuPhrase("10089", "MenuText"), "r03_terima_keluar.php", 10088, "", IsLoggedIn(), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(22, "mci_Setup", $Language->MenuPhrase("22", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(33, "mi_t07_sekolah", $Language->MenuPhrase("33", "MenuText"), "t07_sekolahlist.php", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t07_sekolah'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(1, "mi_t01_supplier", $Language->MenuPhrase("1", "MenuText"), "t01_supplierlist.php", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t01_supplier'), FALSE, FALSE, "");

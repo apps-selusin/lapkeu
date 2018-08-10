@@ -624,9 +624,6 @@
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
-    <menu id="10021">
-      <phrase id="menutext" value="v 02 terima keluar" />
-    </menu>
     <menu id="10055">
       <phrase id="menutext" value="Keuangan" />
     </menu>
@@ -636,8 +633,17 @@
     <menu id="6">
       <phrase id="menutext" value="Pengeluaran" />
     </menu>
-    <menu id="10019">
+    <menu id="10088">
       <phrase id="menutext" value="Laporan" />
+    </menu>
+    <menu id="10019">
+      <phrase id="menutext" value="Draft" />
+    </menu>
+    <menu id="10089">
+      <phrase id="menutext" value="Excel" />
+    </menu>
+    <menu id="10021">
+      <phrase id="menutext" value="v 02 terima keluar" />
     </menu>
     <menu id="22">
       <phrase id="menutext" value="Setup" />
