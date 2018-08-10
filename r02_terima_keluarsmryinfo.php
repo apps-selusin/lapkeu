@@ -7,7 +7,7 @@ $r02_terima_keluar = NULL;
 // Table class for r02_terima_keluar
 //
 class crr02_terima_keluar extends crTableBase {
-	var $ShowGroupHeaderAsRow = FALSE;
+	var $ShowGroupHeaderAsRow = TRUE;
 	var $ShowCompactSummaryFooter = TRUE;
 	var $tanggal;
 	var $ket1;
