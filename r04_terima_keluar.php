@@ -423,8 +423,9 @@ $db =& DbHelper();
 
 </div> -->
 
+<!-- penerimaan -->
 <?php
-$col = 4;
+$col = 5;
 ?>
 
 <table border="1">
@@ -439,11 +440,11 @@ $col = 4;
 		<td>Keterangan</td>
 		<td>No. Kwitansi</td>
 		<td>Jumlah</td>
+		<td>Total</td>
 	</tr>
 <?php
 
-$saldo_terima = 0;
-$saldo_keluar = 0;
+$total_terima = 0;
 
 $q = "select * from t08_penerimaan order by tanggal";
 $r = Conn()->Execute($q);
@@ -455,14 +456,134 @@ while (!$r->EOF) {
 		<td>".$r->fields["Keterangan"]."</td>
 		<td>".$r->fields["NoKwitansi"]."</td>
 		<td>".$r->fields["Jumlah"]."</td>
+		<td>&nbsp;</td>
 	</tr>";
-	$saldo_terima += $r->fields["Jumlah"];
+	$total_terima += $r->fields["Jumlah"];
 	$r->MoveNext();
 }
 echo "
 	<tr>
-		<td colspan='3'>Total</td>
-		<td>".$saldo_terima."</td>
+		<td colspan='4'>Total</td>
+		<td>".$total_terima."</td>
+	</tr>
+";
+?>
+</table>
+
+
+<p>&nbsp;</p>
+
+
+<!-- pengeluaran -->
+<?php
+$col = 11;
+?>
+
+<table border="1">
+	<tr>
+		<td colspan="<?php echo $col;?>">Pengeluaran</td>
+	</tr>
+	<tr>
+		<td colspan="<?php echo $col;?>">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan='2'>Jenis Pengeluaran</td>
+		<td>Tanggal</td>
+		<td>Supplier</td>
+		<td>No. Nota</td>
+		<td>Barang</td>
+		<td>Banyaknya</td>
+		<td>Satuan</td>
+		<td>Harga</td>
+		<td>Jumlah</td>
+		<td>Total</td>
+	</tr>
+<?php
+
+$total_keluar = 0;
+
+// $q = "select * from t08_penerimaan order by tanggal";
+$q = "
+	SELECT 
+		`a`.`Tanggal` AS `tanggal`,
+		`b`.`Nama` AS `maingroup_nama`,
+		`c`.`Nama` AS `subgroup_nama`,
+		`d`.`Nama` AS `supplier_nama`,
+		`a`.`NoNota` AS `nonota`,
+		`e`.`Nama` AS `barang_nama`,
+		`a`.`Banyaknya` AS `banyaknya`,
+		`e`.`Satuan` AS `barang_satuan`,
+		`a`.`Harga` AS `harga`,
+		`a`.`Jumlah` AS `jumlah`
+	FROM
+		((((`t06_pengeluaran` `a`
+		LEFT JOIN `t04_maingroup` `b` ON ((`a`.`maingroup_id` = `b`.`id`)))
+		LEFT JOIN `t05_subgroup` `c` ON ((`a`.`subgroup_id` = `c`.`id`)))
+		LEFT JOIN `t01_supplier` `d` ON ((`a`.`supplier_id` = `d`.`id`)))
+		LEFT JOIN `v01_barang_satuan` `e` ON ((`a`.`barang_id` = `e`.`id`)))
+";
+$r = Conn()->Execute($q);
+
+while (!$r->EOF) {
+	$total_maingroup = 0;
+	$maingroup_nama = $r->fields["maingroup_nama"];
+	echo "
+		<tr>
+			<td>".$maingroup_nama."</td>
+			<td colspan='".($col - 1)."'>&nbsp;</td>
+		</tr>
+	";
+	while ($maingroup_nama == $r->fields["maingroup_nama"]) {
+		$total_subgroup = 0;
+		$subgroup_nama = $r->fields["subgroup_nama"];
+		echo "
+			<tr>
+				<td>&nbsp;</td>
+				<td>".$subgroup_nama."</td>
+				<td colspan='".($col - 2)."'>&nbsp;</td>
+			</tr>
+		";
+		while ($subgroup_nama == $r->fields["subgroup_nama"]) {
+			echo "
+				<tr>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+					<td>".$r->fields["tanggal"]."</td>
+					<td>".$r->fields["supplier_nama"]."</td>
+					<td>".$r->fields["nonota"]."</td>
+					<td>".$r->fields["barang_nama"]."</td>
+					<td>".$r->fields["banyaknya"]."</td>
+					<td>".$r->fields["barang_satuan"]."</td>
+					<td>".$r->fields["harga"]."</td>
+					<td>".$r->fields["jumlah"]."</td>
+					<td>&nbsp;</td>
+				</tr>
+			";
+			$total_subgroup += $r->fields["jumlah"];
+			$r->MoveNext();
+		}
+		echo "
+			<tr>
+				<td>&nbsp;</td>
+				<td>Total</td>
+				<td colspan='".($col - 2)."'>".$total_subgroup."</td>
+				<td>&nbsp;</td>
+			</tr>
+		";
+		$total_maingroup += $total_subgroup;
+	}
+	echo "
+		<tr>
+			<td>Total</td>
+			<td colspan='".($col - 1)."'>".$total_maingroup."</td>
+		</tr>
+	";
+	$total_keluar += $total_subgroup;
+}
+echo "
+	<tr>
+		<td colspan='".$col."'>Total Pengeluaran</td>
+		<td>".$total_keluar."</td>
 	</tr>
 ";
 ?>
