@@ -423,18 +423,42 @@ $db =& DbHelper();
 
 </div> -->
 
-<table border="0">
 <?php
+$col = 6;
+?>
+
+<table border="1">
+	<tr>
+		<td colspan="<?php echo $col;?>">Penerimaan</td>
+	</tr>
+	<tr>
+		<td colspan="<?php echo $col;?>">&nbsp;</td>
+	</tr>
+	<tr>
+		<td>Tanggal</td>
+		<td>Keterangan</td>
+		<td>No. Kwitansi</td>
+		<td>Penerimaan</td>
+		<td>Pengeluaran</td>
+		<td>Saldo</td>
+	</tr>
+<?php
+
+$saldo = 0;
+
 $q = "select * from t08_penerimaan order by tanggal";
 $r = Conn()->Execute($q);
 
 while (!$r->EOF) {
+	$saldo += $r->fields["Jumlah"];
 	echo "
 	<tr>
 		<td>".$r->fields["Tanggal"]."</td>
 		<td>".$r->fields["Keterangan"]."</td>
 		<td>".$r->fields["NoKwitansi"]."</td>
 		<td>".$r->fields["Jumlah"]."</td>
+		<td>&nbsp;</td>
+		<td>".$saldo."</td>
 	</tr>";
 	$r->MoveNext();
 }
