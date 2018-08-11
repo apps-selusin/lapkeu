@@ -623,23 +623,27 @@ $db =& DbHelper();
 
 </div> -->
 
+<?php
+$col = 4;
+?>
+
 <table border="1">
 	<tr>
-		<td colspan="4">Penerimaan</td>
+		<td colspan="<?php echo $col;?>">Penerimaan</td>
 	</tr>
 	<tr>
-		<td colspan="4">&nbsp;</td>
+		<td colspan="<?php echo $col;?>">&nbsp;</td>
 	</tr>
 	<tr>
 		<td>Tanggal</td>
 		<td>Keterangan</td>
 		<td>No. Kwitansi</td>
-		<td>Penerimaan</td>
-		<td>Pengeluaran</td>
+		<td>Jumlah</td>
 	</tr>
 <?php
 
-$saldo = 0;
+$saldo_terima = 0;
+$saldo_keluar = 0;
 
 $q = "select * from t08_penerimaan order by tanggal";
 $r = Conn()->Execute($q);
@@ -652,9 +656,15 @@ while (!$r->EOF) {
 		<td>".$r->fields["NoKwitansi"]."</td>
 		<td>".$r->fields["Jumlah"]."</td>
 	</tr>";
-	$saldo += $r->fields["Jumlah"];
+	$saldo_terima += $r->fields["Jumlah"];
 	$r->MoveNext();
 }
+echo "
+	<tr>
+		<td colspan='3'>Total</td>
+		<td>".$saldo_terima."</td>
+	</tr>
+";
 ?>
 </table>
 ]]></CustomScript>

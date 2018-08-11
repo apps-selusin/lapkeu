@@ -424,7 +424,7 @@ $db =& DbHelper();
 </div> -->
 
 <?php
-$col = 6;
+$col = 4;
 ?>
 
 <table border="1">
@@ -438,30 +438,33 @@ $col = 6;
 		<td>Tanggal</td>
 		<td>Keterangan</td>
 		<td>No. Kwitansi</td>
-		<td>Penerimaan</td>
-		<td>Pengeluaran</td>
-		<td>Saldo</td>
+		<td>Jumlah</td>
 	</tr>
 <?php
 
-$saldo = 0;
+$saldo_terima = 0;
+$saldo_keluar = 0;
 
 $q = "select * from t08_penerimaan order by tanggal";
 $r = Conn()->Execute($q);
 
 while (!$r->EOF) {
-	$saldo += $r->fields["Jumlah"];
 	echo "
 	<tr>
 		<td>".$r->fields["Tanggal"]."</td>
 		<td>".$r->fields["Keterangan"]."</td>
 		<td>".$r->fields["NoKwitansi"]."</td>
 		<td>".$r->fields["Jumlah"]."</td>
-		<td>&nbsp;</td>
-		<td>".$saldo."</td>
 	</tr>";
+	$saldo_terima += $r->fields["Jumlah"];
 	$r->MoveNext();
 }
+echo "
+	<tr>
+		<td colspan='3'>Total</td>
+		<td>".$saldo_terima."</td>
+	</tr>
+";
 ?>
 </table>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
