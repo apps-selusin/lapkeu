@@ -592,6 +592,36 @@ echo "
 ";
 ?>
 </table>
+
+
+<p>&nbsp;</p>
+
+
+<!-- saldo -->
+<?php
+$col = 2;
+?>
+
+<table border="1">
+	<tr>
+		<td colspan="<?php echo $col;?>">Saldo</td>
+	</tr>
+	<!-- <tr>
+		<td colspan="<?php echo $col;?>">&nbsp;</td>
+	</tr> -->
+	<tr>
+		<td>Total Penerimaan</td>
+		<td align='right'><?php echo number_format($total_terima);?></td>
+	</tr>
+	<tr>
+		<td>Total Pengeluaran</td>
+		<td align='right'><?php echo number_format($total_keluar);?></td>
+	</tr>
+	<tr>
+		<td align='right'>Saldo</td>
+		<td align='right'><?php echo number_format($total_terima - $total_keluar);?></td>
+	</tr>
+</table>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
