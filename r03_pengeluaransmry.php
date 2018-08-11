@@ -322,8 +322,9 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 		$gsEmailContentType = @$_POST["contenttype"]; // Get email content type
 
 		// Setup placeholder
-		// Setup export options
+		$this->tanggal->PlaceHolder = $this->tanggal->FldCaption();
 
+		// Setup export options
 		$this->SetupExportOptions();
 
 		// Global Page Loading event (in userfn*.php)
@@ -1479,12 +1480,18 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 		} elseif (@$_GET["cmd"] == "reset") {
 
 			// Load default values
+			$this->SetSessionFilterValues($this->tanggal->SearchValue, $this->tanggal->SearchOperator, $this->tanggal->SearchCondition, $this->tanggal->SearchValue2, $this->tanggal->SearchOperator2, 'tanggal'); // Field tanggal
 			$this->SetSessionDropDownValue($this->maingroup_nama->DropDownValue, $this->maingroup_nama->SearchOperator, 'maingroup_nama'); // Field maingroup_nama
 			$this->SetSessionDropDownValue($this->subgroup_nama->DropDownValue, $this->subgroup_nama->SearchOperator, 'subgroup_nama'); // Field subgroup_nama
 
 			//$bSetupFilter = TRUE; // No need to set up, just use default
 		} else {
 			$bRestoreSession = !$this->SearchCommand;
+
+			// Field tanggal
+			if ($this->GetFilterValues($this->tanggal)) {
+				$bSetupFilter = TRUE;
+			}
 
 			// Field maingroup_nama
 			if ($this->GetDropDownValue($this->maingroup_nama)) {
@@ -1507,6 +1514,7 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 
 		// Restore session
 		if ($bRestoreSession) {
+			$this->GetSessionFilterValues($this->tanggal); // Field tanggal
 			$this->GetSessionDropDownValue($this->maingroup_nama); // Field maingroup_nama
 			$this->GetSessionDropDownValue($this->subgroup_nama); // Field subgroup_nama
 		}
@@ -1515,10 +1523,12 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 		$this->Page_FilterValidated();
 
 		// Build SQL
+		$this->BuildExtendedFilter($this->tanggal, $sFilter, FALSE, TRUE); // Field tanggal
 		$this->BuildDropDownFilter($this->maingroup_nama, $sFilter, $this->maingroup_nama->SearchOperator, FALSE, TRUE); // Field maingroup_nama
 		$this->BuildDropDownFilter($this->subgroup_nama, $sFilter, $this->subgroup_nama->SearchOperator, FALSE, TRUE); // Field subgroup_nama
 
 		// Save parms to session
+		$this->SetSessionFilterValues($this->tanggal->SearchValue, $this->tanggal->SearchOperator, $this->tanggal->SearchCondition, $this->tanggal->SearchValue2, $this->tanggal->SearchOperator2, 'tanggal'); // Field tanggal
 		$this->SetSessionDropDownValue($this->maingroup_nama->DropDownValue, $this->maingroup_nama->SearchOperator, 'maingroup_nama'); // Field maingroup_nama
 		$this->SetSessionDropDownValue($this->subgroup_nama->DropDownValue, $this->subgroup_nama->SearchOperator, 'subgroup_nama'); // Field subgroup_nama
 
@@ -1798,6 +1808,14 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 		// Check if validation required
 		if (!EWR_SERVER_VALIDATE)
 			return ($grFormError == "");
+		if (!ewr_CheckDateDef($this->tanggal->SearchValue)) {
+			if ($grFormError <> "") $grFormError .= "<br>";
+			$grFormError .= $this->tanggal->FldErrMsg();
+		}
+		if (!ewr_CheckDateDef($this->tanggal->SearchValue2)) {
+			if ($grFormError <> "") $grFormError .= "<br>";
+			$grFormError .= $this->tanggal->FldErrMsg();
+		}
 
 		// Return validate result
 		$ValidateForm = ($grFormError == "");
@@ -1851,6 +1869,10 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 		* $so2 - Default search operator 2 (if operator 2 is enabled)
 		* $sv2 - Default ext filter value 2 (if operator 2 is enabled)
 		*/
+
+		// Field tanggal
+		$this->SetDefaultExtFilter($this->tanggal, "BETWEEN", NULL, 'AND', "=", NULL);
+		if (!$this->SearchCommand) $this->ApplyDefaultExtFilter($this->tanggal);
 		/**
 		* Set up default values for popup filters
 		*/
@@ -1858,6 +1880,10 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 
 	// Check if filter applied
 	function CheckFilter() {
+
+		// Check tanggal text filter
+		if ($this->TextFilterApplied($this->tanggal))
+			return TRUE;
 
 		// Check maingroup_nama extended filter
 		if ($this->NonTextFilterApplied($this->maingroup_nama))
@@ -1875,6 +1901,18 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 
 		// Initialize
 		$sFilterList = "";
+
+		// Field tanggal
+		$sExtWrk = "";
+		$sWrk = "";
+		$this->BuildExtendedFilter($this->tanggal, $sExtWrk);
+		$sFilter = "";
+		if ($sExtWrk <> "")
+			$sFilter .= "<span class=\"ewFilterValue\">$sExtWrk</span>";
+		elseif ($sWrk <> "")
+			$sFilter .= "<span class=\"ewFilterValue\">$sWrk</span>";
+		if ($sFilter <> "")
+			$sFilterList .= "<div><span class=\"ewFilterCaption\">" . $this->tanggal->FldCaption() . "</span>" . $sFilter . "</div>";
 
 		// Field maingroup_nama
 		$sExtWrk = "";
@@ -1921,6 +1959,20 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 		// Initialize
 		$sFilterList = "";
 
+		// Field tanggal
+		$sWrk = "";
+		if ($this->tanggal->SearchValue <> "" || $this->tanggal->SearchValue2 <> "") {
+			$sWrk = "\"sv_tanggal\":\"" . ewr_JsEncode2($this->tanggal->SearchValue) . "\"," .
+				"\"so_tanggal\":\"" . ewr_JsEncode2($this->tanggal->SearchOperator) . "\"," .
+				"\"sc_tanggal\":\"" . ewr_JsEncode2($this->tanggal->SearchCondition) . "\"," .
+				"\"sv2_tanggal\":\"" . ewr_JsEncode2($this->tanggal->SearchValue2) . "\"," .
+				"\"so2_tanggal\":\"" . ewr_JsEncode2($this->tanggal->SearchOperator2) . "\"";
+		}
+		if ($sWrk <> "") {
+			if ($sFilterList <> "") $sFilterList .= ",";
+			$sFilterList .= $sWrk;
+		}
+
 		// Field maingroup_nama
 		$sWrk = "";
 		$sWrk = ($this->maingroup_nama->DropDownValue <> EWR_INIT_VALUE) ? $this->maingroup_nama->DropDownValue : "";
@@ -1966,6 +2018,18 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 	function SetupFilterList($filter) {
 		if (!is_array($filter))
 			return FALSE;
+
+		// Field tanggal
+		$bRestoreFilter = FALSE;
+		if (array_key_exists("sv_tanggal", $filter) || array_key_exists("so_tanggal", $filter) ||
+			array_key_exists("sc_tanggal", $filter) ||
+			array_key_exists("sv2_tanggal", $filter) || array_key_exists("so2_tanggal", $filter)) {
+			$this->SetSessionFilterValues(@$filter["sv_tanggal"], @$filter["so_tanggal"], @$filter["sc_tanggal"], @$filter["sv2_tanggal"], @$filter["so2_tanggal"], "tanggal");
+			$bRestoreFilter = TRUE;
+		}
+		if (!$bRestoreFilter) { // Clear filter
+			$this->SetSessionFilterValues("", "=", "AND", "", "=", "tanggal");
+		}
 
 		// Field maingroup_nama
 		$bRestoreFilter = FALSE;
@@ -2392,6 +2456,16 @@ fr03_pengeluaransummary.Validate = function() {
 	if (!this.ValidateRequired)
 		return true; // Ignore validation
 	var $ = jQuery, fobj = this.GetForm(), $fobj = $(fobj);
+	var elm = fobj.sv_tanggal;
+	if (elm && !ewr_CheckDateDef(elm.value)) {
+		if (!this.OnError(elm, "<?php echo ewr_JsEncode2($Page->tanggal->FldErrMsg()) ?>"))
+			return false;
+	}
+	var elm = fobj.sv2_tanggal;
+	if (elm && !ewr_CheckDateDef(elm.value)) {
+		if (!this.OnError(elm, "<?php echo ewr_JsEncode2($Page->tanggal->FldErrMsg()) ?>"))
+			return false;
+	}
 
 	// Call Form Custom Validate event
 	if (!this.Form_CustomValidate(fobj))
@@ -2461,6 +2535,21 @@ if (!$Page->DrillDownInPanel) {
 <div id="fr03_pengeluaransummary_SearchPanel" class="ewSearchPanel collapse<?php echo $SearchPanelClass ?>">
 <input type="hidden" name="cmd" value="search">
 <div id="r_1" class="ewRow">
+<div id="c_tanggal" class="ewCell form-group">
+	<label for="sv_tanggal" class="ewSearchCaption ewLabel"><?php echo $Page->tanggal->FldCaption() ?></label>
+	<span class="ewSearchOperator"><?php echo $ReportLanguage->Phrase("BETWEEN"); ?><input type="hidden" name="so_tanggal" id="so_tanggal" value="BETWEEN"></span>
+	<span class="control-group ewSearchField">
+<?php ewr_PrependClass($Page->tanggal->EditAttrs["class"], "form-control"); // PR8 ?>
+<input type="text" data-table="r03_pengeluaran" data-field="x_tanggal" id="sv_tanggal" name="sv_tanggal" placeholder="<?php echo $Page->tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->tanggal->SearchValue) ?>" data-calendar='true' data-options='{"ignoreReadonly":true,"useCurrent":false,"format":0}'<?php echo $Page->tanggal->EditAttributes() ?>>
+</span>
+	<span class="ewSearchCond btw1_tanggal"><?php echo $ReportLanguage->Phrase("AND") ?></span>
+	<span class="ewSearchField btw1_tanggal">
+<?php ewr_PrependClass($Page->tanggal->EditAttrs["class"], "form-control"); // PR8 ?>
+<input type="text" data-table="r03_pengeluaran" data-field="x_tanggal" id="sv2_tanggal" name="sv2_tanggal" placeholder="<?php echo $Page->tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->tanggal->SearchValue2) ?>" data-calendar='true' data-options='{"ignoreReadonly":true,"useCurrent":false,"format":0}'<?php echo $Page->tanggal->EditAttributes() ?>>
+</span>
+</div>
+</div>
+<div id="r_2" class="ewRow">
 <div id="c_maingroup_nama" class="ewCell form-group">
 	<label for="sv_maingroup_nama" class="ewSearchCaption ewLabel"><?php echo $Page->maingroup_nama->FldCaption() ?></label>
 	<span class="ewSearchField">
@@ -2500,7 +2589,7 @@ fr03_pengeluaransummary.Lists["sv_maingroup_nama"].Options = <?php echo ewr_Arra
 </span>
 </div>
 </div>
-<div id="r_2" class="ewRow">
+<div id="r_3" class="ewRow">
 <div id="c_subgroup_nama" class="ewCell form-group">
 	<label for="sv_subgroup_nama" class="ewSearchCaption ewLabel"><?php echo $Page->subgroup_nama->FldCaption() ?></label>
 	<span class="ewSearchField">

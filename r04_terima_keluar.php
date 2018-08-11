@@ -574,8 +574,7 @@ while (!$r->EOF) {
 	}
 	echo "
 		<tr>
-			<td>&nbsp;</td>
-			<td align='right' colspan='".($col - 2)."'>Sub Total ".$maingroup_nama."</td>
+			<td align='right' colspan='".($col - 1)."'>Sub Total ".$maingroup_nama."</td>
 			<td align='right'>".number_format($total_maingroup)."</td>
 		</tr>
 		<tr>

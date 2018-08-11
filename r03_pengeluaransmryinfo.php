@@ -42,6 +42,8 @@ class crr03_pengeluaran extends crTableBase {
 		$this->tanggal->DateFilter = "";
 		$this->tanggal->SqlSelect = "";
 		$this->tanggal->SqlOrderBy = "";
+		ewr_RegisterFilter($this->tanggal, "@@Past", $ReportLanguage->Phrase("Past"), "ewr_IsPast");
+		ewr_RegisterFilter($this->tanggal, "@@Future", $ReportLanguage->Phrase("Future"), "ewr_IsFuture");
 		$this->fields['tanggal'] = &$this->tanggal;
 
 		// maingroup_nama
