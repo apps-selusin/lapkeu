@@ -344,12 +344,102 @@ $r04_terima_keluar_php->Page_Main();
 Page_Rendering();
 ?>
 <?php include_once "header.php" ?>
-<div class="panel panel-default">
+<?php
+
+$db =& DbHelper(); 
+
+/*function show_table($r) {
+	echo "<table class='table table-striped table-bordered table-hover table-condensed'>";
+	echo "<tr><th>No.</th><th colspan='4'>Keterangan</th></tr>";
+	while (!$r->EOF) {
+		$no = $r->fields["No"];
+		echo "<tr><td>".$no.".</td><td colspan='4'>".$r->fields["Keterangan"]."</td></tr>";
+		while ($no == $r->fields["No"]) {
+			echo "
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>".$r->fields["TanggalJam"]."</td>
+				<td>".$r->fields["Status2"]."</td>
+				<td>".$r->fields["Keterangan2"]."</td>
+			</tr>";
+			$r->MoveNext();
+		}
+		echo "<tr><td colspan='5'>&nbsp;</td></tr>";
+	}
+	echo "</table>";
+}*/
+?>
+
+<!-- <div class="panel panel-default">
 	<div class="panel-heading">Latest News</div>
 	<div class="panel-body">
 		<p>Laporan Keuangan. @2018 Selaras Solusindo. All rights reserved.</p>
 	</div>
-</div>
+</div> -->
+
+<style>
+.panel-heading a{
+  display:block;
+}
+
+.panel-heading a.collapsed {
+  background: url(http://upload.wikimedia.org/wikipedia/commons/3/36/Vector_skin_right_arrow.png) center right no-repeat;
+}
+
+.panel-heading a {
+  background: url(http://www.useragentman.com/blog/wp-content/themes/useragentman/images/widgets/downArrow.png) center right no-repeat;
+}
+</style>
+
+<!-- <div class="row">
+
+	<div class="col-lg-12 col-md-12 col-sm-12">
+		<div class="panel panel-default">
+			<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Log</a></strong></div>
+			<div id="log" class="panel-collapse collapse in">
+			<div class="panel-body">
+				<?php
+				/*$q = "
+					select distinct
+						a.No,
+						a.Keterangan,
+						a.TanggalJam,
+						b.Status as Status2,
+						a.Keterangan2
+					from
+						t92_log a
+						left join t91_log_status b on a.Status = b.id
+					order by
+						no desc,
+						tanggaljam asc";
+				$r = Conn()->Execute($q);
+				show_table($r);*/
+				?>
+			</div>
+			</div>
+		</div>
+	</div>
+
+</div> -->
+
+<table border="0">
+<?php
+$q = "select * from t08_penerimaan order by tanggal";
+$r = Conn()->Execute($q);
+
+while (!$r->EOF) {
+	echo "
+	<tr>
+		<td>".$r->fields["Tanggal"]."</td>
+		<td>".$r->fields["Keterangan"]."</td>
+		<td>".$r->fields["NoKwitansi"]."</td>
+		<td>".$r->fields["Jumlah"]."</td>
+	</tr>";
+	$r->MoveNext();
+}
+?>
+</table>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php

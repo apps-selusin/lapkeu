@@ -621,6 +621,9 @@
     <menu id="10126">
       <phrase id="menutext" value="v 01 barang satuan" />
     </menu>
+    <menu id="10127">
+      <phrase id="menutext" value="v 03 pengeluaran" />
+    </menu>
     <menu id="10123">
       <phrase id="menutext" value="Hak Akses" />
     </menu>
@@ -1047,6 +1050,39 @@
     </table>
     <table id="r04_terima_keluar_php">
       <phrase id="tblcaption" value="Excel Draft" />
+    </table>
+    <table id="v03_pengeluaran">
+      <phrase id="tblcaption" value="v 03 pengeluaran" />
+      <field id="tanggal">
+        <phrase id="fldcaption" value="tanggal" />
+      </field>
+      <field id="maingroup_nama">
+        <phrase id="fldcaption" value="maingroup nama" />
+      </field>
+      <field id="subgroup_nama">
+        <phrase id="fldcaption" value="subgroup nama" />
+      </field>
+      <field id="supplier_nama">
+        <phrase id="fldcaption" value="supplier nama" />
+      </field>
+      <field id="nonota">
+        <phrase id="fldcaption" value="nonota" />
+      </field>
+      <field id="barang_nama">
+        <phrase id="fldcaption" value="barang nama" />
+      </field>
+      <field id="banyaknya">
+        <phrase id="fldcaption" value="banyaknya" />
+      </field>
+      <field id="barang_satuan">
+        <phrase id="fldcaption" value="barang satuan" />
+      </field>
+      <field id="harga">
+        <phrase id="fldcaption" value="harga" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="Jumlah" />
+      </field>
     </table>
   </project>
 </ew-language>
