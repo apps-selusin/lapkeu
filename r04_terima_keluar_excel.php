@@ -437,7 +437,7 @@ else {
 </div> -->
 
 <p>Laporan Keuangan</p>
-<p>Periode <?php echo isset($_GET["start"]) $_GET["start"] ?  : "";?> s.d. <?php echo isset($_GET["end"]) $_GET["end"] ?  : "";?></p>
+<p>Periode <?php isset($_GET["start"]) echo $_GET["start"] ?  : echo "";?> s.d. <?php isset($_GET["end"]) echo $_GET["end"] ?  : echo "";?></p>
 
 <!-- penerimaan -->
 <?php
