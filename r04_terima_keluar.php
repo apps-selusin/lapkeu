@@ -455,7 +455,7 @@ while (!$r->EOF) {
 		<td>".$r->fields["Tanggal"]."</td>
 		<td>".$r->fields["Keterangan"]."</td>
 		<td>".$r->fields["NoKwitansi"]."</td>
-		<td>".$r->fields["Jumlah"]."</td>
+		<td align='right'>".number_format($r->fields["Jumlah"])."</td>
 		<td>&nbsp;</td>
 	</tr>";
 	$total_terima += $r->fields["Jumlah"];
@@ -463,8 +463,8 @@ while (!$r->EOF) {
 }
 echo "
 	<tr>
-		<td colspan='4'>Total</td>
-		<td>".$total_terima."</td>
+		<td align='right' colspan='4'>Total Penerimaan</td>
+		<td align='right'>".number_format($total_terima)."</td>
 	</tr>
 ";
 ?>
@@ -552,10 +552,10 @@ while (!$r->EOF) {
 					<td>".$r->fields["supplier_nama"]."</td>
 					<td>".$r->fields["nonota"]."</td>
 					<td>".$r->fields["barang_nama"]."</td>
-					<td>".$r->fields["banyaknya"]."</td>
+					<td align='right'>".number_format($r->fields["banyaknya"])."</td>
 					<td>".$r->fields["barang_satuan"]."</td>
-					<td>".$r->fields["harga"]."</td>
-					<td>".$r->fields["jumlah"]."</td>
+					<td align='right'>".number_format($r->fields["harga"])."</td>
+					<td align='right'>".number_format($r->fields["jumlah"])."</td>
 					<td>&nbsp;</td>
 				</tr>
 			";
@@ -565,8 +565,8 @@ while (!$r->EOF) {
 		echo "
 			<tr>
 				<td>&nbsp;</td>
-				<td>Total</td>
-				<td colspan='".($col - 2)."'>".$total_subgroup."</td>
+				<td align='right' colspan='".($col - 3)."'>Sub Total ".$subgroup_nama."</td>
+				<td align='right'>".number_format($total_subgroup)."</td>
 				<td>&nbsp;</td>
 			</tr>
 		";
@@ -574,16 +574,20 @@ while (!$r->EOF) {
 	}
 	echo "
 		<tr>
-			<td>Total</td>
-			<td colspan='".($col - 1)."'>".$total_maingroup."</td>
+			<td>&nbsp;</td>
+			<td align='right' colspan='".($col - 2)."'>Sub Total ".$maingroup_nama."</td>
+			<td align='right'>".number_format($total_maingroup)."</td>
+		</tr>
+		<tr>
+			<td colspan='".$col."'>&nbsp;</td>
 		</tr>
 	";
 	$total_keluar += $total_subgroup;
 }
 echo "
 	<tr>
-		<td colspan='".$col."'>Total Pengeluaran</td>
-		<td>".$total_keluar."</td>
+		<td align='right' colspan='".($col - 1)."'>Total Pengeluaran</td>
+		<td align='right'>".number_format($total_keluar)."</td>
 	</tr>
 ";
 ?>
