@@ -331,6 +331,8 @@ class cdefault {
 			$this->Page_Terminate("t99_audittraillist.php");
 		if ($Security->AllowList(CurrentProjectID() . 'r04_terima_keluar.php'))
 			$this->Page_Terminate("r04_terima_keluar.php");
+		if ($Security->AllowList(CurrentProjectID() . 'r04_terima_keluar_excel.php'))
+			$this->Page_Terminate("r04_terima_keluar_excel.php");
 		if ($Security->IsLoggedIn()) {
 			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
 		} else {
