@@ -23,7 +23,7 @@ function CheckDateBetween($sDateInput) {
 
 	//$dDateInput = strtotime($sDateInput);
 	$q = "select TanggalAwal, TanggalAkhir from t09_periode";
-	$r = Conn->Execute($q);
+	$r = Conn()->Execute($q);
 	if (
 		(strtotime($sDateInput) >= strtotime($r->fields["TanggalAwal"]))
 		and
