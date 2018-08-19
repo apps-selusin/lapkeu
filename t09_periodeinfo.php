@@ -75,19 +75,19 @@ class ct09_periode extends cTable {
 
 		// TanggalAwal
 		$this->TanggalAwal = new cField('t09_periode', 't09_periode', 'x_TanggalAwal', 'TanggalAwal', '`TanggalAwal`', ew_CastDateFieldForLike('`TanggalAwal`', 0, "DB"), 133, 0, FALSE, '`TanggalAwal`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->TanggalAwal->Sortable = TRUE; // Allow sort
+		$this->TanggalAwal->Sortable = FALSE; // Allow sort
 		$this->TanggalAwal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_FORMAT"], $Language->Phrase("IncorrectDate"));
 		$this->fields['TanggalAwal'] = &$this->TanggalAwal;
 
 		// TanggalAkhir
 		$this->TanggalAkhir = new cField('t09_periode', 't09_periode', 'x_TanggalAkhir', 'TanggalAkhir', '`TanggalAkhir`', ew_CastDateFieldForLike('`TanggalAkhir`', 0, "DB"), 133, 0, FALSE, '`TanggalAkhir`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->TanggalAkhir->Sortable = TRUE; // Allow sort
+		$this->TanggalAkhir->Sortable = FALSE; // Allow sort
 		$this->TanggalAkhir->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_FORMAT"], $Language->Phrase("IncorrectDate"));
 		$this->fields['TanggalAkhir'] = &$this->TanggalAkhir;
 
 		// NamaBulan
 		$this->NamaBulan = new cField('t09_periode', 't09_periode', 'x_NamaBulan', 'NamaBulan', '`NamaBulan`', '`NamaBulan`', 200, -1, FALSE, '`NamaBulan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->NamaBulan->Sortable = TRUE; // Allow sort
+		$this->NamaBulan->Sortable = FALSE; // Allow sort
 		$this->fields['NamaBulan'] = &$this->NamaBulan;
 	}
 
@@ -657,10 +657,16 @@ class ct09_periode extends cTable {
 		// Bulan
 		// Tahun
 		// TanggalAwal
-		// TanggalAkhir
-		// NamaBulan
-		// id
 
+		$this->TanggalAwal->CellCssStyle = "white-space: nowrap;";
+
+		// TanggalAkhir
+		$this->TanggalAkhir->CellCssStyle = "white-space: nowrap;";
+
+		// NamaBulan
+		$this->NamaBulan->CellCssStyle = "white-space: nowrap;";
+
+		// id
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
@@ -754,22 +760,20 @@ class ct09_periode extends cTable {
 		// TanggalAwal
 		$this->TanggalAwal->EditAttrs["class"] = "form-control";
 		$this->TanggalAwal->EditCustomAttributes = "";
-		$this->TanggalAwal->EditValue = $this->TanggalAwal->CurrentValue;
-		$this->TanggalAwal->EditValue = ew_FormatDateTime($this->TanggalAwal->EditValue, 0);
-		$this->TanggalAwal->ViewCustomAttributes = "";
+		$this->TanggalAwal->EditValue = ew_FormatDateTime($this->TanggalAwal->CurrentValue, 8);
+		$this->TanggalAwal->PlaceHolder = ew_RemoveHtml($this->TanggalAwal->FldCaption());
 
 		// TanggalAkhir
 		$this->TanggalAkhir->EditAttrs["class"] = "form-control";
 		$this->TanggalAkhir->EditCustomAttributes = "";
-		$this->TanggalAkhir->EditValue = $this->TanggalAkhir->CurrentValue;
-		$this->TanggalAkhir->EditValue = ew_FormatDateTime($this->TanggalAkhir->EditValue, 0);
-		$this->TanggalAkhir->ViewCustomAttributes = "";
+		$this->TanggalAkhir->EditValue = ew_FormatDateTime($this->TanggalAkhir->CurrentValue, 8);
+		$this->TanggalAkhir->PlaceHolder = ew_RemoveHtml($this->TanggalAkhir->FldCaption());
 
 		// NamaBulan
 		$this->NamaBulan->EditAttrs["class"] = "form-control";
 		$this->NamaBulan->EditCustomAttributes = "";
 		$this->NamaBulan->EditValue = $this->NamaBulan->CurrentValue;
-		$this->NamaBulan->ViewCustomAttributes = "";
+		$this->NamaBulan->PlaceHolder = ew_RemoveHtml($this->NamaBulan->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -800,16 +804,10 @@ class ct09_periode extends cTable {
 				if ($ExportPageType == "view") {
 					if ($this->Bulan->Exportable) $Doc->ExportCaption($this->Bulan);
 					if ($this->Tahun->Exportable) $Doc->ExportCaption($this->Tahun);
-					if ($this->TanggalAwal->Exportable) $Doc->ExportCaption($this->TanggalAwal);
-					if ($this->TanggalAkhir->Exportable) $Doc->ExportCaption($this->TanggalAkhir);
-					if ($this->NamaBulan->Exportable) $Doc->ExportCaption($this->NamaBulan);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->Bulan->Exportable) $Doc->ExportCaption($this->Bulan);
 					if ($this->Tahun->Exportable) $Doc->ExportCaption($this->Tahun);
-					if ($this->TanggalAwal->Exportable) $Doc->ExportCaption($this->TanggalAwal);
-					if ($this->TanggalAkhir->Exportable) $Doc->ExportCaption($this->TanggalAkhir);
-					if ($this->NamaBulan->Exportable) $Doc->ExportCaption($this->NamaBulan);
 				}
 				$Doc->EndExportRow();
 			}
@@ -843,16 +841,10 @@ class ct09_periode extends cTable {
 					if ($ExportPageType == "view") {
 						if ($this->Bulan->Exportable) $Doc->ExportField($this->Bulan);
 						if ($this->Tahun->Exportable) $Doc->ExportField($this->Tahun);
-						if ($this->TanggalAwal->Exportable) $Doc->ExportField($this->TanggalAwal);
-						if ($this->TanggalAkhir->Exportable) $Doc->ExportField($this->TanggalAkhir);
-						if ($this->NamaBulan->Exportable) $Doc->ExportField($this->NamaBulan);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->Bulan->Exportable) $Doc->ExportField($this->Bulan);
 						if ($this->Tahun->Exportable) $Doc->ExportField($this->Tahun);
-						if ($this->TanggalAwal->Exportable) $Doc->ExportField($this->TanggalAwal);
-						if ($this->TanggalAkhir->Exportable) $Doc->ExportField($this->TanggalAkhir);
-						if ($this->NamaBulan->Exportable) $Doc->ExportField($this->NamaBulan);
 					}
 					$Doc->EndExportRow($RowCnt);
 				}
@@ -1084,6 +1076,31 @@ class ct09_periode extends cTable {
 	function Row_Updated($rsold, &$rsnew) {
 
 		//echo "Row Updated";
+		$aBulan = array(
+		"",
+		"Januari",
+		"Februari",
+		"Maret",
+		"April",
+		"Mei",
+		"Juni",
+		"Juli",
+		"Agustus",
+		"September",
+		"Oktober",
+		"November",
+		"Desember"
+		);
+		$TanggalAwal  = $rsnew["Tahun"] . "-" . $rsnew["Bulan"] . "-" . "01";
+		$TanggalAkhir = $rsnew["Tahun"] . "-" . $rsnew["Bulan"] . "-" . date("t", mktime(0, 0, 0, $rsnew["Bulan"], 1, $rsnew["Tahun"]));
+		$NamaBulan    = $aBulan[$rsnew["Bulan"]];
+		$q = "update t09_periode set
+			TanggalAwal  = '".$TanggalAwal."',
+			TanggalAkhir = '".$TanggalAkhir."',
+			NamaBulan    = '".$NamaBulan."'
+			where id = ".$rsold["id"]."
+		";
+		ew_Execute($q);
 	}
 
 	// Row Update Conflict event

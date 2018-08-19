@@ -418,9 +418,6 @@ class ct09_periode_list extends ct09_periode {
 		$this->SetupListOptions();
 		$this->Bulan->SetVisibility();
 		$this->Tahun->SetVisibility();
-		$this->TanggalAwal->SetVisibility();
-		$this->TanggalAkhir->SetVisibility();
-		$this->NamaBulan->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -794,9 +791,6 @@ class ct09_periode_list extends ct09_periode {
 			$this->CurrentOrderType = @$_GET["ordertype"];
 			$this->UpdateSort($this->Bulan, $bCtrl); // Bulan
 			$this->UpdateSort($this->Tahun, $bCtrl); // Tahun
-			$this->UpdateSort($this->TanggalAwal, $bCtrl); // TanggalAwal
-			$this->UpdateSort($this->TanggalAkhir, $bCtrl); // TanggalAkhir
-			$this->UpdateSort($this->NamaBulan, $bCtrl); // NamaBulan
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -827,9 +821,6 @@ class ct09_periode_list extends ct09_periode {
 				$this->setSessionOrderBy($sOrderBy);
 				$this->Bulan->setSort("");
 				$this->Tahun->setSort("");
-				$this->TanggalAwal->setSort("");
-				$this->TanggalAkhir->setSort("");
-				$this->NamaBulan->setSort("");
 			}
 
 			// Reset start position
@@ -1225,17 +1216,6 @@ class ct09_periode_list extends ct09_periode {
 		if (!$this->Tahun->FldIsDetailKey) {
 			$this->Tahun->setFormValue($objForm->GetValue("x_Tahun"));
 		}
-		if (!$this->TanggalAwal->FldIsDetailKey) {
-			$this->TanggalAwal->setFormValue($objForm->GetValue("x_TanggalAwal"));
-			$this->TanggalAwal->CurrentValue = ew_UnFormatDateTime($this->TanggalAwal->CurrentValue, 0);
-		}
-		if (!$this->TanggalAkhir->FldIsDetailKey) {
-			$this->TanggalAkhir->setFormValue($objForm->GetValue("x_TanggalAkhir"));
-			$this->TanggalAkhir->CurrentValue = ew_UnFormatDateTime($this->TanggalAkhir->CurrentValue, 0);
-		}
-		if (!$this->NamaBulan->FldIsDetailKey) {
-			$this->NamaBulan->setFormValue($objForm->GetValue("x_NamaBulan"));
-		}
 		if (!$this->id->FldIsDetailKey && $this->CurrentAction <> "gridadd" && $this->CurrentAction <> "add")
 			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
@@ -1247,11 +1227,6 @@ class ct09_periode_list extends ct09_periode {
 			$this->id->CurrentValue = $this->id->FormValue;
 		$this->Bulan->CurrentValue = $this->Bulan->FormValue;
 		$this->Tahun->CurrentValue = $this->Tahun->FormValue;
-		$this->TanggalAwal->CurrentValue = $this->TanggalAwal->FormValue;
-		$this->TanggalAwal->CurrentValue = ew_UnFormatDateTime($this->TanggalAwal->CurrentValue, 0);
-		$this->TanggalAkhir->CurrentValue = $this->TanggalAkhir->FormValue;
-		$this->TanggalAkhir->CurrentValue = ew_UnFormatDateTime($this->TanggalAkhir->CurrentValue, 0);
-		$this->NamaBulan->CurrentValue = $this->NamaBulan->FormValue;
 	}
 
 	// Load recordset
@@ -1389,9 +1364,14 @@ class ct09_periode_list extends ct09_periode {
 		// Bulan
 		// Tahun
 		// TanggalAwal
-		// TanggalAkhir
-		// NamaBulan
 
+		$this->TanggalAwal->CellCssStyle = "white-space: nowrap;";
+
+		// TanggalAkhir
+		$this->TanggalAkhir->CellCssStyle = "white-space: nowrap;";
+
+		// NamaBulan
+		$this->NamaBulan->CellCssStyle = "white-space: nowrap;";
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
 		// id
@@ -1410,20 +1390,6 @@ class ct09_periode_list extends ct09_periode {
 		$this->Tahun->ViewValue = $this->Tahun->CurrentValue;
 		$this->Tahun->ViewCustomAttributes = "";
 
-		// TanggalAwal
-		$this->TanggalAwal->ViewValue = $this->TanggalAwal->CurrentValue;
-		$this->TanggalAwal->ViewValue = ew_FormatDateTime($this->TanggalAwal->ViewValue, 0);
-		$this->TanggalAwal->ViewCustomAttributes = "";
-
-		// TanggalAkhir
-		$this->TanggalAkhir->ViewValue = $this->TanggalAkhir->CurrentValue;
-		$this->TanggalAkhir->ViewValue = ew_FormatDateTime($this->TanggalAkhir->ViewValue, 0);
-		$this->TanggalAkhir->ViewCustomAttributes = "";
-
-		// NamaBulan
-		$this->NamaBulan->ViewValue = $this->NamaBulan->CurrentValue;
-		$this->NamaBulan->ViewCustomAttributes = "";
-
 			// Bulan
 			$this->Bulan->LinkCustomAttributes = "";
 			$this->Bulan->HrefValue = "";
@@ -1433,21 +1399,6 @@ class ct09_periode_list extends ct09_periode {
 			$this->Tahun->LinkCustomAttributes = "";
 			$this->Tahun->HrefValue = "";
 			$this->Tahun->TooltipValue = "";
-
-			// TanggalAwal
-			$this->TanggalAwal->LinkCustomAttributes = "";
-			$this->TanggalAwal->HrefValue = "";
-			$this->TanggalAwal->TooltipValue = "";
-
-			// TanggalAkhir
-			$this->TanggalAkhir->LinkCustomAttributes = "";
-			$this->TanggalAkhir->HrefValue = "";
-			$this->TanggalAkhir->TooltipValue = "";
-
-			// NamaBulan
-			$this->NamaBulan->LinkCustomAttributes = "";
-			$this->NamaBulan->HrefValue = "";
-			$this->NamaBulan->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// Bulan
@@ -1461,24 +1412,6 @@ class ct09_periode_list extends ct09_periode {
 			$this->Tahun->EditValue = ew_HtmlEncode($this->Tahun->CurrentValue);
 			$this->Tahun->PlaceHolder = ew_RemoveHtml($this->Tahun->FldCaption());
 
-			// TanggalAwal
-			$this->TanggalAwal->EditAttrs["class"] = "form-control";
-			$this->TanggalAwal->EditCustomAttributes = "";
-			$this->TanggalAwal->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->TanggalAwal->CurrentValue, 8));
-			$this->TanggalAwal->PlaceHolder = ew_RemoveHtml($this->TanggalAwal->FldCaption());
-
-			// TanggalAkhir
-			$this->TanggalAkhir->EditAttrs["class"] = "form-control";
-			$this->TanggalAkhir->EditCustomAttributes = "";
-			$this->TanggalAkhir->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->TanggalAkhir->CurrentValue, 8));
-			$this->TanggalAkhir->PlaceHolder = ew_RemoveHtml($this->TanggalAkhir->FldCaption());
-
-			// NamaBulan
-			$this->NamaBulan->EditAttrs["class"] = "form-control";
-			$this->NamaBulan->EditCustomAttributes = "";
-			$this->NamaBulan->EditValue = ew_HtmlEncode($this->NamaBulan->CurrentValue);
-			$this->NamaBulan->PlaceHolder = ew_RemoveHtml($this->NamaBulan->FldCaption());
-
 			// Add refer script
 			// Bulan
 
@@ -1488,18 +1421,6 @@ class ct09_periode_list extends ct09_periode {
 			// Tahun
 			$this->Tahun->LinkCustomAttributes = "";
 			$this->Tahun->HrefValue = "";
-
-			// TanggalAwal
-			$this->TanggalAwal->LinkCustomAttributes = "";
-			$this->TanggalAwal->HrefValue = "";
-
-			// TanggalAkhir
-			$this->TanggalAkhir->LinkCustomAttributes = "";
-			$this->TanggalAkhir->HrefValue = "";
-
-			// NamaBulan
-			$this->NamaBulan->LinkCustomAttributes = "";
-			$this->NamaBulan->HrefValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// Bulan
@@ -1513,26 +1434,6 @@ class ct09_periode_list extends ct09_periode {
 			$this->Tahun->EditValue = ew_HtmlEncode($this->Tahun->CurrentValue);
 			$this->Tahun->PlaceHolder = ew_RemoveHtml($this->Tahun->FldCaption());
 
-			// TanggalAwal
-			$this->TanggalAwal->EditAttrs["class"] = "form-control";
-			$this->TanggalAwal->EditCustomAttributes = "";
-			$this->TanggalAwal->EditValue = $this->TanggalAwal->CurrentValue;
-			$this->TanggalAwal->EditValue = ew_FormatDateTime($this->TanggalAwal->EditValue, 0);
-			$this->TanggalAwal->ViewCustomAttributes = "";
-
-			// TanggalAkhir
-			$this->TanggalAkhir->EditAttrs["class"] = "form-control";
-			$this->TanggalAkhir->EditCustomAttributes = "";
-			$this->TanggalAkhir->EditValue = $this->TanggalAkhir->CurrentValue;
-			$this->TanggalAkhir->EditValue = ew_FormatDateTime($this->TanggalAkhir->EditValue, 0);
-			$this->TanggalAkhir->ViewCustomAttributes = "";
-
-			// NamaBulan
-			$this->NamaBulan->EditAttrs["class"] = "form-control";
-			$this->NamaBulan->EditCustomAttributes = "";
-			$this->NamaBulan->EditValue = $this->NamaBulan->CurrentValue;
-			$this->NamaBulan->ViewCustomAttributes = "";
-
 			// Edit refer script
 			// Bulan
 
@@ -1542,21 +1443,6 @@ class ct09_periode_list extends ct09_periode {
 			// Tahun
 			$this->Tahun->LinkCustomAttributes = "";
 			$this->Tahun->HrefValue = "";
-
-			// TanggalAwal
-			$this->TanggalAwal->LinkCustomAttributes = "";
-			$this->TanggalAwal->HrefValue = "";
-			$this->TanggalAwal->TooltipValue = "";
-
-			// TanggalAkhir
-			$this->TanggalAkhir->LinkCustomAttributes = "";
-			$this->TanggalAkhir->HrefValue = "";
-			$this->TanggalAkhir->TooltipValue = "";
-
-			// NamaBulan
-			$this->NamaBulan->LinkCustomAttributes = "";
-			$this->NamaBulan->HrefValue = "";
-			$this->NamaBulan->TooltipValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD || $this->RowType == EW_ROWTYPE_EDIT || $this->RowType == EW_ROWTYPE_SEARCH) // Add/Edit/Search row
 			$this->SetupFieldTitles();
@@ -1584,15 +1470,6 @@ class ct09_periode_list extends ct09_periode {
 		}
 		if (!ew_CheckInteger($this->Tahun->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Tahun->FldErrMsg());
-		}
-		if (!$this->TanggalAwal->FldIsDetailKey && !is_null($this->TanggalAwal->FormValue) && $this->TanggalAwal->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->TanggalAwal->FldCaption(), $this->TanggalAwal->ReqErrMsg));
-		}
-		if (!$this->TanggalAkhir->FldIsDetailKey && !is_null($this->TanggalAkhir->FormValue) && $this->TanggalAkhir->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->TanggalAkhir->FldCaption(), $this->TanggalAkhir->ReqErrMsg));
-		}
-		if (!$this->NamaBulan->FldIsDetailKey && !is_null($this->NamaBulan->FormValue) && $this->NamaBulan->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->NamaBulan->FldCaption(), $this->NamaBulan->ReqErrMsg));
 		}
 
 		// Return validate result
@@ -1684,15 +1561,6 @@ class ct09_periode_list extends ct09_periode {
 
 		// Tahun
 		$this->Tahun->SetDbValueDef($rsnew, $this->Tahun->CurrentValue, 0, FALSE);
-
-		// TanggalAwal
-		$this->TanggalAwal->SetDbValueDef($rsnew, ew_UnFormatDateTime($this->TanggalAwal->CurrentValue, 0), ew_CurrentDate(), FALSE);
-
-		// TanggalAkhir
-		$this->TanggalAkhir->SetDbValueDef($rsnew, ew_UnFormatDateTime($this->TanggalAkhir->CurrentValue, 0), ew_CurrentDate(), FALSE);
-
-		// NamaBulan
-		$this->NamaBulan->SetDbValueDef($rsnew, $this->NamaBulan->CurrentValue, "", FALSE);
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -1928,15 +1796,6 @@ ft09_periodelist.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Tahun");
 			if (elm && !ew_CheckInteger(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t09_periode->Tahun->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_TanggalAwal");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t09_periode->TanggalAwal->FldCaption(), $t09_periode->TanggalAwal->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_TanggalAkhir");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t09_periode->TanggalAkhir->FldCaption(), $t09_periode->TanggalAkhir->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_NamaBulan");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t09_periode->NamaBulan->FldCaption(), $t09_periode->NamaBulan->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -2103,33 +1962,6 @@ $t09_periode_list->ListOptions->Render("header", "left");
 		</div></div></th>
 	<?php } ?>
 <?php } ?>
-<?php if ($t09_periode->TanggalAwal->Visible) { // TanggalAwal ?>
-	<?php if ($t09_periode->SortUrl($t09_periode->TanggalAwal) == "") { ?>
-		<th data-name="TanggalAwal" class="<?php echo $t09_periode->TanggalAwal->HeaderCellClass() ?>"><div id="elh_t09_periode_TanggalAwal" class="t09_periode_TanggalAwal"><div class="ewTableHeaderCaption"><?php echo $t09_periode->TanggalAwal->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="TanggalAwal" class="<?php echo $t09_periode->TanggalAwal->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t09_periode->SortUrl($t09_periode->TanggalAwal) ?>',2);"><div id="elh_t09_periode_TanggalAwal" class="t09_periode_TanggalAwal">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t09_periode->TanggalAwal->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t09_periode->TanggalAwal->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t09_periode->TanggalAwal->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-		</div></div></th>
-	<?php } ?>
-<?php } ?>
-<?php if ($t09_periode->TanggalAkhir->Visible) { // TanggalAkhir ?>
-	<?php if ($t09_periode->SortUrl($t09_periode->TanggalAkhir) == "") { ?>
-		<th data-name="TanggalAkhir" class="<?php echo $t09_periode->TanggalAkhir->HeaderCellClass() ?>"><div id="elh_t09_periode_TanggalAkhir" class="t09_periode_TanggalAkhir"><div class="ewTableHeaderCaption"><?php echo $t09_periode->TanggalAkhir->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="TanggalAkhir" class="<?php echo $t09_periode->TanggalAkhir->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t09_periode->SortUrl($t09_periode->TanggalAkhir) ?>',2);"><div id="elh_t09_periode_TanggalAkhir" class="t09_periode_TanggalAkhir">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t09_periode->TanggalAkhir->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t09_periode->TanggalAkhir->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t09_periode->TanggalAkhir->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-		</div></div></th>
-	<?php } ?>
-<?php } ?>
-<?php if ($t09_periode->NamaBulan->Visible) { // NamaBulan ?>
-	<?php if ($t09_periode->SortUrl($t09_periode->NamaBulan) == "") { ?>
-		<th data-name="NamaBulan" class="<?php echo $t09_periode->NamaBulan->HeaderCellClass() ?>"><div id="elh_t09_periode_NamaBulan" class="t09_periode_NamaBulan"><div class="ewTableHeaderCaption"><?php echo $t09_periode->NamaBulan->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="NamaBulan" class="<?php echo $t09_periode->NamaBulan->HeaderCellClass() ?>"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t09_periode->SortUrl($t09_periode->NamaBulan) ?>',2);"><div id="elh_t09_periode_NamaBulan" class="t09_periode_NamaBulan">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t09_periode->NamaBulan->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t09_periode->NamaBulan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t09_periode->NamaBulan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-		</div></div></th>
-	<?php } ?>
-<?php } ?>
 <?php
 
 // Render list options (header, right)
@@ -2250,57 +2082,6 @@ $t09_periode_list->ListOptions->Render("body", "left", $t09_periode_list->RowCnt
 <span id="el<?php echo $t09_periode_list->RowCnt ?>_t09_periode_Tahun" class="t09_periode_Tahun">
 <span<?php echo $t09_periode->Tahun->ViewAttributes() ?>>
 <?php echo $t09_periode->Tahun->ListViewValue() ?></span>
-</span>
-<?php } ?>
-</td>
-	<?php } ?>
-	<?php if ($t09_periode->TanggalAwal->Visible) { // TanggalAwal ?>
-		<td data-name="TanggalAwal"<?php echo $t09_periode->TanggalAwal->CellAttributes() ?>>
-<?php if ($t09_periode->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t09_periode_list->RowCnt ?>_t09_periode_TanggalAwal" class="form-group t09_periode_TanggalAwal">
-<span<?php echo $t09_periode->TanggalAwal->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t09_periode->TanggalAwal->EditValue ?></p></span>
-</span>
-<input type="hidden" data-table="t09_periode" data-field="x_TanggalAwal" name="x<?php echo $t09_periode_list->RowIndex ?>_TanggalAwal" id="x<?php echo $t09_periode_list->RowIndex ?>_TanggalAwal" value="<?php echo ew_HtmlEncode($t09_periode->TanggalAwal->CurrentValue) ?>">
-<?php } ?>
-<?php if ($t09_periode->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t09_periode_list->RowCnt ?>_t09_periode_TanggalAwal" class="t09_periode_TanggalAwal">
-<span<?php echo $t09_periode->TanggalAwal->ViewAttributes() ?>>
-<?php echo $t09_periode->TanggalAwal->ListViewValue() ?></span>
-</span>
-<?php } ?>
-</td>
-	<?php } ?>
-	<?php if ($t09_periode->TanggalAkhir->Visible) { // TanggalAkhir ?>
-		<td data-name="TanggalAkhir"<?php echo $t09_periode->TanggalAkhir->CellAttributes() ?>>
-<?php if ($t09_periode->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t09_periode_list->RowCnt ?>_t09_periode_TanggalAkhir" class="form-group t09_periode_TanggalAkhir">
-<span<?php echo $t09_periode->TanggalAkhir->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t09_periode->TanggalAkhir->EditValue ?></p></span>
-</span>
-<input type="hidden" data-table="t09_periode" data-field="x_TanggalAkhir" name="x<?php echo $t09_periode_list->RowIndex ?>_TanggalAkhir" id="x<?php echo $t09_periode_list->RowIndex ?>_TanggalAkhir" value="<?php echo ew_HtmlEncode($t09_periode->TanggalAkhir->CurrentValue) ?>">
-<?php } ?>
-<?php if ($t09_periode->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t09_periode_list->RowCnt ?>_t09_periode_TanggalAkhir" class="t09_periode_TanggalAkhir">
-<span<?php echo $t09_periode->TanggalAkhir->ViewAttributes() ?>>
-<?php echo $t09_periode->TanggalAkhir->ListViewValue() ?></span>
-</span>
-<?php } ?>
-</td>
-	<?php } ?>
-	<?php if ($t09_periode->NamaBulan->Visible) { // NamaBulan ?>
-		<td data-name="NamaBulan"<?php echo $t09_periode->NamaBulan->CellAttributes() ?>>
-<?php if ($t09_periode->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t09_periode_list->RowCnt ?>_t09_periode_NamaBulan" class="form-group t09_periode_NamaBulan">
-<span<?php echo $t09_periode->NamaBulan->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t09_periode->NamaBulan->EditValue ?></p></span>
-</span>
-<input type="hidden" data-table="t09_periode" data-field="x_NamaBulan" name="x<?php echo $t09_periode_list->RowIndex ?>_NamaBulan" id="x<?php echo $t09_periode_list->RowIndex ?>_NamaBulan" value="<?php echo ew_HtmlEncode($t09_periode->NamaBulan->CurrentValue) ?>">
-<?php } ?>
-<?php if ($t09_periode->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t09_periode_list->RowCnt ?>_t09_periode_NamaBulan" class="t09_periode_NamaBulan">
-<span<?php echo $t09_periode->NamaBulan->ViewAttributes() ?>>
-<?php echo $t09_periode->NamaBulan->ListViewValue() ?></span>
 </span>
 <?php } ?>
 </td>
