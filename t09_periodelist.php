@@ -2243,7 +2243,7 @@ $t09_periode_list->ListOptions->Render("body", "left", $t09_periode_list->RowCnt
 		<td data-name="Tahun"<?php echo $t09_periode->Tahun->CellAttributes() ?>>
 <?php if ($t09_periode->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t09_periode_list->RowCnt ?>_t09_periode_Tahun" class="form-group t09_periode_Tahun">
-<input type="text" data-table="t09_periode" data-field="x_Tahun" name="x<?php echo $t09_periode_list->RowIndex ?>_Tahun" id="x<?php echo $t09_periode_list->RowIndex ?>_Tahun" size="30" placeholder="<?php echo ew_HtmlEncode($t09_periode->Tahun->getPlaceHolder()) ?>" value="<?php echo $t09_periode->Tahun->EditValue ?>"<?php echo $t09_periode->Tahun->EditAttributes() ?>>
+<input type="text" data-table="t09_periode" data-field="x_Tahun" name="x<?php echo $t09_periode_list->RowIndex ?>_Tahun" id="x<?php echo $t09_periode_list->RowIndex ?>_Tahun" size="5" placeholder="<?php echo ew_HtmlEncode($t09_periode->Tahun->getPlaceHolder()) ?>" value="<?php echo $t09_periode->Tahun->EditValue ?>"<?php echo $t09_periode->Tahun->EditAttributes() ?>>
 </span>
 <?php } ?>
 <?php if ($t09_periode->RowType == EW_ROWTYPE_VIEW) { // View record ?>
