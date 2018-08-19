@@ -12,6 +12,7 @@ $RootMenu->AddMenuItem(10017, "mri_r025fterima5fkeluar", $Language->MenuPhrase("
 $RootMenu->AddMenuItem(10089, "mci_Excel", $Language->MenuPhrase("10089", "MenuText"), "r03_terima_keluar.php", 10055, "", IsLoggedIn(), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10120, "mi_r04_terima_keluar_php", $Language->MenuPhrase("10120", "MenuText"), "r04_terima_keluar.php", 10055, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}r04_terima_keluar.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(22, "mci_Setup", $Language->MenuPhrase("22", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "");
+$RootMenu->AddMenuItem(10129, "mi_t09_periode", $Language->MenuPhrase("10129", "MenuText"), "t09_periodelist.php", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t09_periode'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(33, "mi_t07_sekolah", $Language->MenuPhrase("33", "MenuText"), "t07_sekolahlist.php", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t07_sekolah'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(1, "mi_t01_supplier", $Language->MenuPhrase("1", "MenuText"), "t01_supplierlist.php", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t01_supplier'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(2, "mi_t02_satuan", $Language->MenuPhrase("2", "MenuText"), "t02_satuanlist.php", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t02_satuan'), FALSE, FALSE, "");

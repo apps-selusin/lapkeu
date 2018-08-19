@@ -305,6 +305,10 @@ class cdefault {
 		$Security->LoadUserLevel(); // Load User Level
 		if ($Security->AllowList(CurrentProjectID() . 'cf01_home.php'))
 		$this->Page_Terminate("cf01_home.php"); // Exit and go to default page
+		if ($Security->AllowList(CurrentProjectID() . 'r04_terima_keluar.php'))
+			$this->Page_Terminate("r04_terima_keluar.php");
+		if ($Security->AllowList(CurrentProjectID() . 'r04_terima_keluar_excel.php'))
+			$this->Page_Terminate("r04_terima_keluar_excel.php");
 		if ($Security->AllowList(CurrentProjectID() . 't01_supplier'))
 			$this->Page_Terminate("t01_supplierlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't02_satuan'))
@@ -321,6 +325,8 @@ class cdefault {
 			$this->Page_Terminate("t07_sekolahlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't08_penerimaan'))
 			$this->Page_Terminate("t08_penerimaanlist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't09_periode'))
+			$this->Page_Terminate("t09_periodelist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't96_employees'))
 			$this->Page_Terminate("t96_employeeslist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't97_userlevels'))
@@ -329,10 +335,6 @@ class cdefault {
 			$this->Page_Terminate("t98_userlevelpermissionslist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't99_audittrail'))
 			$this->Page_Terminate("t99_audittraillist.php");
-		if ($Security->AllowList(CurrentProjectID() . 'r04_terima_keluar.php'))
-			$this->Page_Terminate("r04_terima_keluar.php");
-		if ($Security->AllowList(CurrentProjectID() . 'r04_terima_keluar_excel.php'))
-			$this->Page_Terminate("r04_terima_keluar_excel.php");
 		if ($Security->IsLoggedIn()) {
 			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
 		} else {

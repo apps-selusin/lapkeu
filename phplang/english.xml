@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/8/11" version="14.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/8/19" version="14.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -621,26 +621,23 @@
     <menu id="10126">
       <phrase id="menutext" value="v 01 barang satuan" />
     </menu>
-    <menu id="10127">
-      <phrase id="menutext" value="v 03 pengeluaran" />
-    </menu>
-    <menu id="10128">
-      <phrase id="menutext" value="Laporan Keuangan Excel" />
-    </menu>
-    <menu id="10123">
-      <phrase id="menutext" value="Hak Akses" />
-    </menu>
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
-    <menu id="10125">
-      <phrase id="menutext" value="v 02 terima keluar" />
+    <menu id="10127">
+      <phrase id="menutext" value="v 03 pengeluaran" />
     </menu>
     <menu id="10016">
       <phrase id="menutext" value="Penerimaan" />
     </menu>
+    <menu id="10128">
+      <phrase id="menutext" value="Laporan Keuangan Excel" />
+    </menu>
     <menu id="6">
       <phrase id="menutext" value="Pengeluaran" />
+    </menu>
+    <menu id="10123">
+      <phrase id="menutext" value="Hak Akses" />
     </menu>
     <menu id="10088">
       <phrase id="menutext" value="Laporan" />
@@ -662,6 +659,9 @@
     </menu>
     <menu id="22">
       <phrase id="menutext" value="Setup" />
+    </menu>
+    <menu id="10129">
+      <phrase id="menutext" value="Periode" />
     </menu>
     <menu id="33">
       <phrase id="menutext" value="Sekolah" />
@@ -692,6 +692,9 @@
     </menu>
     <menu id="23">
       <phrase id="menutext" value="Log" />
+    </menu>
+    <menu id="10125">
+      <phrase id="menutext" value="v 02 terima keluar" />
     </menu>
     <menu id="10118">
       <phrase id="menutext" value="List" />
@@ -746,6 +749,12 @@
     </menu>
     <table id="cf01_home_php">
       <phrase id="tblcaption" value="Home" />
+    </table>
+    <table id="r04_terima_keluar_php">
+      <phrase id="tblcaption" value="Excel Draft" />
+    </table>
+    <table id="r04_terima_keluar_excel_php">
+      <phrase id="tblcaption" value="Laporan Keuangan Excel" />
     </table>
     <table id="t01_supplier">
       <phrase id="tblcaption" value="Supplier" />
@@ -868,6 +877,51 @@
       </field>
       <field id="jumlah">
         <phrase id="fldcaption" value="Jumlah" />
+      </field>
+    </table>
+    <table id="t09_periode">
+      <phrase id="tblcaption" value="Periode" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="bulan">
+        <phrase id="fldcaption" value="Bulan" />
+        <phrase id="fldtagvalue1" value="1" />
+        <phrase id="fldtagcaption1" value="Januari" />
+        <phrase id="fldtagvalue2" value="2" />
+        <phrase id="fldtagcaption2" value="Februari" />
+        <phrase id="fldtagvalue3" value="3" />
+        <phrase id="fldtagcaption3" value="Maret" />
+        <phrase id="fldtagvalue4" value="4" />
+        <phrase id="fldtagcaption4" value="April" />
+        <phrase id="fldtagvalue5" value="5" />
+        <phrase id="fldtagcaption5" value="Mei" />
+        <phrase id="fldtagvalue6" value="6" />
+        <phrase id="fldtagcaption6" value="Juni" />
+        <phrase id="fldtagvalue7" value="7" />
+        <phrase id="fldtagcaption7" value="Juli" />
+        <phrase id="fldtagvalue8" value="8" />
+        <phrase id="fldtagcaption8" value="Agustus" />
+        <phrase id="fldtagvalue9" value="9" />
+        <phrase id="fldtagcaption9" value="September" />
+        <phrase id="fldtagvalue10" value="10" />
+        <phrase id="fldtagcaption10" value="Oktober" />
+        <phrase id="fldtagvalue11" value="11" />
+        <phrase id="fldtagcaption11" value="November" />
+        <phrase id="fldtagvalue12" value="12" />
+        <phrase id="fldtagcaption12" value="Desember" />
+      </field>
+      <field id="tahun">
+        <phrase id="fldcaption" value="Tahun" />
+      </field>
+      <field id="tanggalawal">
+        <phrase id="fldcaption" value="Tanggal Awal" />
+      </field>
+      <field id="tanggalakhir">
+        <phrase id="fldcaption" value="Tanggal Akhir" />
+      </field>
+      <field id="namabulan">
+        <phrase id="fldcaption" value="Nama Bulan" />
       </field>
     </table>
     <table id="t96_employees">
@@ -1051,9 +1105,6 @@
         <phrase id="fldcaption" value="saldo" />
       </field>
     </table>
-    <table id="r04_terima_keluar_php">
-      <phrase id="tblcaption" value="Excel Draft" />
-    </table>
     <table id="v03_pengeluaran">
       <phrase id="tblcaption" value="v 03 pengeluaran" />
       <field id="tanggal">
@@ -1086,9 +1137,6 @@
       <field id="jumlah">
         <phrase id="fldcaption" value="Jumlah" />
       </field>
-    </table>
-    <table id="r04_terima_keluar_excel_php">
-      <phrase id="tblcaption" value="Laporan Keuangan Excel" />
     </table>
   </project>
 </ew-language>
