@@ -624,20 +624,14 @@
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
-    <menu id="10127">
-      <phrase id="menutext" value="v 03 pengeluaran" />
-    </menu>
     <menu id="10016">
       <phrase id="menutext" value="Penerimaan" />
     </menu>
-    <menu id="10128">
-      <phrase id="menutext" value="Laporan Keuangan Excel" />
+    <menu id="10127">
+      <phrase id="menutext" value="v 03 pengeluaran" />
     </menu>
     <menu id="6">
       <phrase id="menutext" value="Pengeluaran" />
-    </menu>
-    <menu id="10123">
-      <phrase id="menutext" value="Hak Akses" />
     </menu>
     <menu id="10088">
       <phrase id="menutext" value="Laporan" />
@@ -657,11 +651,17 @@
     <menu id="10120">
       <phrase id="menutext" value="Excel Draft" />
     </menu>
+    <menu id="10128">
+      <phrase id="menutext" value="Laporan Keuangan Excel" />
+    </menu>
     <menu id="22">
       <phrase id="menutext" value="Setup" />
     </menu>
     <menu id="10129">
       <phrase id="menutext" value="Periode" />
+    </menu>
+    <menu id="10130">
+      <phrase id="menutext" value="Saldo Awal" />
     </menu>
     <menu id="33">
       <phrase id="menutext" value="Sekolah" />
@@ -693,9 +693,6 @@
     <menu id="23">
       <phrase id="menutext" value="Log" />
     </menu>
-    <menu id="10125">
-      <phrase id="menutext" value="v 02 terima keluar" />
-    </menu>
     <menu id="10118">
       <phrase id="menutext" value="List" />
     </menu>
@@ -716,6 +713,12 @@
     </menu>
     <menu id="10011">
       <phrase id="menutext" value="User Log" />
+    </menu>
+    <menu id="10123">
+      <phrase id="menutext" value="Hak Akses" />
+    </menu>
+    <menu id="10125">
+      <phrase id="menutext" value="v 02 terima keluar" />
     </menu>
     <menu id="10020">
       <phrase id="menutext" value="v 03 pengeluaran" />
@@ -922,6 +925,21 @@
       </field>
       <field id="namabulan">
         <phrase id="fldcaption" value="Nama Bulan" />
+      </field>
+    </table>
+    <table id="t10_saldo">
+      <phrase id="tblcaption" value="Saldo Awal" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="bulan">
+        <phrase id="fldcaption" value="Bulan" />
+      </field>
+      <field id="tahun">
+        <phrase id="fldcaption" value="Tahun" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="Jumlah" />
       </field>
     </table>
     <table id="t96_employees">

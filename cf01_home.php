@@ -344,7 +344,17 @@ $cf01_home_php->Page_Main();
 Page_Rendering();
 ?>
 <?php include_once "header.php" ?>
-<!-- %%Custom page content begin%% --><!-- %%Custom page content end%% --><?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
+<?php
+	$db =& DbHelper(); // Create instance of the database helper class by DbHelper() (for main database) or DbHelper("<dbname>") (for linked databases) where <dbname> is database variable name
+?>
+<div class="panel panel-default">
+	<div class="panel-heading">Periode</div>
+	<?php
+	$q = "select concat(NamaBulan, ' ', Tahun) as Periode from t09_periode";
+	echo $db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t09_periode"]]); // Execute a SQL and show as HTML table
+?>
+</div>
+<?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
 $cf01_home_php->Page_Terminate();

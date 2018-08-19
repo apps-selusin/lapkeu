@@ -327,6 +327,8 @@ class cdefault {
 			$this->Page_Terminate("t08_penerimaanlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't09_periode'))
 			$this->Page_Terminate("t09_periodelist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't10_saldo'))
+			$this->Page_Terminate("t10_saldolist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't96_employees'))
 			$this->Page_Terminate("t96_employeeslist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't97_userlevels'))

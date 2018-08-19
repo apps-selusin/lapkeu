@@ -1,12 +1,12 @@
 <?php
 
 // Global variable for table object
-$t08_penerimaan = NULL;
+$t10_saldo = NULL;
 
 //
-// Table class for t08_penerimaan
+// Table class for t10_saldo
 //
-class ct08_penerimaan extends cTable {
+class ct10_saldo extends cTable {
 	var $AuditTrailOnAdd = TRUE;
 	var $AuditTrailOnEdit = TRUE;
 	var $AuditTrailOnDelete = TRUE;
@@ -14,9 +14,8 @@ class ct08_penerimaan extends cTable {
 	var $AuditTrailOnViewData = FALSE;
 	var $AuditTrailOnSearch = FALSE;
 	var $id;
-	var $Tanggal;
-	var $NoKwitansi;
-	var $Keterangan;
+	var $Bulan;
+	var $Tahun;
 	var $Jumlah;
 
 	//
@@ -27,12 +26,12 @@ class ct08_penerimaan extends cTable {
 
 		// Language object
 		if (!isset($Language)) $Language = new cLanguage();
-		$this->TableVar = 't08_penerimaan';
-		$this->TableName = 't08_penerimaan';
+		$this->TableVar = 't10_saldo';
+		$this->TableName = 't10_saldo';
 		$this->TableType = 'TABLE';
 
 		// Update Table
-		$this->UpdateTable = "`t08_penerimaan`";
+		$this->UpdateTable = "`t10_saldo`";
 		$this->DBID = 'DB';
 		$this->ExportAll = TRUE;
 		$this->ExportPageBreakCount = 0; // Page break per every n record (PDF only)
@@ -52,29 +51,25 @@ class ct08_penerimaan extends cTable {
 		$this->BasicSearch = new cBasicSearch($this->TableVar);
 
 		// id
-		$this->id = new cField('t08_penerimaan', 't08_penerimaan', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
+		$this->id = new cField('t10_saldo', 't10_saldo', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
 		$this->id->Sortable = TRUE; // Allow sort
 		$this->id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['id'] = &$this->id;
 
-		// Tanggal
-		$this->Tanggal = new cField('t08_penerimaan', 't08_penerimaan', 'x_Tanggal', 'Tanggal', '`Tanggal`', ew_CastDateFieldForLike('`Tanggal`', 7, "DB"), 133, 7, FALSE, '`Tanggal`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Tanggal->Sortable = TRUE; // Allow sort
-		$this->Tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_SEPARATOR"], $Language->Phrase("IncorrectDateDMY"));
-		$this->fields['Tanggal'] = &$this->Tanggal;
+		// Bulan
+		$this->Bulan = new cField('t10_saldo', 't10_saldo', 'x_Bulan', 'Bulan', '`Bulan`', '`Bulan`', 16, -1, FALSE, '`Bulan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Bulan->Sortable = TRUE; // Allow sort
+		$this->Bulan->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
+		$this->fields['Bulan'] = &$this->Bulan;
 
-		// NoKwitansi
-		$this->NoKwitansi = new cField('t08_penerimaan', 't08_penerimaan', 'x_NoKwitansi', 'NoKwitansi', '`NoKwitansi`', '`NoKwitansi`', 200, -1, FALSE, '`NoKwitansi`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->NoKwitansi->Sortable = TRUE; // Allow sort
-		$this->fields['NoKwitansi'] = &$this->NoKwitansi;
-
-		// Keterangan
-		$this->Keterangan = new cField('t08_penerimaan', 't08_penerimaan', 'x_Keterangan', 'Keterangan', '`Keterangan`', '`Keterangan`', 200, -1, FALSE, '`Keterangan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Keterangan->Sortable = TRUE; // Allow sort
-		$this->fields['Keterangan'] = &$this->Keterangan;
+		// Tahun
+		$this->Tahun = new cField('t10_saldo', 't10_saldo', 'x_Tahun', 'Tahun', '`Tahun`', '`Tahun`', 2, -1, FALSE, '`Tahun`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Tahun->Sortable = TRUE; // Allow sort
+		$this->Tahun->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
+		$this->fields['Tahun'] = &$this->Tahun;
 
 		// Jumlah
-		$this->Jumlah = new cField('t08_penerimaan', 't08_penerimaan', 'x_Jumlah', 'Jumlah', '`Jumlah`', '`Jumlah`', 4, -1, FALSE, '`Jumlah`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Jumlah = new cField('t10_saldo', 't10_saldo', 'x_Jumlah', 'Jumlah', '`Jumlah`', '`Jumlah`', 4, -1, FALSE, '`Jumlah`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->Jumlah->Sortable = TRUE; // Allow sort
 		$this->Jumlah->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
 		$this->fields['Jumlah'] = &$this->Jumlah;
@@ -132,7 +127,7 @@ class ct08_penerimaan extends cTable {
 	var $_SqlFrom = "";
 
 	function getSqlFrom() { // From
-		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t08_penerimaan`";
+		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t10_saldo`";
 	}
 
 	function SqlFrom() { // For backward compatibility
@@ -455,7 +450,7 @@ class ct08_penerimaan extends cTable {
 		if (@$_SESSION[$name] <> "") {
 			return $_SESSION[$name];
 		} else {
-			return "t08_penerimaanlist.php";
+			return "t10_saldolist.php";
 		}
 	}
 
@@ -466,11 +461,11 @@ class ct08_penerimaan extends cTable {
 	// Get modal caption
 	function GetModalCaption($pageName) {
 		global $Language;
-		if ($pageName == "t08_penerimaanview.php")
+		if ($pageName == "t10_saldoview.php")
 			return $Language->Phrase("View");
-		elseif ($pageName == "t08_penerimaanedit.php")
+		elseif ($pageName == "t10_saldoedit.php")
 			return $Language->Phrase("Edit");
-		elseif ($pageName == "t08_penerimaanadd.php")
+		elseif ($pageName == "t10_saldoadd.php")
 			return $Language->Phrase("Add");
 		else
 			return "";
@@ -478,30 +473,30 @@ class ct08_penerimaan extends cTable {
 
 	// List URL
 	function GetListUrl() {
-		return "t08_penerimaanlist.php";
+		return "t10_saldolist.php";
 	}
 
 	// View URL
 	function GetViewUrl($parm = "") {
 		if ($parm <> "")
-			$url = $this->KeyUrl("t08_penerimaanview.php", $this->UrlParm($parm));
+			$url = $this->KeyUrl("t10_saldoview.php", $this->UrlParm($parm));
 		else
-			$url = $this->KeyUrl("t08_penerimaanview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+			$url = $this->KeyUrl("t10_saldoview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
 		return $this->AddMasterUrl($url);
 	}
 
 	// Add URL
 	function GetAddUrl($parm = "") {
 		if ($parm <> "")
-			$url = "t08_penerimaanadd.php?" . $this->UrlParm($parm);
+			$url = "t10_saldoadd.php?" . $this->UrlParm($parm);
 		else
-			$url = "t08_penerimaanadd.php";
+			$url = "t10_saldoadd.php";
 		return $this->AddMasterUrl($url);
 	}
 
 	// Edit URL
 	function GetEditUrl($parm = "") {
-		$url = $this->KeyUrl("t08_penerimaanedit.php", $this->UrlParm($parm));
+		$url = $this->KeyUrl("t10_saldoedit.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -513,7 +508,7 @@ class ct08_penerimaan extends cTable {
 
 	// Copy URL
 	function GetCopyUrl($parm = "") {
-		$url = $this->KeyUrl("t08_penerimaanadd.php", $this->UrlParm($parm));
+		$url = $this->KeyUrl("t10_saldoadd.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -525,7 +520,7 @@ class ct08_penerimaan extends cTable {
 
 	// Delete URL
 	function GetDeleteUrl() {
-		return $this->KeyUrl("t08_penerimaandelete.php", $this->UrlParm());
+		return $this->KeyUrl("t10_saldodelete.php", $this->UrlParm());
 	}
 
 	// Add master url
@@ -627,9 +622,8 @@ class ct08_penerimaan extends cTable {
 	// Load row values from recordset
 	function LoadListRowValues(&$rs) {
 		$this->id->setDbValue($rs->fields('id'));
-		$this->Tanggal->setDbValue($rs->fields('Tanggal'));
-		$this->NoKwitansi->setDbValue($rs->fields('NoKwitansi'));
-		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->Bulan->setDbValue($rs->fields('Bulan'));
+		$this->Tahun->setDbValue($rs->fields('Tahun'));
 		$this->Jumlah->setDbValue($rs->fields('Jumlah'));
 	}
 
@@ -642,27 +636,21 @@ class ct08_penerimaan extends cTable {
 
 	// Common render codes
 		// id
-		// Tanggal
-		// NoKwitansi
-		// Keterangan
+		// Bulan
+		// Tahun
 		// Jumlah
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// Tanggal
-		$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
-		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 7);
-		$this->Tanggal->ViewCustomAttributes = "";
+		// Bulan
+		$this->Bulan->ViewValue = $this->Bulan->CurrentValue;
+		$this->Bulan->ViewCustomAttributes = "";
 
-		// NoKwitansi
-		$this->NoKwitansi->ViewValue = $this->NoKwitansi->CurrentValue;
-		$this->NoKwitansi->ViewCustomAttributes = "";
-
-		// Keterangan
-		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
-		$this->Keterangan->ViewCustomAttributes = "";
+		// Tahun
+		$this->Tahun->ViewValue = $this->Tahun->CurrentValue;
+		$this->Tahun->ViewCustomAttributes = "";
 
 		// Jumlah
 		$this->Jumlah->ViewValue = $this->Jumlah->CurrentValue;
@@ -675,20 +663,15 @@ class ct08_penerimaan extends cTable {
 		$this->id->HrefValue = "";
 		$this->id->TooltipValue = "";
 
-		// Tanggal
-		$this->Tanggal->LinkCustomAttributes = "";
-		$this->Tanggal->HrefValue = "";
-		$this->Tanggal->TooltipValue = "";
+		// Bulan
+		$this->Bulan->LinkCustomAttributes = "";
+		$this->Bulan->HrefValue = "";
+		$this->Bulan->TooltipValue = "";
 
-		// NoKwitansi
-		$this->NoKwitansi->LinkCustomAttributes = "";
-		$this->NoKwitansi->HrefValue = "";
-		$this->NoKwitansi->TooltipValue = "";
-
-		// Keterangan
-		$this->Keterangan->LinkCustomAttributes = "";
-		$this->Keterangan->HrefValue = "";
-		$this->Keterangan->TooltipValue = "";
+		// Tahun
+		$this->Tahun->LinkCustomAttributes = "";
+		$this->Tahun->HrefValue = "";
+		$this->Tahun->TooltipValue = "";
 
 		// Jumlah
 		$this->Jumlah->LinkCustomAttributes = "";
@@ -715,23 +698,17 @@ class ct08_penerimaan extends cTable {
 		$this->id->EditValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// Tanggal
-		$this->Tanggal->EditAttrs["class"] = "form-control";
-		$this->Tanggal->EditCustomAttributes = "";
-		$this->Tanggal->EditValue = ew_FormatDateTime($this->Tanggal->CurrentValue, 7);
-		$this->Tanggal->PlaceHolder = ew_RemoveHtml($this->Tanggal->FldCaption());
+		// Bulan
+		$this->Bulan->EditAttrs["class"] = "form-control";
+		$this->Bulan->EditCustomAttributes = "";
+		$this->Bulan->EditValue = $this->Bulan->CurrentValue;
+		$this->Bulan->ViewCustomAttributes = "";
 
-		// NoKwitansi
-		$this->NoKwitansi->EditAttrs["class"] = "form-control";
-		$this->NoKwitansi->EditCustomAttributes = "";
-		$this->NoKwitansi->EditValue = $this->NoKwitansi->CurrentValue;
-		$this->NoKwitansi->PlaceHolder = ew_RemoveHtml($this->NoKwitansi->FldCaption());
-
-		// Keterangan
-		$this->Keterangan->EditAttrs["class"] = "form-control";
-		$this->Keterangan->EditCustomAttributes = "";
-		$this->Keterangan->EditValue = $this->Keterangan->CurrentValue;
-		$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
+		// Tahun
+		$this->Tahun->EditAttrs["class"] = "form-control";
+		$this->Tahun->EditCustomAttributes = "";
+		$this->Tahun->EditValue = $this->Tahun->CurrentValue;
+		$this->Tahun->ViewCustomAttributes = "";
 
 		// Jumlah
 		$this->Jumlah->EditAttrs["class"] = "form-control";
@@ -767,15 +744,14 @@ class ct08_penerimaan extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->Tanggal->Exportable) $Doc->ExportCaption($this->Tanggal);
-					if ($this->NoKwitansi->Exportable) $Doc->ExportCaption($this->NoKwitansi);
-					if ($this->Keterangan->Exportable) $Doc->ExportCaption($this->Keterangan);
+					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
+					if ($this->Bulan->Exportable) $Doc->ExportCaption($this->Bulan);
+					if ($this->Tahun->Exportable) $Doc->ExportCaption($this->Tahun);
 					if ($this->Jumlah->Exportable) $Doc->ExportCaption($this->Jumlah);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
-					if ($this->Tanggal->Exportable) $Doc->ExportCaption($this->Tanggal);
-					if ($this->NoKwitansi->Exportable) $Doc->ExportCaption($this->NoKwitansi);
-					if ($this->Keterangan->Exportable) $Doc->ExportCaption($this->Keterangan);
+					if ($this->Bulan->Exportable) $Doc->ExportCaption($this->Bulan);
+					if ($this->Tahun->Exportable) $Doc->ExportCaption($this->Tahun);
 					if ($this->Jumlah->Exportable) $Doc->ExportCaption($this->Jumlah);
 				}
 				$Doc->EndExportRow();
@@ -808,15 +784,14 @@ class ct08_penerimaan extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->Tanggal->Exportable) $Doc->ExportField($this->Tanggal);
-						if ($this->NoKwitansi->Exportable) $Doc->ExportField($this->NoKwitansi);
-						if ($this->Keterangan->Exportable) $Doc->ExportField($this->Keterangan);
+						if ($this->id->Exportable) $Doc->ExportField($this->id);
+						if ($this->Bulan->Exportable) $Doc->ExportField($this->Bulan);
+						if ($this->Tahun->Exportable) $Doc->ExportField($this->Tahun);
 						if ($this->Jumlah->Exportable) $Doc->ExportField($this->Jumlah);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
-						if ($this->Tanggal->Exportable) $Doc->ExportField($this->Tanggal);
-						if ($this->NoKwitansi->Exportable) $Doc->ExportField($this->NoKwitansi);
-						if ($this->Keterangan->Exportable) $Doc->ExportField($this->Keterangan);
+						if ($this->Bulan->Exportable) $Doc->ExportField($this->Bulan);
+						if ($this->Tahun->Exportable) $Doc->ExportField($this->Tahun);
 						if ($this->Jumlah->Exportable) $Doc->ExportField($this->Jumlah);
 					}
 					$Doc->EndExportRow($RowCnt);
@@ -861,7 +836,7 @@ class ct08_penerimaan extends cTable {
 
 	// Write Audit Trail start/end for grid update
 	function WriteAuditTrailDummy($typ) {
-		$table = 't08_penerimaan';
+		$table = 't10_saldo';
 		$usr = CurrentUserID();
 		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
 	}
@@ -870,7 +845,7 @@ class ct08_penerimaan extends cTable {
 	function WriteAuditTrailOnAdd(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnAdd) return;
-		$table = 't08_penerimaan';
+		$table = 't10_saldo';
 
 		// Get key value
 		$key = "";
@@ -904,7 +879,7 @@ class ct08_penerimaan extends cTable {
 	function WriteAuditTrailOnEdit(&$rsold, &$rsnew) {
 		global $Language;
 		if (!$this->AuditTrailOnEdit) return;
-		$table = 't08_penerimaan';
+		$table = 't10_saldo';
 
 		// Get key value
 		$key = "";
@@ -951,7 +926,7 @@ class ct08_penerimaan extends cTable {
 	function WriteAuditTrailOnDelete(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnDelete) return;
-		$table = 't08_penerimaan';
+		$table = 't10_saldo';
 
 		// Get key value
 		$key = "";
@@ -1027,10 +1002,6 @@ class ct08_penerimaan extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
-		if (CheckDateBetween($rsnew["Tanggal"]) == FALSE) {
-			$this->setFailureMessage("Periode tanggal yang diinput salah, mohon periksa ulang !");
-			return FALSE;
-		}
 		return TRUE;
 	}
 
@@ -1046,10 +1017,6 @@ class ct08_penerimaan extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
-		if (CheckDateBetween($rsnew["Tanggal"]) == FALSE) {
-			$this->setFailureMessage("Periode tanggal yang diinput salah, mohon periksa ulang !");
-			return FALSE;
-		}
 		return TRUE;
 	}
 

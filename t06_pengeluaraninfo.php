@@ -1337,6 +1337,10 @@ class ct06_pengeluaran extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		if (CheckDateBetween($rsnew["Tanggal"]) == FALSE) {
+			$this->setFailureMessage("Periode tanggal yang diinput salah, mohon periksa ulang !");
+			return FALSE;
+		}
 		return TRUE;
 	}
 
@@ -1352,6 +1356,10 @@ class ct06_pengeluaran extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		if (CheckDateBetween($rsnew["Tanggal"]) == FALSE) {
+			$this->setFailureMessage("Periode tanggal yang diinput salah, mohon periksa ulang !");
+			return FALSE;
+		}
 		return TRUE;
 	}
 
