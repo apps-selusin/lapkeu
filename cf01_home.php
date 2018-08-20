@@ -361,6 +361,9 @@ Page_Rendering();
 <?php
 	$db =& DbHelper(); // Create instance of the database helper class by DbHelper() (for main database) or DbHelper("<dbname>") (for linked databases) where <dbname> is database variable name
 ?>
+
+
+<!-- periode -->
 <div class="panel panel-default">
 	<div class="panel-heading">Periode</div>
 	<?php
@@ -368,6 +371,9 @@ Page_Rendering();
 	echo $db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t09_periode"]]); // Execute a SQL and show as HTML table
 	?>
 </div>
+
+
+<!-- saldo awal -->
 <div class="panel panel-default">
 	<div class="panel-heading">Saldo Awal</div>
 	<?php
@@ -375,13 +381,19 @@ Page_Rendering();
 	echo $db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t10_saldo"]]); // Execute a SQL and show as HTML table
 	?>
 </div>
-<!-- <div class="panel panel-default">
-	<div class="panel-heading">Log</div>
-	<div>
-		<p>&nbsp;sampai dengan create tabel saldo awal;<br/>
-		&nbsp;berikutnya :: mulai rancang proses akhir bulan
-	</div>
-</div> -->
+
+
+<!-- saldo awal -->
+<div class="panel panel-default">
+	<div class="panel-heading">Penerimaan</div>
+	<?php
+	$q = "select format(sum(jumlah), 2) as Jumlah from t08_penerimaan";
+	echo $db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t08_penerimaan"]]); // Execute a SQL and show as HTML table
+	?>
+</div>
+
+
+<!-- log -->
 <div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Log</a></strong></div>
 	<div id="log" class="panel-collapse collapse out">
