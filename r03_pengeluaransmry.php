@@ -2391,6 +2391,7 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 		// Example:
 		//$header = "your header";
 
+		echo "<p><a href='r03_pengeluaran_excel.php'><button>Excel</button></a></p>";
 	}
 
 	// Page Data Rendered event
