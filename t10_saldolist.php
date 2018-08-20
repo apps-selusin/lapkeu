@@ -1374,7 +1374,11 @@ class ct10_saldo_list extends ct10_saldo {
 		$this->id->ViewCustomAttributes = "";
 
 		// Bulan
-		$this->Bulan->ViewValue = $this->Bulan->CurrentValue;
+		if (strval($this->Bulan->CurrentValue) <> "") {
+			$this->Bulan->ViewValue = $this->Bulan->OptionCaption($this->Bulan->CurrentValue);
+		} else {
+			$this->Bulan->ViewValue = NULL;
+		}
 		$this->Bulan->ViewCustomAttributes = "";
 
 		// Tahun
@@ -1406,8 +1410,7 @@ class ct10_saldo_list extends ct10_saldo {
 			// Bulan
 			$this->Bulan->EditAttrs["class"] = "form-control";
 			$this->Bulan->EditCustomAttributes = "";
-			$this->Bulan->EditValue = ew_HtmlEncode($this->Bulan->CurrentValue);
-			$this->Bulan->PlaceHolder = ew_RemoveHtml($this->Bulan->FldCaption());
+			$this->Bulan->EditValue = $this->Bulan->Options(TRUE);
 
 			// Tahun
 			$this->Tahun->EditAttrs["class"] = "form-control";
@@ -1440,7 +1443,11 @@ class ct10_saldo_list extends ct10_saldo {
 			// Bulan
 			$this->Bulan->EditAttrs["class"] = "form-control";
 			$this->Bulan->EditCustomAttributes = "";
-			$this->Bulan->EditValue = $this->Bulan->CurrentValue;
+			if (strval($this->Bulan->CurrentValue) <> "") {
+				$this->Bulan->EditValue = $this->Bulan->OptionCaption($this->Bulan->CurrentValue);
+			} else {
+				$this->Bulan->EditValue = NULL;
+			}
 			$this->Bulan->ViewCustomAttributes = "";
 
 			// Tahun
@@ -1850,8 +1857,10 @@ ft10_saldolist.Form_CustomValidate =
 ft10_saldolist.ValidateRequired = <?php echo json_encode(EW_CLIENT_VALIDATE) ?>;
 
 // Dynamic selection lists
-// Form object for search
+ft10_saldolist.Lists["x_Bulan"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft10_saldolist.Lists["x_Bulan"].Options = <?php echo json_encode($t10_saldo_list->Bulan->Options()) ?>;
 
+// Form object for search
 </script>
 <script type="text/javascript">
 

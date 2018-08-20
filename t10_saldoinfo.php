@@ -57,8 +57,11 @@ class ct10_saldo extends cTable {
 		$this->fields['id'] = &$this->id;
 
 		// Bulan
-		$this->Bulan = new cField('t10_saldo', 't10_saldo', 'x_Bulan', 'Bulan', '`Bulan`', '`Bulan`', 16, -1, FALSE, '`Bulan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Bulan = new cField('t10_saldo', 't10_saldo', 'x_Bulan', 'Bulan', '`Bulan`', '`Bulan`', 16, -1, FALSE, '`Bulan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
 		$this->Bulan->Sortable = TRUE; // Allow sort
+		$this->Bulan->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->Bulan->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
+		$this->Bulan->OptionCount = 12;
 		$this->Bulan->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['Bulan'] = &$this->Bulan;
 
@@ -645,7 +648,11 @@ class ct10_saldo extends cTable {
 		$this->id->ViewCustomAttributes = "";
 
 		// Bulan
-		$this->Bulan->ViewValue = $this->Bulan->CurrentValue;
+		if (strval($this->Bulan->CurrentValue) <> "") {
+			$this->Bulan->ViewValue = $this->Bulan->OptionCaption($this->Bulan->CurrentValue);
+		} else {
+			$this->Bulan->ViewValue = NULL;
+		}
 		$this->Bulan->ViewCustomAttributes = "";
 
 		// Tahun
@@ -701,7 +708,11 @@ class ct10_saldo extends cTable {
 		// Bulan
 		$this->Bulan->EditAttrs["class"] = "form-control";
 		$this->Bulan->EditCustomAttributes = "";
-		$this->Bulan->EditValue = $this->Bulan->CurrentValue;
+		if (strval($this->Bulan->CurrentValue) <> "") {
+			$this->Bulan->EditValue = $this->Bulan->OptionCaption($this->Bulan->CurrentValue);
+		} else {
+			$this->Bulan->EditValue = NULL;
+		}
 		$this->Bulan->ViewCustomAttributes = "";
 
 		// Tahun

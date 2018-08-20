@@ -352,7 +352,21 @@ Page_Rendering();
 	<?php
 	$q = "select concat(NamaBulan, ' ', Tahun) as Periode from t09_periode";
 	echo $db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t09_periode"]]); // Execute a SQL and show as HTML table
-?>
+	?>
+</div>
+<div class="panel panel-default">
+	<div class="panel-heading">Saldo Awal</div>
+	<?php
+	$q = "select format(jumlah, 2) as Jumlah from t10_saldo";
+	echo $db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t10_saldo"]]); // Execute a SQL and show as HTML table
+	?>
+</div>
+<div class="panel panel-default">
+	<div class="panel-heading">Log</div>
+	<div>
+		<p>&nbsp;sampai dengan create tabel saldo awal;<br/>
+		&nbsp;berikutnya :: mulai rancang proses akhir bulan
+	</div>
 </div>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>

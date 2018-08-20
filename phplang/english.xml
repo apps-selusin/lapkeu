@@ -934,6 +934,30 @@
       </field>
       <field id="bulan">
         <phrase id="fldcaption" value="Bulan" />
+        <phrase id="fldtagvalue1" value="01" />
+        <phrase id="fldtagcaption1" value="Januari" />
+        <phrase id="fldtagvalue2" value="02" />
+        <phrase id="fldtagcaption2" value="Februari" />
+        <phrase id="fldtagvalue3" value="03" />
+        <phrase id="fldtagcaption3" value="Maret" />
+        <phrase id="fldtagvalue4" value="04" />
+        <phrase id="fldtagcaption4" value="April" />
+        <phrase id="fldtagvalue5" value="05" />
+        <phrase id="fldtagcaption5" value="Mei" />
+        <phrase id="fldtagvalue6" value="06" />
+        <phrase id="fldtagcaption6" value="Juni" />
+        <phrase id="fldtagvalue7" value="07" />
+        <phrase id="fldtagcaption7" value="Juli" />
+        <phrase id="fldtagvalue8" value="08" />
+        <phrase id="fldtagcaption8" value="Agustus" />
+        <phrase id="fldtagvalue9" value="09" />
+        <phrase id="fldtagcaption9" value="September" />
+        <phrase id="fldtagvalue10" value="10" />
+        <phrase id="fldtagcaption10" value="Oktober" />
+        <phrase id="fldtagvalue11" value="11" />
+        <phrase id="fldtagcaption11" value="November" />
+        <phrase id="fldtagvalue12" value="12" />
+        <phrase id="fldtagcaption12" value="Desember" />
       </field>
       <field id="tahun">
         <phrase id="fldcaption" value="Tahun" />
