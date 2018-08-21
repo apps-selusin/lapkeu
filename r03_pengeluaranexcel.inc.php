@@ -168,6 +168,7 @@ while (!$r->EOF) {
 		";*/
 		$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, "Sub Total ".$subgroup_nama); $objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':I'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('B'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 		$objPHPExcel->getActiveSheet()->setCellValue('J'.$baris, $total_subgroup);
+		$baris++; $objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':J'.$baris.'');
 		$baris++;
 		$total_maingroup += $total_subgroup;
 	}
@@ -182,6 +183,7 @@ while (!$r->EOF) {
 	";*/
 	$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, "Sub Total ".$maingroup_nama); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':J'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('A'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 	$objPHPExcel->getActiveSheet()->setCellValue('K'.$baris, $total_maingroup);
+	$baris++; $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.'');
 	$baris++; $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.'');
 	$baris++;
 	$total_keluar += $total_subgroup;
