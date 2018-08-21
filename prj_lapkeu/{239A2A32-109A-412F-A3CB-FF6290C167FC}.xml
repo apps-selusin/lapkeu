@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <configuration date="2018/08/21" author="e.World Technology Ltd.">
-  <project id="{239A2A32-109A-412F-A3CB-FF6290C167FC}" file="C:\xampp\htdocs\lapkeu\prj_lapkeu.pmp" name="prj_lapkeu" product="PHPMaker" version="14.0" datetime="2018/08/21 12:37:56" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" relatedid="{3CDC6268-D928-4495-B72A-CA5D35EAE344}">
+  <project id="{239A2A32-109A-412F-A3CB-FF6290C167FC}" file="C:\xampp\htdocs\lapkeu\prj_lapkeu.pmp" name="prj_lapkeu" product="PHPMaker" version="14.0" datetime="2018/08/21 17:58:50" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" relatedid="{3CDC6268-D928-4495-B72A-CA5D35EAE344}">
     <table id="cf01_home_php" name="cf01_home.php" caption="Home" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="r04_terima_keluar_php" name="r04_terima_keluar.php" caption="Excel Draft" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="r04_terima_keluar_excel_php" name="r04_terima_keluar_excel.php" caption="Laporan Keuangan Excel" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />

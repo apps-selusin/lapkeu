@@ -624,8 +624,14 @@
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
+    <menu id="10089">
+      <phrase id="menutext" value="Excel" />
+    </menu>
     <menu id="10016">
       <phrase id="menutext" value="Penerimaan" />
+    </menu>
+    <menu id="10120">
+      <phrase id="menutext" value="Excel Draft" />
     </menu>
     <menu id="10127">
       <phrase id="menutext" value="v 03 pengeluaran" />
@@ -639,20 +645,8 @@
     <menu id="10019">
       <phrase id="menutext" value="Pengeluaran" />
     </menu>
-    <menu id="10055">
-      <phrase id="menutext" value="Keuangan" />
-    </menu>
     <menu id="10017">
-      <phrase id="menutext" value="Draft" />
-    </menu>
-    <menu id="10089">
-      <phrase id="menutext" value="Excel" />
-    </menu>
-    <menu id="10120">
-      <phrase id="menutext" value="Excel Draft" />
-    </menu>
-    <menu id="10128">
-      <phrase id="menutext" value="Laporan Keuangan Excel" />
+      <phrase id="menutext" value="Keuangan" />
     </menu>
     <menu id="22">
       <phrase id="menutext" value="Setup" />
@@ -692,6 +686,9 @@
     </menu>
     <menu id="23">
       <phrase id="menutext" value="Log" />
+    </menu>
+    <menu id="10128">
+      <phrase id="menutext" value="Laporan Keuangan Excel" />
     </menu>
     <menu id="10118">
       <phrase id="menutext" value="List" />
