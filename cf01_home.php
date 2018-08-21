@@ -377,6 +377,9 @@ Page_Rendering();
 <div class="panel panel-default">
 	<div class="panel-heading">Saldo Awal</div>
 	<?php
+	$q = "select jumlah from t10_saldo";
+	$jumlah = ew_ExecuteScalar($q);
+	$saldo_akhir = $jumlah;
 	$q = "select format(jumlah, 2) as Jumlah from t10_saldo";
 	echo $db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t10_saldo"]]); // Execute a SQL and show as HTML table
 	?>
@@ -387,6 +390,9 @@ Page_Rendering();
 <div class="panel panel-default">
 	<div class="panel-heading">Penerimaan</div>
 	<?php
+	$q = "select jumlah from t08_penerimaan";
+	$jumlah = ew_ExecuteScalar($q);
+	$saldo_akhir += $jumlah;
 	$q = "select format(sum(jumlah), 2) as Jumlah from t08_penerimaan";
 	echo $db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t08_penerimaan"]]); // Execute a SQL and show as HTML table
 	?>
@@ -397,9 +403,26 @@ Page_Rendering();
 <div class="panel panel-default">
 	<div class="panel-heading">Pengeluaran</div>
 	<?php
+	$q = "select jumlah from t06_pengeluaran";
+	$jumlah = ew_ExecuteScalar($q);
+	$saldo_akhir -= $jumlah;
 	$q = "select format(sum(jumlah), 2) as Jumlah from t06_pengeluaran";
 	echo $db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t06_pengeluaran"]]); // Execute a SQL and show as HTML table
 	?>
+</div>
+
+
+<!-- saldo akhir -->
+<div class="panel panel-default">
+	<div class="panel-heading">Saldo Akhir</div>
+	<div class="panel-body">
+		<div>
+			<p>
+			<?php
+			echo number_format($saldo_akhir); //$db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t06_pengeluaran"]]); // Execute a SQL and show as HTML table 
+			?>
+		</div>
+	</div>
 </div>
 
 
