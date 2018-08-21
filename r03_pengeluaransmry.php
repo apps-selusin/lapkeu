@@ -3061,6 +3061,126 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 		// Show Footers
 ?>
 <?php
+		if ($Page->ChkLvlBreak(2)) {
+			$cnt = count(@$Page->GrpIdx[$Page->GrpCount]);
+			$Page->GrpIdx[$Page->GrpCount][$cnt] = $Page->RecCount;
+		}
+		if ($Page->ChkLvlBreak(2) && $Page->subgroup_nama->Visible) {
+?>
+<?php
+			$Page->maingroup_nama->Count = $Page->GetSummaryCount(1, FALSE);
+			$Page->subgroup_nama->Count = $Page->GetSummaryCount(2, FALSE);
+			$Page->Jumlah->Count = $Page->Cnt[2][8];
+			$Page->Jumlah->SumValue = $Page->Smry[2][8]; // Load SUM
+			$Page->ResetAttrs();
+			$Page->RowType = EWR_ROWTYPE_TOTAL;
+			$Page->RowTotalType = EWR_ROWTOTAL_GROUP;
+			$Page->RowTotalSubType = EWR_ROWTOTAL_FOOTER;
+			$Page->RowGroupLevel = 2;
+			$Page->RenderRow();
+?>
+<?php if ($Page->subgroup_nama->ShowCompactSummaryFooter) { ?>
+	<tr<?php echo $Page->RowAttributes(); ?>>
+<?php if ($Page->maingroup_nama->Visible) { ?>
+		<td data-field="maingroup_nama"<?php echo $Page->maingroup_nama->CellAttributes() ?>>
+	<?php if ($Page->maingroup_nama->ShowGroupHeaderAsRow) { ?>
+		&nbsp;
+	<?php } elseif ($Page->RowGroupLevel <> 1) { ?>
+		&nbsp;
+	<?php } else { ?>
+		<span class="ewSummaryCount"><span class="ewAggregateCaption"><?php echo $ReportLanguage->Phrase("RptCnt") ?></span><?php echo $ReportLanguage->Phrase("AggregateEqual") ?><span class="ewAggregateValue"><?php echo ewr_FormatNumber($Page->maingroup_nama->Count,0,-2,-2,-2) ?></span></span>
+	<?php } ?>
+		</td>
+<?php } ?>
+<?php if ($Page->subgroup_nama->Visible) { ?>
+		<td data-field="subgroup_nama"<?php echo $Page->subgroup_nama->CellAttributes() ?>>
+	<?php if ($Page->subgroup_nama->ShowGroupHeaderAsRow) { ?>
+		&nbsp;
+	<?php } elseif ($Page->RowGroupLevel <> 2) { ?>
+		&nbsp;
+	<?php } else { ?>
+		<span class="ewSummaryCount"><span class="ewAggregateCaption"><?php echo $ReportLanguage->Phrase("RptCnt") ?></span><?php echo $ReportLanguage->Phrase("AggregateEqual") ?><span class="ewAggregateValue"><?php echo ewr_FormatNumber($Page->subgroup_nama->Count,0,-2,-2,-2) ?></span></span>
+	<?php } ?>
+		</td>
+<?php } ?>
+<?php if ($Page->tanggal->Visible) { ?>
+		<td data-field="tanggal"<?php echo $Page->subgroup_nama->CellAttributes() ?>></td>
+<?php } ?>
+<?php if ($Page->supplier_nama->Visible) { ?>
+		<td data-field="supplier_nama"<?php echo $Page->subgroup_nama->CellAttributes() ?>></td>
+<?php } ?>
+<?php if ($Page->nonota->Visible) { ?>
+		<td data-field="nonota"<?php echo $Page->subgroup_nama->CellAttributes() ?>></td>
+<?php } ?>
+<?php if ($Page->barang_nama->Visible) { ?>
+		<td data-field="barang_nama"<?php echo $Page->subgroup_nama->CellAttributes() ?>></td>
+<?php } ?>
+<?php if ($Page->banyaknya->Visible) { ?>
+		<td data-field="banyaknya"<?php echo $Page->subgroup_nama->CellAttributes() ?>></td>
+<?php } ?>
+<?php if ($Page->barang_satuan->Visible) { ?>
+		<td data-field="barang_satuan"<?php echo $Page->subgroup_nama->CellAttributes() ?>></td>
+<?php } ?>
+<?php if ($Page->harga->Visible) { ?>
+		<td data-field="harga"<?php echo $Page->subgroup_nama->CellAttributes() ?>></td>
+<?php } ?>
+<?php if ($Page->Jumlah->Visible) { ?>
+		<td data-field="Jumlah"<?php echo $Page->subgroup_nama->CellAttributes() ?>><span class="ewAggregateCaption"><?php echo $ReportLanguage->Phrase("RptSum") ?></span><?php echo $ReportLanguage->Phrase("AggregateEqual") ?><span class="ewAggregateValue"><span<?php echo $Page->Jumlah->ViewAttributes() ?>><?php echo $Page->Jumlah->SumViewValue ?></span></span></td>
+<?php } ?>
+	</tr>
+<?php } else { ?>
+	<tr<?php echo $Page->RowAttributes(); ?>>
+<?php if ($Page->maingroup_nama->Visible) { ?>
+		<td data-field="maingroup_nama"<?php echo $Page->maingroup_nama->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->SubGrpColumnCount + $Page->DtlColumnCount > 0) { ?>
+		<td colspan="<?php echo ($Page->SubGrpColumnCount + $Page->DtlColumnCount) ?>"<?php echo $Page->Jumlah->CellAttributes() ?>><?php echo str_replace(array("%v", "%c"), array($Page->subgroup_nama->GroupViewValue, $Page->subgroup_nama->FldCaption()), $ReportLanguage->Phrase("RptSumHead")) ?> <span class="ewDirLtr">(<?php echo ewr_FormatNumber($Page->Cnt[2][0],0,-2,-2,-2) ?><?php echo $ReportLanguage->Phrase("RptDtlRec") ?>)</span></td>
+<?php } ?>
+	</tr>
+	<tr<?php echo $Page->RowAttributes(); ?>>
+<?php if ($Page->maingroup_nama->Visible) { ?>
+		<td data-field="maingroup_nama"<?php echo $Page->maingroup_nama->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->GrpColumnCount > 0) { ?>
+		<td colspan="<?php echo ($Page->GrpColumnCount - 1) ?>"<?php echo $Page->subgroup_nama->CellAttributes() ?>><?php echo $ReportLanguage->Phrase("RptSum") ?></td>
+<?php } ?>
+<?php if ($Page->tanggal->Visible) { ?>
+		<td data-field="tanggal"<?php echo $Page->subgroup_nama->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->supplier_nama->Visible) { ?>
+		<td data-field="supplier_nama"<?php echo $Page->subgroup_nama->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->nonota->Visible) { ?>
+		<td data-field="nonota"<?php echo $Page->subgroup_nama->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->barang_nama->Visible) { ?>
+		<td data-field="barang_nama"<?php echo $Page->subgroup_nama->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->banyaknya->Visible) { ?>
+		<td data-field="banyaknya"<?php echo $Page->subgroup_nama->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->barang_satuan->Visible) { ?>
+		<td data-field="barang_satuan"<?php echo $Page->subgroup_nama->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->harga->Visible) { ?>
+		<td data-field="harga"<?php echo $Page->subgroup_nama->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->Jumlah->Visible) { ?>
+		<td data-field="Jumlah"<?php echo $Page->Jumlah->CellAttributes() ?>>
+<span<?php echo $Page->Jumlah->ViewAttributes() ?>><?php echo $Page->Jumlah->SumViewValue ?></span></td>
+<?php } ?>
+	</tr>
+<?php } ?>
+<?php
+
+			// Reset level 2 summary
+			$Page->ResetLevelSummary(2);
+		} // End show footer check
+		if ($Page->ChkLvlBreak(2)) {
+			$Page->GrpCounter[0]++;
+		}
+?>
+<?php
 	} // End detail records loop
 ?>
 <?php

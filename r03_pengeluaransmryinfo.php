@@ -7,7 +7,7 @@ $r03_pengeluaran = NULL;
 // Table class for r03_pengeluaran
 //
 class crr03_pengeluaran extends crTableBase {
-	var $ShowGroupHeaderAsRow = FALSE;
+	var $ShowGroupHeaderAsRow = TRUE;
 	var $ShowCompactSummaryFooter = TRUE;
 	var $tanggal;
 	var $maingroup_nama;
