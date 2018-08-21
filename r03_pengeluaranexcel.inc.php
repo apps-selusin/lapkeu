@@ -110,7 +110,7 @@ $q = "
 ";
 $r = Conn()->Execute($q);
 
-$total_keluar = 00;
+$total_keluar = 0;
 
 while (!$r->EOF) {
 	$total_maingroup = 0;
