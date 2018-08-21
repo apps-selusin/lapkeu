@@ -191,7 +191,7 @@ while (!$r->EOF) {
 	$baris++; $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.'');
 	$baris++; $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.'');
 	$baris++;
-	$total_keluar += $total_subgroup;
+	$total_keluar += $total_maingroup;
 }
 /*echo "
 	<tr>
