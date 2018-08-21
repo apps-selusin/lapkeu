@@ -36,9 +36,9 @@ class crr03_pengeluaran extends crTableBase {
 		$this->ExportPageOrientation = "portrait"; // Page orientation (PDF only)
 
 		// tanggal
-		$this->tanggal = new crField('r03_pengeluaran', 'r03_pengeluaran', 'x_tanggal', 'tanggal', '`tanggal`', 133, EWR_DATATYPE_DATE, 0);
+		$this->tanggal = new crField('r03_pengeluaran', 'r03_pengeluaran', 'x_tanggal', 'tanggal', '`tanggal`', 133, EWR_DATATYPE_DATE, 7);
 		$this->tanggal->Sortable = TRUE; // Allow sort
-		$this->tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EWR_DATE_FORMAT"], $ReportLanguage->Phrase("IncorrectDate"));
+		$this->tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EWR_DATE_SEPARATOR"], $ReportLanguage->Phrase("IncorrectDateDMY"));
 		$this->tanggal->DateFilter = "";
 		$this->tanggal->SqlSelect = "";
 		$this->tanggal->SqlOrderBy = "";

@@ -1229,7 +1229,7 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 
 			// tanggal
 			$this->tanggal->ViewValue = $this->tanggal->CurrentValue;
-			$this->tanggal->ViewValue = ewr_FormatDateTime($this->tanggal->ViewValue, 0);
+			$this->tanggal->ViewValue = ewr_FormatDateTime($this->tanggal->ViewValue, 7);
 			$this->tanggal->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
 
 			// supplier_nama
@@ -1808,11 +1808,11 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 		// Check if validation required
 		if (!EWR_SERVER_VALIDATE)
 			return ($grFormError == "");
-		if (!ewr_CheckDateDef($this->tanggal->SearchValue)) {
+		if (!ewr_CheckEuroDate($this->tanggal->SearchValue)) {
 			if ($grFormError <> "") $grFormError .= "<br>";
 			$grFormError .= $this->tanggal->FldErrMsg();
 		}
-		if (!ewr_CheckDateDef($this->tanggal->SearchValue2)) {
+		if (!ewr_CheckEuroDate($this->tanggal->SearchValue2)) {
 			if ($grFormError <> "") $grFormError .= "<br>";
 			$grFormError .= $this->tanggal->FldErrMsg();
 		}
@@ -2391,7 +2391,7 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 		// Example:
 		//$header = "your header";
 
-		echo "<p><a href='r03_pengeluaran_excel.php'><button>Excel</button></a></p>";
+		echo "-".(isset($_GET["sv_tanggal"]) ? $_GET["sv_tanggal"] : "0")."-";
 	}
 
 	// Page Data Rendered event
@@ -2400,6 +2400,7 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 		// Example:
 		//$footer = "your footer";
 
+		echo "<p><a href='r03_pengeluaranexcel.php'><button>Export to Excel</button></a></p>";
 	}
 
 	// Form Custom Validate event
@@ -2458,12 +2459,12 @@ fr03_pengeluaransummary.Validate = function() {
 		return true; // Ignore validation
 	var $ = jQuery, fobj = this.GetForm(), $fobj = $(fobj);
 	var elm = fobj.sv_tanggal;
-	if (elm && !ewr_CheckDateDef(elm.value)) {
+	if (elm && !ewr_CheckEuroDate(elm.value)) {
 		if (!this.OnError(elm, "<?php echo ewr_JsEncode2($Page->tanggal->FldErrMsg()) ?>"))
 			return false;
 	}
 	var elm = fobj.sv2_tanggal;
-	if (elm && !ewr_CheckDateDef(elm.value)) {
+	if (elm && !ewr_CheckEuroDate(elm.value)) {
 		if (!this.OnError(elm, "<?php echo ewr_JsEncode2($Page->tanggal->FldErrMsg()) ?>"))
 			return false;
 	}
@@ -2541,12 +2542,12 @@ if (!$Page->DrillDownInPanel) {
 	<span class="ewSearchOperator"><?php echo $ReportLanguage->Phrase("BETWEEN"); ?><input type="hidden" name="so_tanggal" id="so_tanggal" value="BETWEEN"></span>
 	<span class="control-group ewSearchField">
 <?php ewr_PrependClass($Page->tanggal->EditAttrs["class"], "form-control"); // PR8 ?>
-<input type="text" data-table="r03_pengeluaran" data-field="x_tanggal" id="sv_tanggal" name="sv_tanggal" placeholder="<?php echo $Page->tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->tanggal->SearchValue) ?>" data-calendar='true' data-options='{"ignoreReadonly":true,"useCurrent":false,"format":0}'<?php echo $Page->tanggal->EditAttributes() ?>>
+<input type="text" data-table="r03_pengeluaran" data-field="x_tanggal" id="sv_tanggal" name="sv_tanggal" placeholder="<?php echo $Page->tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->tanggal->SearchValue) ?>" data-calendar='true' data-options='{"ignoreReadonly":true,"useCurrent":false,"format":7}'<?php echo $Page->tanggal->EditAttributes() ?>>
 </span>
 	<span class="ewSearchCond btw1_tanggal"><?php echo $ReportLanguage->Phrase("AND") ?></span>
 	<span class="ewSearchField btw1_tanggal">
 <?php ewr_PrependClass($Page->tanggal->EditAttrs["class"], "form-control"); // PR8 ?>
-<input type="text" data-table="r03_pengeluaran" data-field="x_tanggal" id="sv2_tanggal" name="sv2_tanggal" placeholder="<?php echo $Page->tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->tanggal->SearchValue2) ?>" data-calendar='true' data-options='{"ignoreReadonly":true,"useCurrent":false,"format":0}'<?php echo $Page->tanggal->EditAttributes() ?>>
+<input type="text" data-table="r03_pengeluaran" data-field="x_tanggal" id="sv2_tanggal" name="sv2_tanggal" placeholder="<?php echo $Page->tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->tanggal->SearchValue2) ?>" data-calendar='true' data-options='{"ignoreReadonly":true,"useCurrent":false,"format":7}'<?php echo $Page->tanggal->EditAttributes() ?>>
 </span>
 </div>
 </div>
