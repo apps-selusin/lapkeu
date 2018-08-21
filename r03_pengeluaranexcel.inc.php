@@ -110,6 +110,8 @@ $q = "
 ";
 $r = Conn()->Execute($q);
 
+$total_keluar = 0;
+
 while (!$r->EOF) {
 	$total_maingroup = 0;
 	$maingroup_nama = $r->fields["maingroup_nama"];
