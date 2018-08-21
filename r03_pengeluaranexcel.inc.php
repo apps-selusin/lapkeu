@@ -104,6 +104,9 @@ $q = "
 		LEFT JOIN `t05_subgroup` `c` ON ((`a`.`subgroup_id` = `c`.`id`)))
 		LEFT JOIN `t01_supplier` `d` ON ((`a`.`supplier_id` = `d`.`id`)))
 		LEFT JOIN `v01_barang_satuan` `e` ON ((`a`.`barang_id` = `e`.`id`)))
+	group by
+		a.maingroup_id,
+		a.subgroup_id
 ";
 $r = Conn()->Execute($q);
 
