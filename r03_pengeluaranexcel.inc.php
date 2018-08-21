@@ -87,7 +87,7 @@ $baris++;
 
 // query data
 $q = "
-	SELECT 
+	SELECT
 		`a`.`Tanggal` AS `tanggal`,
 		`b`.`Nama` AS `maingroup_nama`,
 		`c`.`Nama` AS `subgroup_nama`,
@@ -110,7 +110,7 @@ $q = "
 ";
 $r = Conn()->Execute($q);
 
-$total_keluar = 0;
+$total_keluar = 00;
 
 while (!$r->EOF) {
 	$total_maingroup = 0;
