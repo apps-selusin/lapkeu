@@ -294,9 +294,6 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 
 		// Security
 		$Security = new crAdvancedSecurity();
-
-		// Process generate request
-		$this->ProcessGenRequest();
 		if (!$Security->IsLoggedIn()) $Security->AutoLogin(); // Auto login
 		$Security->TablePermission_Loading();
 		$Security->LoadCurrentUserLevel($this->ProjectID . 'r02_terima_keluar');
@@ -313,12 +310,6 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ewr_DeniedMsg()); // Set no permission
 			$this->Page_Terminate(ewr_GetUrl("login.php"));
-		}
-
-		// Generate request URL
-		if ($this->GenerateRequestUrl()) {
-			$this->Page_Terminate();
-			exit();
 		}
 
 		// Get export parameters
@@ -350,203 +341,6 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 
 		// Create Token
 		$this->CreateToken();
-	}
-
-	// Generate request URL
-	function GenerateRequestUrl() {
-		global $Security, $ReportLanguage, $grLanguage, $ReportOptions;
-		global $UserTableConn;
-		$post = $_POST;
-
-		// Check if create URL request
-		if (count($post) == 0 || @$post["generateurl"] <> "1" || @$post["reporttype"] == "") {
-			$UserNameList = array();
-			if ($Security->IsSysAdmin())
-				$UserNameList["@@admin"] = $ReportLanguage->Phrase("ReportFormUserDefault");
-
-			// Get list of user names
-			$sSql = EWR_LOGIN_SELECT_SQL;
-			if ($rs = $UserTableConn->Execute($sSql)) {
-				while (!$rs->EOF) {
-					$usr = $rs->fields('Username');
-					$userid = $rs->fields('EmployeeID');
-					if (!$Security->IsSysAdmin() && !in_array(strval($userid), $Security->UserID))
-						$usr = "";
-					$lvl = $rs->fields('UserLevel');
-					$priv = $Security->GetUserLevelPrivEx($this->ProjectID . $this->TableName, $lvl);
-					if (($priv & EWR_ALLOW_REPORT) <> EWR_ALLOW_REPORT)
-						$usr = "";
-					if ($usr <> "")
-						$UserNameList[$usr] = $usr;
-					$rs->MoveNext();
-				}
-			}
-			$ReportOptions["UserNameList"] = $UserNameList;
-			$ReportOptions["ShowFilter"] = FALSE;
-			return FALSE;
-		}
-
-		// Check if login
-		if (!$Security->IsLoggedIn())
-			return FALSE;
-
-		// Get username/password
-		$usr = @$post["username"];
-		$pwd = "";
-		if ($usr == "@@admin") {
-			$usr = EWR_ADMIN_USER_NAME;
-			$pwd = EWR_ADMIN_PASSWORD;
-		} else {
-			$sFilter = str_replace("%u", ewr_AdjustSql($usr, EWR_USER_TABLE_DBID), EWR_USER_NAME_FILTER);
-			$sSql = EWR_LOGIN_SELECT_SQL . " WHERE " . $sFilter;
-			if ($rs = $UserTableConn->Execute($sSql)) {
-				if (!$rs->EOF)
-					$pwd = $rs->fields('Password');
-			}
-		}
-		if ($usr == "" || $pwd == "") // No user specified
-			return FALSE;
-		$usr = ewr_Encrypt($usr, EWR_REPORT_LOG_ENCRYPT_KEY);
-		$pwd = ewr_Encrypt($pwd, EWR_REPORT_LOG_ENCRYPT_KEY);
-
-		// Set report parameters
-		$reportType = @$post["reporttype"];
-		$genKey = ewr_Encrypt($this->TableVar, EWR_REPORT_LOG_ENCRYPT_KEY);
-		$url = ewr_FullUrl();
-		$url .= "?reporttype=" . $reportType . "&k=" . urlencode($genKey) . "&u=" . urlencode($usr) . "&p=" . urlencode($pwd);
-		if ($reportType == "email") {
-			$sender = @$post["sender"];
-			$recipient = @$post["recipient"];
-			$cc = @$post["cc"];
-			$bcc = @$post["bcc"];
-			$subject = @$post["subject"];
-			if ($sender == "" || $recipient == "" || $subject == "")
-				return FALSE;
-			$url .= "&sender=" . urlencode($sender) . "&recipient=" . urlencode($recipient) . "&subject=" . urlencode($subject);
-			if ($cc <> "") $url .= "&cc=" . urlencode($cc);
-			if ($bcc <> "") $url .= "&bcc=" . urlencode($bcc);
-		}
-		$pageOption = @$post["pageoption"];
-		$url .= ($pageOption == "all") ? "&exportall=1" : "&exportall=0&start=1"; // All pages / First page
-
-		// Set report filter
-		$filterName = @$post["filtername"];
-		if ($filterName == "")
-			$filterName = "_none";
-		elseif ($filterName == "@@current")
-			$filterName = "_user";
-		$url .= "&filtername=" . urlencode($filterName);
-		$filter = json_decode(@$post["filter"], TRUE);
-		if (is_array($filter)) {
-			foreach ($filter as $key => $val)
-				$url .= "&" . $key . "=" . urlencode($val);
-		}
-
-		// Set response type
-		$responseType = @$post["responsetype"];
-		$url .= "&responsetype=" . urlencode($responseType);
-
-		// Set show current filter
-		$showCurrentFilter = @$post["showcurrentfilter"];
-		$url .= "&showfilter=" . ($showCurrentFilter == "1" ? "1" : "0");
-		echo json_encode(array("url" => $url));
-		return TRUE;
-	}
-
-	// Process generate request
-	function ProcessGenRequest() {
-		global $Security, $ReportLanguage;
-		$ar = ewr_IsHttpPost() ? $_POST : $_GET;
-		$genType = @$ar["reporttype"];
-		$genKey = @$ar["k"];
-		if (array_key_exists("k", $ar)) // Remove key
-			unset($ar["k"]);
-		if (ewr_Decrypt($genKey, EWR_REPORT_LOG_ENCRYPT_KEY) == $this->TableVar && $genType <> "") {
-			$usr = @$ar["u"];
-			$usr = ewr_Decrypt($usr, EWR_REPORT_LOG_ENCRYPT_KEY);
-			if (array_key_exists("u", $ar)) // Update actual user name
-				$ar["u"] = $usr;
-			$pwd = @$ar["p"];
-			if (array_key_exists("p", $ar)) // Remove password
-				unset($ar["p"]);
-			$pwd = ewr_Decrypt($pwd, EWR_REPORT_LOG_ENCRYPT_KEY);
-			$encrypted = @$ar["encrypted"] == "1";
-			$bLogin = $Security->ValidateUser($usr, $pwd, FALSE, $encrypted); // Manual login
-			if (!$bLogin) {
-				echo ewr_DeniedMsg();
-				exit();
-			} else {
-				if ($genType == "html") $genType = "print";
-				$this->Export = $genType;
-				$this->ShowCurrentFilter = FALSE;
-				if (@$ar["exportall"] <> "") // Export all option specified
-					$this->ExportAll = $ar["exportall"] == "1";
-				$this->GenOptions = $this->GetGenOptions($ar); // Set up generate options
-				$this->SetupGenFilterList($ar); // Update filter list
-			}
-		}
-	}
-
-	// Generate file extension
-	function GenFileExt($genType) {
-		if ($genType == "print" || $genType == "html")
-			return "html";
-		elseif ($genType == "excel")
-			return "xls";
-		elseif ($genType == "word")
-			return "doc";
-		elseif ($genType == "pdf")
-			return "pdf";
-		else
-			return $genType;
-	}
-
-	// Get Generate options
-	function GetGenOptions($ar) {
-		$options = array();
-		$options["parms"] = json_encode($ar);
-
-		// Set up gen type / filename
-		$genType = @$ar["reporttype"];
-		$options["reporttype"] = $genType;
-		$options["filtername"] = @$ar["filtername"];
-		$options["responsetype"] = @$ar["responsetype"];
-		if ($genType == "email") { // Email
-			$options["sender"] = @$ar["sender"];
-			$options["recipient"] = @$ar["recipient"];
-			$options["subject"] = @$ar["subject"];
-		} else {
-			$options["folder"] = (@$ar["folder"] <> "") ? $ar["folder"] : EWR_UPLOAD_DEST_PATH;
-			$options["filename"] = (@$ar["filename"] <> "") ? $ar["filename"] : $this->TableVar . "_" . ewr_RandomGuid() . "." . $this->GenFileExt($genType);
-		}
-
-		// Paging
-		$options["start"] = @$ar["start"]; // Start
-		$options["pageno"] = @$ar["pageno"]; // Page number
-		$options["grpperpage"] = @$ar["grpperpage"]; // Group per page
-
-		// Sort
-		$options["order"] = @$ar["order"]; // Order by
-		$options["ordertype"] = @$ar["ordertype"]; // ASC/DESC
-		if ($options["order"] == "") // Reset sort if not specified
-			$options["resetsort"] = "1";
-		$options["showfilter"] = @$ar["showfilter"]; // Show current filter
-		return $options;
-	}
-
-	// Set up generate filter
-	function SetupGenFilterList($ar) {
-		return FALSE;
-	}
-
-	// Write generate response
-	function WriteGenResponse($genurl) {
-		if ($genurl <> "") {
-			$genType = @$this->GenOptions["reporttype"];
-			$responseType = @$this->GenOptions["responsetype"];
-			if ($responseType == "json" || $genType == "email")
-				echo json_encode(array("url" => $genurl));
-		}
 	}
 
 	// Set up export options
@@ -615,17 +409,6 @@ class crr02_terima_keluar_summary extends crr02_terima_keluar {
 
 		// Add group option item
 		$item = &$this->FilterOptions->Add($this->FilterOptions->GroupOptionName);
-		$item->Body = "";
-		$item->Visible = FALSE;
-
-		// Button to create generate URL
-		$item = &$this->GenerateOptions->Add("generateurl");
-		$item->Body = "<a type=\"button\" title=\"" . $ReportLanguage->Phrase("GenerateReportUrl", TRUE) . "\" onclick=\"ewr_ModalGenerateUrlShow(event);\" class=\"ewGenerateUrlBtn btn btn-default\"><span class=\"glyphicon glyphicon-link ewIcon\"></span></a>";
-		$item->Visible = $Security->IsLoggedIn(); // Check if logged in
-		$this->GenerateOptions->UseButtonGroup = TRUE;
-
-		// Add group option item
-		$item = &$this->GenerateOptions->Add($this->GenerateOptions->GroupOptionName);
 		$item->Body = "";
 		$item->Visible = FALSE;
 
