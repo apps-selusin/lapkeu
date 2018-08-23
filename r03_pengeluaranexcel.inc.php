@@ -234,7 +234,7 @@ $styleThinBlackBorderOutline = array(
 		),
 	),
 );
-$objPHPExcel->getActiveSheet()->getStyle('A4:E10')->applyFromArray($styleThinBlackBorderOutline);
+$objPHPExcel->getActiveSheet()->getStyle('A4:L'.$baris)->applyFromArray($styleThinBlackBorderOutline);
 
 
 /*$objPHPExcel->getActiveSheet()->setCellValue('A4', '1001');
