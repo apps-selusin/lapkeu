@@ -2225,8 +2225,10 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 
 		$dtglstart = $_SESSION["dGlobal_TanggalAwal"];
 		if (isset($_GET["sv_tanggal"])) {
-			$stglstart = DateTime::createFromFormat("d-m-Y", $_GET["sv_tanggal"]);
-			$dtglstart = $stglstart->format("Y-m-d");
+			if ($_GET["sv_tanggal"] <> "") {
+				$stglstart = DateTime::createFromFormat("d-m-Y", $_GET["sv_tanggal"]);
+				$dtglstart = $stglstart->format("Y-m-d");
+			}
 		}
 		$_SESSION["r03_pengeluaran_tglstart"] = $dtglstart;
 
@@ -2235,8 +2237,10 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 
 		$dtglend = $_SESSION["dGlobal_TanggalAkhir"];
 		if (isset($_GET["sv2_tanggal"])) {
-			$stglend = DateTime::createFromFormat("d-m-Y", $_GET["sv2_tanggal"]);
-			$dtglend = $stglend->format("Y-m-d");
+			if ($_GET["sv2_tanggal"] <> "") {
+				$stglend = DateTime::createFromFormat("d-m-Y", $_GET["sv2_tanggal"]);
+				$dtglend = $stglend->format("Y-m-d");
+			}
 		}
 		$_SESSION["r03_pengeluaran_tglend"] = $dtglend;
 

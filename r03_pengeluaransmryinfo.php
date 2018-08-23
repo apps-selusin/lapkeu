@@ -475,6 +475,7 @@ class crr03_pengeluaran extends crTableBase {
 	function Page_Selecting(&$filter) {
 
 		// Enter your code here
+		$_SESSION["r03_pengeluaran_filter"] = $filter; //var_dump($filter);
 	}
 
 	// Page Breaking event

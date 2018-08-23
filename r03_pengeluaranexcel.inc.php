@@ -63,9 +63,8 @@ $objPHPExcel->getActiveSheet()->setCellValue('B1', 'Laporan Pengeluaran'); $objP
 //$objPHPExcel->getActiveSheet()->getStyle('D1')->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_XLSX15);
 //$objPHPExcel->getActiveSheet()->setCellValue('E1', '#12566');
 
-//$dtglstart = DateTime::createFromFormat("d-m-Y", $_SESSION["r03_pengeluaran_tglstart"]);
 $objPHPExcel->getActiveSheet()->setCellValue('B2', "Periode ".date("d-m-Y", strtotime($_SESSION["r03_pengeluaran_tglstart"]))." s.d. ".date("d-m-Y", strtotime($_SESSION["r03_pengeluaran_tglend"]))); $objPHPExcel->getActiveSheet()->mergeCells('B2:L2'); $objPHPExcel->getActiveSheet()->getStyle('B2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-//$objPHPExcel->getActiveSheet()->setCellValue('G1', $_SESSION["r03_pengeluaran_tglend"]);
+//$objPHPExcel->getActiveSheet()->setCellValue('B3', $_SESSION["r03_pengeluaran_filter"]); $objPHPExcel->getActiveSheet()->mergeCells('B3:L3'); $objPHPExcel->getActiveSheet()->getStyle('B3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
 $baris = 4; // baris mulai untuk tampilkan header kolom
 
@@ -90,6 +89,12 @@ $baris++; $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.'');
 $baris++;
 
 // query data
+
+// filtering data
+$filter = "";
+if ($_SESSION["r03_pengeluaran_filter"]) {
+	$filter = "where ".$_SESSION["r03_pengeluaran_filter"];
+}
 $q = "
 	SELECT
 		`a`.`Tanggal` AS `tanggal`,
@@ -108,12 +113,12 @@ $q = "
 		LEFT JOIN `t05_subgroup` `c` ON ((`a`.`subgroup_id` = `c`.`id`)))
 		LEFT JOIN `t01_supplier` `d` ON ((`a`.`supplier_id` = `d`.`id`)))
 		LEFT JOIN `v01_barang_satuan` `e` ON ((`a`.`barang_id` = `e`.`id`)))
-	where
-		a.Tanggal between '".$_SESSION["r03_pengeluaran_tglstart"]."' and '".$_SESSION["r03_pengeluaran_tglend"]."'
+		".$filter."
 	order by
 		a.maingroup_id,
 		a.subgroup_id
-";
+"; //echo $q; //where a.Tanggal between '".$_SESSION["r03_pengeluaran_tglstart"]."' and '".$_SESSION["r03_pengeluaran_tglend"]."'
+$q = "select * from v03_pengeluaran ".$filter." order by maingroup_nama, subgroup_nama, tanggal";
 $r = Conn()->Execute($q);
 
 $total_keluar = 0;
@@ -164,9 +169,9 @@ while (!$r->EOF) {
 			$objPHPExcel->getActiveSheet()->setCellValue('G'.$baris, $r->fields["banyaknya"]);
 			$objPHPExcel->getActiveSheet()->setCellValue('H'.$baris, $r->fields["barang_satuan"]);
 			$objPHPExcel->getActiveSheet()->setCellValue('I'.$baris, $r->fields["harga"]);
-			$objPHPExcel->getActiveSheet()->setCellValue('J'.$baris, $r->fields["jumlah"]);
+			$objPHPExcel->getActiveSheet()->setCellValue('J'.$baris, $r->fields["Jumlah"]);
 			$baris++;
-			$total_subgroup += $r->fields["jumlah"];
+			$total_subgroup += $r->fields["Jumlah"];
 			$r->MoveNext();
 		}
 		/*echo "
