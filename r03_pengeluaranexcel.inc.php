@@ -212,7 +212,7 @@ while (!$r->EOF) {
 ";*/
 $objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, "Total Pengeluaran"); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':K'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('A'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 $objPHPExcel->getActiveSheet()->setCellValue('L'.$baris, $total_keluar); $objPHPExcel->getActiveSheet()->getStyle('L'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-$baris++;
+//$baris++;
 
 $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
 $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
