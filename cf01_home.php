@@ -416,12 +416,12 @@ Page_Rendering();
 <div class="panel panel-default">
 	<div class="panel-heading">Saldo Akhir</div>
 	<div class="panel-body">
-		<div>
-			<p>
-			<?php
-			echo number_format($saldo_akhir); //$db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t06_pengeluaran"]]); // Execute a SQL and show as HTML table 
-			?>
-		</div>
+		<table class='table table-striped table-bordered table-hover table-condensed'>
+			<tr>
+				<td>Jumlah</td>
+				<td><?php echo number_format($saldo_akhir, 2); //$db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t06_pengeluaran"]]); // Execute a SQL and show as HTML table ?></td>
+			</tr>
+		</table>
 	</div>
 </div>
 

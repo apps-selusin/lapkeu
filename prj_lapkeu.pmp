@@ -1094,7 +1094,7 @@ function Row_Updating($rsold, &$rsnew) {
 		<div>
 			<p>
 			<?php
-			echo $saldo_akhir; //$db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t06_pengeluaran"]]); // Execute a SQL and show as HTML table 
+			echo number_format($saldo_akhir); //$db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t06_pengeluaran"]]); // Execute a SQL and show as HTML table 
 			?>
 		</div>
 	</div>
