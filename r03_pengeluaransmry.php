@@ -2390,8 +2390,21 @@ class crr03_pengeluaran_summary extends crr03_pengeluaran {
 
 		// Example:
 		//$header = "your header";
+		//echo "-".(isset($_GET["sv_tanggal"]) ? $_GET["sv_tanggal"] : "0")."-";
+		// simpan data inputan dari user ke variable session
 
-		echo "-".(isset($_GET["sv_tanggal"]) ? $_GET["sv_tanggal"] : "0")."-";
+		$dtglstart = date("Y-m-")."01";
+		if (isset($_GET["sv_tanggal"])) {
+			$stglstart = DateTime::createFromFormat("d-m-Y", $_GET["sv_tanggal"]);
+			$dtglstart = $stglstart->format("Y-m-d");
+		}
+		$_SESSION["r03_pengeluaran_tglstart"] = $dtglstart;
+		$dtglend = date("Y-m-t");
+		if (isset($_GET["sv2_tanggal"])) {
+			$stglend = DateTime::createFromFormat("d-m-Y", $_GET["sv2_tanggal"]);
+			$dtglend = $stglend->format("Y-m-d");
+		}
+		$_SESSION["r03_pengeluaran_tglend"] = $dtglend;
 	}
 
 	// Page Data Rendered event

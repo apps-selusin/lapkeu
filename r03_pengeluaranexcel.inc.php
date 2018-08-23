@@ -63,6 +63,10 @@ $objPHPExcel->getActiveSheet()->setCellValue('D1', PHPExcel_Shared_Date::PHPToEx
 $objPHPExcel->getActiveSheet()->getStyle('D1')->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_XLSX15);
 $objPHPExcel->getActiveSheet()->setCellValue('E1', '#12566');
 
+//$dtglstart = DateTime::createFromFormat("d-m-Y", $_SESSION["r03_pengeluaran_tglstart"]);
+$objPHPExcel->getActiveSheet()->setCellValue('F1', $_SESSION["r03_pengeluaran_tglstart"]);
+$objPHPExcel->getActiveSheet()->setCellValue('G1', $_SESSION["r03_pengeluaran_tglend"]);
+
 $baris = 3; // header kolom
 
 // header
@@ -104,6 +108,8 @@ $q = "
 		LEFT JOIN `t05_subgroup` `c` ON ((`a`.`subgroup_id` = `c`.`id`)))
 		LEFT JOIN `t01_supplier` `d` ON ((`a`.`supplier_id` = `d`.`id`)))
 		LEFT JOIN `v01_barang_satuan` `e` ON ((`a`.`barang_id` = `e`.`id`)))
+	where
+		a.Tanggal between '".$_SESSION["r03_pengeluaran_tglstart"]."' and '".$_SESSION["r03_pengeluaran_tglend"]."'
 	order by
 		a.maingroup_id,
 		a.subgroup_id
