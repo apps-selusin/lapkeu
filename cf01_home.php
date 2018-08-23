@@ -390,7 +390,7 @@ Page_Rendering();
 <div class="panel panel-default">
 	<div class="panel-heading">Penerimaan</div>
 	<?php
-	$q = "select jumlah from t08_penerimaan";
+	$q = "select sum(jumlah) as jumlah from t08_penerimaan";
 	$jumlah = ew_ExecuteScalar($q);
 	$saldo_akhir += $jumlah;
 	$q = "select format(sum(jumlah), 2) as Jumlah from t08_penerimaan";
@@ -403,7 +403,7 @@ Page_Rendering();
 <div class="panel panel-default">
 	<div class="panel-heading">Pengeluaran</div>
 	<?php
-	$q = "select jumlah from t06_pengeluaran";
+	$q = "select sum(jumlah) as jumlah from t06_pengeluaran";
 	$jumlah = ew_ExecuteScalar($q);
 	$saldo_akhir -= $jumlah;
 	$q = "select format(sum(jumlah), 2) as Jumlah from t06_pengeluaran";
