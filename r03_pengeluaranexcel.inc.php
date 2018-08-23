@@ -69,11 +69,6 @@ $objPHPExcel->getActiveSheet()->setCellValue('B2', "Periode ".date("d-m-Y", strt
 $baris = 4; // baris mulai untuk tampilkan header kolom
 
 // header
-/*$objPHPExcel->getActiveSheet()->setCellValue('A3', 'Product Id');
-$objPHPExcel->getActiveSheet()->setCellValue('B3', 'Description');
-$objPHPExcel->getActiveSheet()->setCellValue('C3', 'Price');
-$objPHPExcel->getActiveSheet()->setCellValue('D3', 'Amount');
-$objPHPExcel->getActiveSheet()->setCellValue('E3', 'Total');*/
 $objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, 'Jenis Pengeluaran'); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':B'.$baris.'');
 $objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, 'Tanggal');
 $objPHPExcel->getActiveSheet()->setCellValue('D'.$baris, 'Supplier');
@@ -89,35 +84,11 @@ $baris++; $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.'');
 $baris++;
 
 // query data
-
 // filtering data
 $filter = "";
 if ($_SESSION["r03_pengeluaran_filter"]) {
 	$filter = "where ".$_SESSION["r03_pengeluaran_filter"];
 }
-$q = "
-	SELECT
-		`a`.`Tanggal` AS `tanggal`,
-		`b`.`Nama` AS `maingroup_nama`,
-		`c`.`Nama` AS `subgroup_nama`,
-		`d`.`Nama` AS `supplier_nama`,
-		`a`.`NoNota` AS `nonota`,
-		`e`.`Nama` AS `barang_nama`,
-		`a`.`Banyaknya` AS `banyaknya`,
-		`e`.`Satuan` AS `barang_satuan`,
-		`a`.`Harga` AS `harga`,
-		`a`.`Jumlah` AS `jumlah`
-	FROM
-		((((`t06_pengeluaran` `a`
-		LEFT JOIN `t04_maingroup` `b` ON ((`a`.`maingroup_id` = `b`.`id`)))
-		LEFT JOIN `t05_subgroup` `c` ON ((`a`.`subgroup_id` = `c`.`id`)))
-		LEFT JOIN `t01_supplier` `d` ON ((`a`.`supplier_id` = `d`.`id`)))
-		LEFT JOIN `v01_barang_satuan` `e` ON ((`a`.`barang_id` = `e`.`id`)))
-		".$filter."
-	order by
-		a.maingroup_id,
-		a.subgroup_id
-"; //echo $q; //where a.Tanggal between '".$_SESSION["r03_pengeluaran_tglstart"]."' and '".$_SESSION["r03_pengeluaran_tglend"]."'
 $q = "select * from v03_pengeluaran ".$filter." order by maingroup_nama, subgroup_nama, tanggal";
 $r = Conn()->Execute($q);
 
