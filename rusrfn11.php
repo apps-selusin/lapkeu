@@ -39,4 +39,15 @@ function Page_Unloaded() {
 function ewr_CurrentHost() {
 	return ewr_ServerVar("HTTP_HOST");
 }
+
+// Get a record as associative array
+// NOTE: Modify your SQL here, replace the table name, field name and the condition
+//$MyRow = ewr_ExecuteRow("SELECT * FROM t09_periode");
+//$_SESSION["dGlobal_TanggalAwal"] = $MyRow["TanggalAwal"];
+//$_SESSION["dGlobal_TanggalAkhir"] = $MyRow["TanggalAkhir"];
+
+$q = "select TanggalAwal, TanggalAkhir from t09_periode";
+$r = Conn()->Execute($q);
+$_SESSION["dGlobal_TanggalAwal"] = $r->fields["TanggalAwal"];
+$_SESSION["dGlobal_TanggalAkhir"] = $r->fields["TanggalAkhir"];
 ?>
