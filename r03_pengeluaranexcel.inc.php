@@ -58,16 +58,16 @@ $objPHPExcel = new PHPExcel();
 // Create a first sheet, representing sales data
 echo date('H:i:s') , " Add some data" , EOL;
 $objPHPExcel->setActiveSheetIndex(0);
-$objPHPExcel->getActiveSheet()->setCellValue('B1', 'Laporan Pengeluaran');
-$objPHPExcel->getActiveSheet()->setCellValue('D1', PHPExcel_Shared_Date::PHPToExcel( gmmktime(0,0,0,date('m'),date('d'),date('Y')) ));
-$objPHPExcel->getActiveSheet()->getStyle('D1')->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_XLSX15);
-$objPHPExcel->getActiveSheet()->setCellValue('E1', '#12566');
+$objPHPExcel->getActiveSheet()->setCellValue('B1', 'Laporan Pengeluaran'); $objPHPExcel->getActiveSheet()->mergeCells('B1:L1'); $objPHPExcel->getActiveSheet()->getStyle('B1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+//$objPHPExcel->getActiveSheet()->setCellValue('D1', PHPExcel_Shared_Date::PHPToExcel( gmmktime(0,0,0,date('m'),date('d'),date('Y')) ));
+//$objPHPExcel->getActiveSheet()->getStyle('D1')->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_XLSX15);
+//$objPHPExcel->getActiveSheet()->setCellValue('E1', '#12566');
 
 //$dtglstart = DateTime::createFromFormat("d-m-Y", $_SESSION["r03_pengeluaran_tglstart"]);
-$objPHPExcel->getActiveSheet()->setCellValue('F1', $_SESSION["r03_pengeluaran_tglstart"]);
-$objPHPExcel->getActiveSheet()->setCellValue('G1', $_SESSION["r03_pengeluaran_tglend"]);
+$objPHPExcel->getActiveSheet()->setCellValue('B2', "Periode ".date("d-m-Y", strtotime($_SESSION["r03_pengeluaran_tglstart"]))." s.d. ".date("d-m-Y", strtotime($_SESSION["r03_pengeluaran_tglend"]))); $objPHPExcel->getActiveSheet()->mergeCells('B2:L2'); $objPHPExcel->getActiveSheet()->getStyle('B2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+//$objPHPExcel->getActiveSheet()->setCellValue('G1', $_SESSION["r03_pengeluaran_tglend"]);
 
-$baris = 3; // header kolom
+$baris = 4; // baris mulai untuk tampilkan header kolom
 
 // header
 /*$objPHPExcel->getActiveSheet()->setCellValue('A3', 'Product Id');
