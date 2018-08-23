@@ -226,7 +226,15 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
 $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
 $objPHPExcel->getActiveSheet()->getStyle('A4:L4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-
+$styleThinBlackBorderOutline = array(
+	'borders' => array(
+		'outline' => array(
+			'style' => PHPExcel_Style_Border::BORDER_THIN,
+			'color' => array('argb' => 'FF000000'),
+		),
+	),
+);
+$objPHPExcel->getActiveSheet()->getStyle('A4:E10')->applyFromArray($styleThinBlackBorderOutline);
 
 
 /*$objPHPExcel->getActiveSheet()->setCellValue('A4', '1001');
