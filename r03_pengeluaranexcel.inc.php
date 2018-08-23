@@ -162,14 +162,14 @@ while (!$r->EOF) {
 					<td>&nbsp;</td>
 				</tr>
 			";*/
-			$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, $r->fields["tanggal"]);
+			$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, date("d-m-Y", strtotime($r->fields["tanggal"])));
 			$objPHPExcel->getActiveSheet()->setCellValue('D'.$baris, $r->fields["supplier_nama"]);
 			$objPHPExcel->getActiveSheet()->setCellValue('E'.$baris, $r->fields["nonota"]);
 			$objPHPExcel->getActiveSheet()->setCellValue('F'.$baris, $r->fields["barang_nama"]);
-			$objPHPExcel->getActiveSheet()->setCellValue('G'.$baris, $r->fields["banyaknya"]);
+			$objPHPExcel->getActiveSheet()->setCellValue('G'.$baris, $r->fields["banyaknya"]); $objPHPExcel->getActiveSheet()->getStyle('G'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
 			$objPHPExcel->getActiveSheet()->setCellValue('H'.$baris, $r->fields["barang_satuan"]);
-			$objPHPExcel->getActiveSheet()->setCellValue('I'.$baris, $r->fields["harga"]);
-			$objPHPExcel->getActiveSheet()->setCellValue('J'.$baris, $r->fields["Jumlah"]);
+			$objPHPExcel->getActiveSheet()->setCellValue('I'.$baris, $r->fields["harga"]); $objPHPExcel->getActiveSheet()->getStyle('I'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+			$objPHPExcel->getActiveSheet()->setCellValue('J'.$baris, $r->fields["Jumlah"]); $objPHPExcel->getActiveSheet()->getStyle('J'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
 			$baris++;
 			$total_subgroup += $r->fields["Jumlah"];
 			$r->MoveNext();
@@ -183,7 +183,7 @@ while (!$r->EOF) {
 			</tr>
 		";*/
 		$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, "Sub Total ".$subgroup_nama); $objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':I'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('B'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-		$objPHPExcel->getActiveSheet()->setCellValue('J'.$baris, $total_subgroup);
+		$objPHPExcel->getActiveSheet()->setCellValue('J'.$baris, $total_subgroup); $objPHPExcel->getActiveSheet()->getStyle('J'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
 		$baris++; $objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':J'.$baris.'');
 		$baris++;
 		$total_maingroup += $total_subgroup;
@@ -198,7 +198,7 @@ while (!$r->EOF) {
 		</tr>
 	";*/
 	$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, "Sub Total ".$maingroup_nama); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':J'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('A'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-	$objPHPExcel->getActiveSheet()->setCellValue('K'.$baris, $total_maingroup);
+	$objPHPExcel->getActiveSheet()->setCellValue('K'.$baris, $total_maingroup); $objPHPExcel->getActiveSheet()->getStyle('K'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
 	$baris++; $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.'');
 	$baris++; $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.'');
 	$baris++;
@@ -211,8 +211,23 @@ while (!$r->EOF) {
 	</tr>
 ";*/
 $objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, "Total Pengeluaran"); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':K'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('A'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-$objPHPExcel->getActiveSheet()->setCellValue('L'.$baris, $total_keluar);
+$objPHPExcel->getActiveSheet()->setCellValue('L'.$baris, $total_keluar); $objPHPExcel->getActiveSheet()->getStyle('L'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
 $baris++;
+
+$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+$objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+$objPHPExcel->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
+$objPHPExcel->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+$objPHPExcel->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+$objPHPExcel->getActiveSheet()->getStyle('A4:L4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+
+
 
 /*$objPHPExcel->getActiveSheet()->setCellValue('A4', '1001');
 $objPHPExcel->getActiveSheet()->setCellValue('B4', 'PHP for dummies');
