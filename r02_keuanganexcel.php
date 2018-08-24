@@ -44,17 +44,17 @@ define('EOL',(PHP_SAPI == 'cli') ? PHP_EOL : '<br />');
 
 date_default_timezone_set('Asia/Jakarta');
 
-include "r03_pengeluaranexcel.inc.php"; //include "05featuredemo.inc.php";
+include "r02_keuanganexcel.inc.php"; //include "05featuredemo.inc.php";
 
 /** Include PHPExcel_IOFactory */
 require_once dirname(__FILE__) . '/../Classes/PHPExcel/IOFactory.php';
 
 
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-$objWriter->save('Laporan Pengeluaran.xlsx'); // $objWriter->save(str_replace('.php', '.xlsx', __FILE__));
+$objWriter->save('Laporan Keuangan.xlsx'); // $objWriter->save(str_replace('.php', '.xlsx', __FILE__));
 $callEndTime = microtime(true);
 $callTime = $callEndTime - $callStartTime;
 
 // $objWriter = PHPExcel_IOFactory::createWriter($excelku, 'Excel2007');
 // $objWriter->save($mnama_file.'.xlsx');
-header("Location: Laporan Pengeluaran.xlsx");
+header("Location: Laporan Keuangan.xlsx");

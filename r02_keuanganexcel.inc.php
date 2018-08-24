@@ -9,6 +9,26 @@ ob_start(); // Turn on output buffering
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn14.php" ?>
 <?php
+
+// data periode
+$q = "select * from t09_periode";
+$r = Conn()->Execute($q);
+$periode_bulan = $r->fields["Bulan"];
+$periode_namabulan = $r->fields["NamaBulan"];
+$periode_tahun = $r->fields["Tahun"];
+$tanggalawal = date("d-m-Y", strtotime($r->fields["TanggalAwal"]));
+$tanggalakhir = date("d-m-Y", strtotime($r->fields["TanggalAkhir"]));
+
+$q = "select * from t10_saldo";
+$r = Conn()->Execute($q);
+$saldo = $r->fields["Jumlah"];
+
+$q = "select * from t08_penerimaan order by Tanggal";
+$rpenerimaan = Conn()->Execute($q);
+
+$no = 1;
+?>
+<?php
 /**
  * PHPExcel
  *
@@ -42,45 +62,102 @@ error_reporting(E_ALL);
 require_once dirname(__FILE__) . '/../Classes/PHPExcel.php';
 
 // Create new PHPExcel object
-echo date('H:i:s') , " Create new PHPExcel object" , EOL;
 $objPHPExcel = new PHPExcel();
 
-// Set document properties
-//echo date('H:i:s') , " Set document properties" , EOL;
-/*$objPHPExcel->getProperties()->setCreator("Maarten Balliauw")
-							 ->setLastModifiedBy("Maarten Balliauw")
-							 ->setTitle("Office 2007 XLSX Test Document")
-							 ->setSubject("Office 2007 XLSX Test Document")
-							 ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
-							 ->setKeywords("office 2007 openxml php")
-							 ->setCategory("Test result file");*/
-
 // Create a first sheet, representing sales data
-echo date('H:i:s') , " Add some data" , EOL;
 $objPHPExcel->setActiveSheetIndex(0);
-$objPHPExcel->getActiveSheet()->setCellValue('B1', 'Laporan Pengeluaran'); $objPHPExcel->getActiveSheet()->mergeCells('B1:L1'); $objPHPExcel->getActiveSheet()->getStyle('B1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-//$objPHPExcel->getActiveSheet()->setCellValue('D1', PHPExcel_Shared_Date::PHPToExcel( gmmktime(0,0,0,date('m'),date('d'),date('Y')) ));
-//$objPHPExcel->getActiveSheet()->getStyle('D1')->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_XLSX15);
-//$objPHPExcel->getActiveSheet()->setCellValue('E1', '#12566');
-
-$objPHPExcel->getActiveSheet()->setCellValue('B2', "Periode ".date("d-m-Y", strtotime($_SESSION["r03_pengeluaran_tglstart"]))." s.d. ".date("d-m-Y", strtotime($_SESSION["r03_pengeluaran_tglend"]))); $objPHPExcel->getActiveSheet()->mergeCells('B2:L2'); $objPHPExcel->getActiveSheet()->getStyle('B2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+$objPHPExcel->getActiveSheet()->setCellValue('B1', 'Laporan Keuangan'); $objPHPExcel->getActiveSheet()->mergeCells('B1:M1'); $objPHPExcel->getActiveSheet()->getStyle('B1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+$objPHPExcel->getActiveSheet()->setCellValue('B2', "Periode ".$periode_namabulan . " " . $periode_tahun); $objPHPExcel->getActiveSheet()->mergeCells('B2:M2'); $objPHPExcel->getActiveSheet()->getStyle('B2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 //$objPHPExcel->getActiveSheet()->setCellValue('B3', $_SESSION["r03_pengeluaran_filter"]); $objPHPExcel->getActiveSheet()->mergeCells('B3:L3'); $objPHPExcel->getActiveSheet()->getStyle('B3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
 $baris = 4; // baris mulai untuk tampilkan header kolom
+$kolom_akhir = "M";
 
-// header
+
+
+// saldo awal ----------------------------------------------------------------------------------------------------
+$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, 'Saldo Awal'); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':M'.$baris.'');
+$baris++;
+
+// kolom header saldo awal
+$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, 'No.');
+$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, 'Tanggal');
+$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, 'Keterangan'); $objPHPExcel->getActiveSheet()->mergeCells('C'.$baris.':L'.$baris.'');
+$objPHPExcel->getActiveSheet()->setCellValue('M'.$baris, 'Jumlah');
+$baris++;
+
+// show data saldo awal
+$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, $no++);
+$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, $tanggalawal);
+$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, 'Saldo Awal'); $objPHPExcel->getActiveSheet()->mergeCells('C'.$baris.':L'.$baris.'');
+$objPHPExcel->getActiveSheet()->setCellValue('M'.$baris, $saldo); $objPHPExcel->getActiveSheet()->getStyle('M'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+$baris++;
+
+// pemisah; baris kosong;
+$objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':'.$kolom_akhir.$baris.'');
+$baris++;
+
+
+
+// penerimaan ----------------------------------------------------------------------------------------------------
+$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, 'Penerimaan'); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':M'.$baris.'');
+$baris++;
+
+// kolom header penerimaan
+$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, 'No.');
+$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, 'Tanggal');
+$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, 'Keterangan');
+$objPHPExcel->getActiveSheet()->setCellValue('D'.$baris, 'No. Kwitansi'); $objPHPExcel->getActiveSheet()->mergeCells('D'.$baris.':K'.$baris.'');
+$objPHPExcel->getActiveSheet()->setCellValue('L'.$baris, 'Jumlah');
+$baris++;
+
+$penerimaan = 0;
+while (!$rpenerimaan->EOF) {
+	$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, $no++);
+	$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, date("d-m-Y", strtotime($rpenerimaan->fields["Tanggal"])));
+	$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, $rpenerimaan->fields["Keterangan"]);
+	$objPHPExcel->getActiveSheet()->setCellValue('D'.$baris, $rpenerimaan->fields["NoKwitansi"]); $objPHPExcel->getActiveSheet()->getStyle('D'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT); $objPHPExcel->getActiveSheet()->mergeCells('D'.$baris.':K'.$baris.'');
+	$objPHPExcel->getActiveSheet()->setCellValue('L'.$baris, $rpenerimaan->fields["Jumlah"]); $objPHPExcel->getActiveSheet()->getStyle('L'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+	$baris++;
+	$penerimaan += $rpenerimaan->fields["Jumlah"];
+ 	$rpenerimaan->MoveNext();
+}
+$saldo += $penerimaan;
+
+$objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':'.$kolom_akhir.$baris.'');
+$baris++;
+$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, "Total Penerimaan"); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('A'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+$objPHPExcel->getActiveSheet()->setCellValue('M'.$baris, $penerimaan); $objPHPExcel->getActiveSheet()->getStyle('M'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+$baris++;
+
+$objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':'.$kolom_akhir.$baris.'');
+$baris++;
+$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, "Saldo Awal + Total Penerimaan"); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('A'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+$objPHPExcel->getActiveSheet()->setCellValue('M'.$baris, $saldo); $objPHPExcel->getActiveSheet()->getStyle('M'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+$baris++;
+
+// pemisah; baris kosong;
+$objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':'.$kolom_akhir.$baris.'');
+$baris++;
+
+
+
+// pengeluaran ----------------------------------------------------------------------------------------------------
+$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, 'Pengeluaran'); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':M'.$baris.'');
+$baris++;
+
+// kolom header pengeluaran
 $objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, 'Jenis Pengeluaran'); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':B'.$baris.'');
-$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, 'Tanggal');
-$objPHPExcel->getActiveSheet()->setCellValue('D'.$baris, 'Supplier');
-$objPHPExcel->getActiveSheet()->setCellValue('E'.$baris, 'No. Nota');
-$objPHPExcel->getActiveSheet()->setCellValue('F'.$baris, 'Barang');
-$objPHPExcel->getActiveSheet()->setCellValue('G'.$baris, 'Banyaknya');
-$objPHPExcel->getActiveSheet()->setCellValue('H'.$baris, 'Satuan');
-$objPHPExcel->getActiveSheet()->setCellValue('I'.$baris, 'Harga');
-$objPHPExcel->getActiveSheet()->setCellValue('J'.$baris, 'Jumlah');
-$objPHPExcel->getActiveSheet()->setCellValue('K'.$baris, 'Sub Total');
-$objPHPExcel->getActiveSheet()->setCellValue('L'.$baris, 'Total');
-$baris++; $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.'');
+$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, 'No.');
+$objPHPExcel->getActiveSheet()->setCellValue('D'.$baris, 'Tanggal');
+$objPHPExcel->getActiveSheet()->setCellValue('E'.$baris, 'Supplier');
+$objPHPExcel->getActiveSheet()->setCellValue('F'.$baris, 'No. Nota');
+$objPHPExcel->getActiveSheet()->setCellValue('G'.$baris, 'Barang');
+$objPHPExcel->getActiveSheet()->setCellValue('H'.$baris, 'Banyaknya');
+$objPHPExcel->getActiveSheet()->setCellValue('I'.$baris, 'Satuan');
+$objPHPExcel->getActiveSheet()->setCellValue('J'.$baris, 'Harga');
+$objPHPExcel->getActiveSheet()->setCellValue('K'.$baris, 'Jumlah');
+$objPHPExcel->getActiveSheet()->setCellValue('L'.$baris, 'Sub Total');
 $baris++;
 
 // query data
@@ -97,94 +174,54 @@ $total_keluar = 0;
 while (!$r->EOF) {
 	$total_maingroup = 0;
 	$maingroup_nama = $r->fields["maingroup_nama"];
-	/*echo "
-		<tr>
-			<td>".$maingroup_nama."</td>
-			<td colspan='".($col - 1)."'>&nbsp;</td>
-		</tr>
-	";*/
-	$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, $maingroup_nama); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':K'.$baris.'');
+	$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, $maingroup_nama); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.'');
 	$baris++;
 	while ($maingroup_nama == $r->fields["maingroup_nama"]) {
 		$total_subgroup = 0;
 		$subgroup_nama = $r->fields["subgroup_nama"];
-		/*echo "
-			<tr>
-				<td>&nbsp;</td>
-				<td>".$subgroup_nama."</td>
-				<td colspan='".($col - 2)."'>&nbsp;</td>
-			</tr>
-		";*/
-		$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, $subgroup_nama); $objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':J'.$baris.'');
+		$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, $subgroup_nama); $objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':K'.$baris.'');
 		$baris++;
 		while ($subgroup_nama == $r->fields["subgroup_nama"]) {
-			/*echo "
-				<tr>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
-					<td>".$r->fields["tanggal"]."</td>
-					<td>".$r->fields["supplier_nama"]."</td>
-					<td>".$r->fields["nonota"]."</td>
-					<td>".$r->fields["barang_nama"]."</td>
-					<td align='right'>".number_format($r->fields["banyaknya"])."</td>
-					<td>".$r->fields["barang_satuan"]."</td>
-					<td align='right'>".number_format($r->fields["harga"])."</td>
-					<td align='right'>".number_format($r->fields["jumlah"])."</td>
-					<td>&nbsp;</td>
-				</tr>
-			";*/
-			$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, date("d-m-Y", strtotime($r->fields["tanggal"])));
-			$objPHPExcel->getActiveSheet()->setCellValue('D'.$baris, $r->fields["supplier_nama"]);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$baris, $r->fields["nonota"]);
-			$objPHPExcel->getActiveSheet()->setCellValue('F'.$baris, $r->fields["barang_nama"]);
-			$objPHPExcel->getActiveSheet()->setCellValue('G'.$baris, $r->fields["banyaknya"]); $objPHPExcel->getActiveSheet()->getStyle('G'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-			$objPHPExcel->getActiveSheet()->setCellValue('H'.$baris, $r->fields["barang_satuan"]);
-			$objPHPExcel->getActiveSheet()->setCellValue('I'.$baris, $r->fields["harga"]); $objPHPExcel->getActiveSheet()->getStyle('I'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-			$objPHPExcel->getActiveSheet()->setCellValue('J'.$baris, $r->fields["Jumlah"]); $objPHPExcel->getActiveSheet()->getStyle('J'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+			$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, $no++);
+			$objPHPExcel->getActiveSheet()->setCellValue('D'.$baris, date("d-m-Y", strtotime($r->fields["tanggal"])));
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$baris, $r->fields["supplier_nama"]);
+			$objPHPExcel->getActiveSheet()->setCellValue('F'.$baris, $r->fields["nonota"]);
+			$objPHPExcel->getActiveSheet()->setCellValue('G'.$baris, $r->fields["barang_nama"]);
+			$objPHPExcel->getActiveSheet()->setCellValue('H'.$baris, $r->fields["banyaknya"]); $objPHPExcel->getActiveSheet()->getStyle('H'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+			$objPHPExcel->getActiveSheet()->setCellValue('I'.$baris, $r->fields["barang_satuan"]);
+			$objPHPExcel->getActiveSheet()->setCellValue('J'.$baris, $r->fields["harga"]); $objPHPExcel->getActiveSheet()->getStyle('J'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+			$objPHPExcel->getActiveSheet()->setCellValue('K'.$baris, $r->fields["Jumlah"]); $objPHPExcel->getActiveSheet()->getStyle('K'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
 			$baris++;
 			$total_subgroup += $r->fields["Jumlah"];
 			$r->MoveNext();
 		}
-		/*echo "
-			<tr>
-				<td>&nbsp;</td>
-				<td align='right' colspan='".($col - 3)."'>Sub Total ".$subgroup_nama."</td>
-				<td align='right'>".number_format($total_subgroup)."</td>
-				<td>&nbsp;</td>
-			</tr>
-		";*/
-		$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, "Sub Total ".$subgroup_nama); $objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':I'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('B'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-		$objPHPExcel->getActiveSheet()->setCellValue('J'.$baris, $total_subgroup); $objPHPExcel->getActiveSheet()->getStyle('J'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-		$baris++; $objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':J'.$baris.'');
+		$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, "Sub Total ".$subgroup_nama); $objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':J'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('B'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+		$objPHPExcel->getActiveSheet()->setCellValue('K'.$baris, $total_subgroup); $objPHPExcel->getActiveSheet()->getStyle('K'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
 		$baris++;
 		$total_maingroup += $total_subgroup;
 	}
-	/*echo "
-		<tr>
-			<td align='right' colspan='".($col - 1)."'>Sub Total ".$maingroup_nama."</td>
-			<td align='right'>".number_format($total_maingroup)."</td>
-		</tr>
-		<tr>
-			<td colspan='".$col."'>&nbsp;</td>
-		</tr>
-	";*/
-	$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, "Sub Total ".$maingroup_nama); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':J'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('A'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-	$objPHPExcel->getActiveSheet()->setCellValue('K'.$baris, $total_maingroup); $objPHPExcel->getActiveSheet()->getStyle('K'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-	$baris++; $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.'');
-	$baris++; $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.'');
-	$baris++;
+	$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, "Sub Total ".$maingroup_nama); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':K'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('A'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+	$objPHPExcel->getActiveSheet()->setCellValue('L'.$baris, $total_maingroup); $objPHPExcel->getActiveSheet()->getStyle('L'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+	$baris++; 
 	$total_keluar += $total_maingroup;
 }
-/*echo "
-	<tr>
-		<td align='right' colspan='".($col - 1)."'>Total Pengeluaran</td>
-		<td align='right'>".number_format($total_keluar)."</td>
-	</tr>
-";*/
-$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, "Total Pengeluaran"); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':K'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('A'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-$objPHPExcel->getActiveSheet()->setCellValue('L'.$baris, $total_keluar); $objPHPExcel->getActiveSheet()->getStyle('L'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+$saldo -= $total_keluar;
+
+$objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':'.$kolom_akhir.$baris.'');
+$baris++;
+
+$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, "Total Pengeluaran"); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('A'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+$objPHPExcel->getActiveSheet()->setCellValue('M'.$baris, $total_keluar); $objPHPExcel->getActiveSheet()->getStyle('M'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+$baris++;
+
+$objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':'.$kolom_akhir.$baris.'');
+$baris++;
+$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, "Saldo Akhir = (Saldo Awal + Total Penerimaan) - Total Pengeluaran"); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':L'.$baris.''); $objPHPExcel->getActiveSheet()->getStyle('A'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+$objPHPExcel->getActiveSheet()->setCellValue('M'.$baris, $saldo); $objPHPExcel->getActiveSheet()->getStyle('M'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
 //$baris++;
 
+
+$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
 $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
 $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
 $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
@@ -195,7 +232,8 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
 $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
 $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
 $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
-$objPHPExcel->getActiveSheet()->getStyle('A4:L4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+$objPHPExcel->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+//$objPHPExcel->getActiveSheet()->getStyle('A4:L4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
 // tampilkan border line di all column
 $styleArray = array(
@@ -205,7 +243,7 @@ $styleArray = array(
 		)
 	)
 );
-$objPHPExcel->getActiveSheet()->getStyle('A4:L'.$baris)->applyFromArray($styleArray);
+$objPHPExcel->getActiveSheet()->getStyle('A4:M'.$baris)->applyFromArray($styleArray);
 
 
 /*$objPHPExcel->getActiveSheet()->setCellValue('A4', '1001');
