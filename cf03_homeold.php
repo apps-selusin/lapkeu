@@ -3,6 +3,7 @@ if (session_id() == "") session_start(); // Init session data
 ob_start(); // Turn on output buffering
 ?>
 <?php include_once "ewcfg14.php" ?>
+<?php $EW_ROOT_RELATIVE_PATH = ""; ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql14.php") ?>
 <?php include_once "phpfn14.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
@@ -13,18 +14,21 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$default = NULL; // Initialize page object first
+$cf03_homeold_php = NULL; // Initialize page object first
 
-class cdefault {
+class ccf03_homeold_php {
 
 	// Page ID
-	var $PageID = 'default';
+	var $PageID = 'custom';
 
 	// Project ID
 	var $ProjectID = '{239A2A32-109A-412F-A3CB-FF6290C167FC}';
 
+	// Table name
+	var $TableName = 'cf03_homeold.php';
+
 	// Page object name
-	var $PageObjName = 'default';
+	var $PageObjName = 'cf03_homeold_php';
 
 	// Page headings
 	var $Heading = '';
@@ -209,7 +213,11 @@ class cdefault {
 
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
-			define("EW_PAGE_ID", 'default', TRUE);
+			define("EW_PAGE_ID", 'custom', TRUE);
+
+		// Table name (for backward compatibility)
+		if (!defined("EW_TABLE_NAME"))
+			define("EW_TABLE_NAME", 'cf03_homeold.php', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"]))
@@ -240,17 +248,31 @@ class cdefault {
 
 		// Security
 		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanReport()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			$this->Page_Terminate(ew_GetUrl("index.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 
 		// NOTE: Security object may be needed in other part of the script, skip set to Nothing
 		// 
 		// Security = null;
 		// 
+
+		if (@$_GET["export"] <> "")
+			$gsExport = $_GET["export"]; // Get export parameter, used in header
+
 		// Global Page Loading event (in userfn*.php)
-
 		Page_Loading();
-
-		// Page Load event
-		$this->Page_Load();
 
 		// Check token
 		if (!$this->ValidPost()) {
@@ -269,16 +291,12 @@ class cdefault {
 	function Page_Terminate($url = "") {
 		global $gsExportFile, $gTmpImages;
 
-		// Page Unload event
-		$this->Page_Unload();
-
 		// Global Page Unloaded event (in userfn*.php)
 		Page_Unloaded();
 
 		// Export
-		$this->Page_Redirecting($url);
-
 		// Close connection
+
 		ew_CloseConn();
 
 		// Go to URL if specified
@@ -295,86 +313,18 @@ class cdefault {
 	// Page main
 	//
 	function Page_Main() {
-		global $Security, $Language, $Breadcrumb;
+
+		// Set up Breadcrumb
+		$this->SetupBreadcrumb();
+	}
+
+	// Set up Breadcrumb
+	function SetupBreadcrumb() {
+		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
-
-		// If session expired, show session expired message
-		if (@$_GET["expired"] == "1")
-			$this->setFailureMessage($Language->Phrase("SessionExpired"));
-		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
-		$Security->LoadUserLevel(); // Load User Level
-		if ($Security->AllowList(CurrentProjectID() . 'cf01_home.php'))
-		$this->Page_Terminate("cf01_home.php"); // Exit and go to default page
-		if ($Security->AllowList(CurrentProjectID() . 'cf02_tutupbuku.php'))
-			$this->Page_Terminate("cf02_tutupbuku.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf03_homeold.php'))
-			$this->Page_Terminate("cf03_homeold.php");
-		if ($Security->AllowList(CurrentProjectID() . 'r02_keuangan.php'))
-			$this->Page_Terminate("r02_keuangan.php");
-		if ($Security->AllowList(CurrentProjectID() . 'r05_keuanganold.php'))
-			$this->Page_Terminate("r05_keuanganold.php");
-		if ($Security->AllowList(CurrentProjectID() . 't01_supplier'))
-			$this->Page_Terminate("t01_supplierlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't02_satuan'))
-			$this->Page_Terminate("t02_satuanlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't03_barang'))
-			$this->Page_Terminate("t03_baranglist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't04_maingroup'))
-			$this->Page_Terminate("t04_maingrouplist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't05_subgroup'))
-			$this->Page_Terminate("t05_subgrouplist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't06_pengeluaran'))
-			$this->Page_Terminate("t06_pengeluaranlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't07_sekolah'))
-			$this->Page_Terminate("t07_sekolahlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't08_penerimaan'))
-			$this->Page_Terminate("t08_penerimaanlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't09_periode'))
-			$this->Page_Terminate("t09_periodelist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't10_saldo'))
-			$this->Page_Terminate("t10_saldolist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't96_employees'))
-			$this->Page_Terminate("t96_employeeslist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't97_userlevels'))
-			$this->Page_Terminate("t97_userlevelslist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't98_userlevelpermissions'))
-			$this->Page_Terminate("t98_userlevelpermissionslist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't99_audittrail'))
-			$this->Page_Terminate("t99_audittraillist.php");
-		if ($Security->IsLoggedIn()) {
-			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
-		} else {
-			$this->Page_Terminate("login.php"); // Exit and go to login page
-		}
-	}
-
-	// Page Load event
-	function Page_Load() {
-
-		//echo "Page Load";
-	}
-
-	// Page Unload event
-	function Page_Unload() {
-
-		//echo "Page Unload";
-	}
-
-	// Page Redirecting event
-	function Page_Redirecting(&$url) {
-
-		// Example:
-		//$url = "your URL";
-
-	}
-
-	// Message Showing event
-	// $type = ''|'success'|'failure'
-	function Message_Showing(&$msg, $type) {
-
-		// Example:
-		//if ($type == 'success') $msg = "your success message";
-
+		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
+		$Breadcrumb->Add("custom", "cf03_homeold_php", $url, "", "cf03_homeold_php", TRUE);
+		$this->Heading = $Language->TablePhrase("cf03_homeold_php", "TblCaption"); 
 	}
 }
 ?>
@@ -382,19 +332,137 @@ class cdefault {
 <?php
 
 // Create page object
-if (!isset($default)) $default = new cdefault();
+if (!isset($cf03_homeold_php)) $cf03_homeold_php = new ccf03_homeold_php();
 
 // Page init
-$default->Page_Init();
+$cf03_homeold_php->Page_Init();
 
 // Page main
-$default->Page_Main();
+$cf03_homeold_php->Page_Main();
+
+// Global Page Rendering event (in userfn*.php)
+Page_Rendering();
 ?>
 <?php include_once "header.php" ?>
+<form id="myform" name="myform" class="form-horizontal" method="post" action="r05_keuanganoldsubmit.php">
+	<div id="r_start" class="form-group">
+		<!-- <label for="start" class="col-sm-2 control-label ewLabel">Periode</label> -->
+		<div class="col-sm-10">
+			Periode :
+			<select class="form-control" name="periodeold_id">
+				<option value="0">Pilih Periode</option>
+				<?php
+				$q = "select id, concat(NamaBulan, ' ', Tahun) as Periode from t14_periodeold order by Bulan, Tahun";
+				$r = Conn()->Execute($q);
+				while (!$r->EOF) {
+				?>
+					<option value="<?php echo $r->fields["id"]?>"><?php echo $r->fields["Periode"]?></option>
+					<?php
+					$r->MoveNext();
+				}
+				?>
+			</select>
+		</div>
+	</div>
+	<button class="btn btn-primary ewButton" name="btnsubmit" id="btnsubmit" type="submit">Proses</button>
+</form>
+<p>&nbsp;</p>
+
 <?php
-$default->ShowMessage();
+if (isset($_GET["periodeold_id"])) {
+	if ($_GET["periodeold_id"]) {
+		$periodeold_id = $_GET["periodeold_id"];
 ?>
+
+<?php
+$q = "select * from t14_periodeold where id = ".$periodeold_id."";
+$r = Conn()->Execute($q);
+$periode_bulan = $r->fields["Bulan"];
+$periode_namabulan = $r->fields["NamaBulan"];
+$periode_tahun = $r->fields["Tahun"];
+$tanggalawal = date("d-m-Y", strtotime($r->fields["TanggalAwal"]));
+$tanggalakhir = date("d-m-Y", strtotime($r->fields["TanggalAkhir"]));
+$dtanggalawal = $r->fields["TanggalAwal"];
+$dtanggalakhir = $r->fields["TanggalAkhir"];
+?>
+
+<style>
+.panel-heading a{
+  display:block;
+}
+
+.panel-heading a.collapsed {
+  background: url(http://upload.wikimedia.org/wikipedia/commons/3/36/Vector_skin_right_arrow.png) center right no-repeat;
+}
+
+.panel-heading a {
+  background: url(http://www.useragentman.com/blog/wp-content/themes/useragentman/images/widgets/downArrow.png) center right no-repeat;
+}
+</style>
+
+<?php
+	$db =& DbHelper(); // Create instance of the database helper class by DbHelper() (for main database) or DbHelper("<dbname>") (for linked databases) where <dbname> is database variable name
+?>
+
+
+
+<!-- summary -->
+<div class="panel panel-default">
+	<div class="panel-heading">Summary</div>
+	<div class="panel-body">
+		<table class='table table-striped table-bordered table-hover table-condensed'>
+			<tr>
+				<td>Periode</td>
+				<?php
+				$q = "select concat(NamaBulan, ' ', Tahun) as Periode from t14_periodeold where id = ".$periodeold_id."";
+				$periode = ew_ExecuteScalar($q);
+				?>
+				<td><?php echo $periode;?></td>
+			</tr>
+			<tr>
+				<td>Saldo Awal</td>
+				<?php
+				$q = "select jumlah from t11_saldo";
+				$q = "select jumlah from t11_saldoold where Bulan = ".$periode_bulan." and Tahun = ".$periode_tahun."";
+				$jumlah = ew_ExecuteScalar($q);
+				$saldo_akhir = $jumlah;
+				?>
+				<td align="right"><?php echo number_format($jumlah, 2);?></td>
+			</tr>
+			<tr>
+				<td>Penerimaan</td>
+				<?php
+				$q = "select sum(jumlah) as jumlah from t08_penerimaan";
+				$q = "select sum(jumlah) as jumlah from t12_penerimaanold where Tanggal between '".$dtanggalawal."' and '".$dtanggalakhir."' order by Tanggal";
+				$jumlah = ew_ExecuteScalar($q);
+				$saldo_akhir += $jumlah;
+				?>
+				<td align="right"><?php echo number_format($jumlah, 2);?></td>
+			</tr>
+			<tr>
+				<td>Pengeluaran</td>
+				<?php
+				$q = "select sum(jumlah) as jumlah from t06_pengeluaran";
+				$q = "select sum(jumlah) as jumlah from t13_pengeluaranold where Tanggal between '".$dtanggalawal."' and '".$dtanggalakhir."' order by maingroup_nama, subgroup_nama, tanggal";
+				$jumlah = ew_ExecuteScalar($q);
+				$saldo_akhir -= $jumlah;
+				?>
+				<td align="right"><?php echo number_format($jumlah, 2);?></td>
+			</tr>
+			<tr>
+				<td>Saldo Akhir</td>
+				<td align="right"><?php echo number_format($saldo_akhir, 2); //$db->ExecuteHtml($q, ["fieldcaption" => TRUE, "tablename" => ["t06_pengeluaran"]]); // Execute a SQL and show as HTML table ?></td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<?php
+	}
+}
+?>
+<?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
-$default->Page_Terminate();
+$cf03_homeold_php->Page_Terminate();
 ?>

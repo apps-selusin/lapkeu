@@ -2,6 +2,7 @@
 
 // Menu
 $RootMenu = new cMenu("RootMenu", TRUE);
+$RootMenu->AddMenuItem(10175, "mi_cf03_homeold_php", $Language->MenuPhrase("10175", "MenuText"), "cf03_homeold.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf03_homeold.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(11, "mi_cf01_home_php", $Language->MenuPhrase("11", "MenuText"), "cf01_home.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf01_home.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10016, "mi_t08_penerimaan", $Language->MenuPhrase("10016", "MenuText"), "t08_penerimaanlist.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t08_penerimaan'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(6, "mi_t06_pengeluaran", $Language->MenuPhrase("6", "MenuText"), "t06_pengeluaranlist.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t06_pengeluaran'), FALSE, FALSE, "");

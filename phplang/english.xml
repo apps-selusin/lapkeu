@@ -618,6 +618,9 @@
   <project>
     <phrase id="bodytitle" value="Laporan Keuangan" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <menu id="10175">
+      <phrase id="menutext" value="Summary (Closed)" />
+    </menu>
     <menu id="10173">
       <phrase id="menutext" value="v 04 pengeluaranold" />
     </menu>
@@ -798,8 +801,14 @@
     <table id="cf02_tutupbuku_php">
       <phrase id="tblcaption" value="Tutup Buku" />
     </table>
+    <table id="cf03_homeold_php">
+      <phrase id="tblcaption" value="Summary (Closed)" />
+    </table>
     <table id="r02_keuangan_php">
       <phrase id="tblcaption" value="Keuangan" />
+    </table>
+    <table id="r05_keuanganold_php">
+      <phrase id="tblcaption" value="Laporan Keuangan (Closed)" />
     </table>
     <table id="t01_supplier">
       <phrase id="tblcaption" value="Supplier" />
@@ -1341,9 +1350,6 @@
       <field id="jumlah">
         <phrase id="fldcaption" value="Jumlah" />
       </field>
-    </table>
-    <table id="r05_keuanganold_php">
-      <phrase id="tblcaption" value="Laporan Keuangan (Closed)" />
     </table>
   </project>
 </ew-language>
