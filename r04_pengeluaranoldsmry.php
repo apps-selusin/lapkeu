@@ -1812,11 +1812,11 @@ class crr04_pengeluaranold_summary extends crr04_pengeluaranold {
 		// Check if validation required
 		if (!EWR_SERVER_VALIDATE)
 			return ($grFormError == "");
-		if (!EURODATE($this->tanggal->SearchValue)) {
+		if (!ewr_CheckEuroDate($this->tanggal->SearchValue)) {
 			if ($grFormError <> "") $grFormError .= "<br>";
 			$grFormError .= $this->tanggal->FldErrMsg();
 		}
-		if (!EURODATE($this->tanggal->SearchValue2)) {
+		if (!ewr_CheckEuroDate($this->tanggal->SearchValue2)) {
 			if ($grFormError <> "") $grFormError .= "<br>";
 			$grFormError .= $this->tanggal->FldErrMsg();
 		}
@@ -2287,12 +2287,12 @@ fr04_pengeluaranoldsummary.Validate = function() {
 		return true; // Ignore validation
 	var $ = jQuery, fobj = this.GetForm(), $fobj = $(fobj);
 	var elm = fobj.sv_tanggal;
-	if (elm && typeof(EURODATE) == "function" && !EURODATE(elm.value)) {
+	if (elm && !ewr_CheckEuroDate(elm.value)) {
 		if (!this.OnError(elm, "<?php echo ewr_JsEncode2($Page->tanggal->FldErrMsg()) ?>"))
 			return false;
 	}
 	var elm = fobj.sv2_tanggal;
-	if (elm && typeof(EURODATE) == "function" && !EURODATE(elm.value)) {
+	if (elm && !ewr_CheckEuroDate(elm.value)) {
 		if (!this.OnError(elm, "<?php echo ewr_JsEncode2($Page->tanggal->FldErrMsg()) ?>"))
 			return false;
 	}
@@ -2368,12 +2368,12 @@ if (!$Page->DrillDownInPanel) {
 	<span class="ewSearchOperator"><?php echo $ReportLanguage->Phrase("BETWEEN"); ?><input type="hidden" name="so_tanggal" id="so_tanggal" value="BETWEEN"></span>
 	<span class="control-group ewSearchField">
 <?php ewr_PrependClass($Page->tanggal->EditAttrs["class"], "form-control"); // PR8 ?>
-<input type="text" data-table="r04_pengeluaranold" data-field="x_tanggal" id="sv_tanggal" name="sv_tanggal" placeholder="<?php echo $Page->tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->tanggal->SearchValue) ?>"<?php echo $Page->tanggal->EditAttributes() ?>>
+<input type="text" data-table="r04_pengeluaranold" data-field="x_tanggal" id="sv_tanggal" name="sv_tanggal" placeholder="<?php echo $Page->tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->tanggal->SearchValue) ?>" data-calendar='true' data-options='{"ignoreReadonly":true,"useCurrent":false,"format":7}'<?php echo $Page->tanggal->EditAttributes() ?>>
 </span>
 	<span class="ewSearchCond btw1_tanggal"><?php echo $ReportLanguage->Phrase("AND") ?></span>
 	<span class="ewSearchField btw1_tanggal">
 <?php ewr_PrependClass($Page->tanggal->EditAttrs["class"], "form-control"); // PR8 ?>
-<input type="text" data-table="r04_pengeluaranold" data-field="x_tanggal" id="sv2_tanggal" name="sv2_tanggal" placeholder="<?php echo $Page->tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->tanggal->SearchValue2) ?>"<?php echo $Page->tanggal->EditAttributes() ?>>
+<input type="text" data-table="r04_pengeluaranold" data-field="x_tanggal" id="sv2_tanggal" name="sv2_tanggal" placeholder="<?php echo $Page->tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->tanggal->SearchValue2) ?>" data-calendar='true' data-options='{"ignoreReadonly":true,"useCurrent":false,"format":7}'<?php echo $Page->tanggal->EditAttributes() ?>>
 </span>
 </div>
 </div>

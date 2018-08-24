@@ -38,7 +38,7 @@ class crr04_pengeluaranold extends crTableBase {
 		// tanggal
 		$this->tanggal = new crField('r04_pengeluaranold', 'r04_pengeluaranold', 'x_tanggal', 'tanggal', '`tanggal`', 133, EWR_DATATYPE_DATE, 7);
 		$this->tanggal->Sortable = TRUE; // Allow sort
-		$this->tanggal->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectField");
+		$this->tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EWR_DATE_SEPARATOR"], $ReportLanguage->Phrase("IncorrectDateDMY"));
 		$this->tanggal->DateFilter = "";
 		$this->tanggal->SqlSelect = "";
 		$this->tanggal->SqlOrderBy = "";
