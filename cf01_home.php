@@ -481,8 +481,10 @@ Page_Rendering();
 	<div id="log" class="panel-collapse collapse out">
 		<div class="panel-body">
 			<div>
-				<p>sampai dengan create tabel saldo awal;<br/>
-				berikutnya :: mulai rancang proses akhir bulan
+<p>to do:<br/>
+1. tidak diperkenankan ubah Periode mundur;<br/>
+2. tampilkan menu semua Laporan untuk data yang sudah ditutup;<br/>
+3. ?;<br/>
 			</div>
 		</div>
 	</div>
