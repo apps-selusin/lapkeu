@@ -366,6 +366,7 @@ Page_Rendering();
 	</div>
 	<button class="btn btn-primary ewButton" name="btnsubmit" id="btnsubmit" type="submit">Proses</button>
 </form>
+<p>&nbsp;</p>
 
 <?php
 if (isset($_GET["periodeold_id"])) {
