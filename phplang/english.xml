@@ -621,17 +621,14 @@
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
-    <menu id="10126">
-      <phrase id="menutext" value="v 01 barang satuan" />
-    </menu>
     <menu id="10016">
       <phrase id="menutext" value="Penerimaan" />
     </menu>
+    <menu id="10126">
+      <phrase id="menutext" value="v 01 barang satuan" />
+    </menu>
     <menu id="6">
       <phrase id="menutext" value="Pengeluaran" />
-    </menu>
-    <menu id="10089">
-      <phrase id="menutext" value="Excel" />
     </menu>
     <menu id="10088">
       <phrase id="menutext" value="Laporan" />
@@ -642,11 +639,14 @@
     <menu id="10017">
       <phrase id="menutext" value="Keuangan" />
     </menu>
-    <menu id="10131">
-      <phrase id="menutext" value="Tutup Buku" />
-    </menu>
     <menu id="10120">
       <phrase id="menutext" value="Excel Draft" />
+    </menu>
+    <menu id="10132">
+      <phrase id="menutext" value="Keuangan" />
+    </menu>
+    <menu id="10131">
+      <phrase id="menutext" value="Tutup Buku" />
     </menu>
     <menu id="22">
       <phrase id="menutext" value="Setup" />
@@ -687,8 +687,8 @@
     <menu id="23">
       <phrase id="menutext" value="Log" />
     </menu>
-    <menu id="10127">
-      <phrase id="menutext" value="v 03 pengeluaran" />
+    <menu id="10089">
+      <phrase id="menutext" value="Excel" />
     </menu>
     <menu id="10118">
       <phrase id="menutext" value="List" />
@@ -710,6 +710,9 @@
     </menu>
     <menu id="10011">
       <phrase id="menutext" value="User Log" />
+    </menu>
+    <menu id="10127">
+      <phrase id="menutext" value="v 03 pengeluaran" />
     </menu>
     <menu id="10128">
       <phrase id="menutext" value="Laporan Keuangan Excel" />
@@ -755,6 +758,9 @@
     </table>
     <table id="cf02_tutupbuku_php">
       <phrase id="tblcaption" value="Tutup Buku" />
+    </table>
+    <table id="r02_keuangan_php">
+      <phrase id="tblcaption" value="Keuangan" />
     </table>
     <table id="r04_terima_keluar_php">
       <phrase id="tblcaption" value="Excel Draft" />
