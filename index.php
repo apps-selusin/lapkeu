@@ -309,10 +309,6 @@ class cdefault {
 			$this->Page_Terminate("cf02_tutupbuku.php");
 		if ($Security->AllowList(CurrentProjectID() . 'r02_keuangan.php'))
 			$this->Page_Terminate("r02_keuangan.php");
-		if ($Security->AllowList(CurrentProjectID() . 'r04_terima_keluar.php'))
-			$this->Page_Terminate("r04_terima_keluar.php");
-		if ($Security->AllowList(CurrentProjectID() . 'r04_terima_keluar_excel.php'))
-			$this->Page_Terminate("r04_terima_keluar_excel.php");
 		if ($Security->AllowList(CurrentProjectID() . 't01_supplier'))
 			$this->Page_Terminate("t01_supplierlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't02_satuan'))
