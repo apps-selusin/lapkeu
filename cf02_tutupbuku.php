@@ -362,6 +362,31 @@ Page_Rendering();
 	$db =& DbHelper(); // Create instance of the database helper class by DbHelper() (for main database) or DbHelper("<dbname>") (for linked databases) where <dbname> is database variable name
 ?>
 
+<?php
+if (isset($_GET["ok"])) {
+	if ($_GET["ok"] == 1) {
+		?>
+		<div class="panel panel-default">
+			<div class="panel-heading">Tutup Buku</div>
+			<div class="panel-body">
+				<table class='table table-striped table-bordered table-hover table-condensed'>
+					<tr>
+						<td>Proses Tutup Buku selesai !</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td><a href='.'><button>Selesai</button></a></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<?php
+	}
+}
+else {
+?>
 <div class="panel panel-default">
 	<div class="panel-heading">Tutup Buku</div>
 	<div class="panel-body">
@@ -370,11 +395,17 @@ Page_Rendering();
 				<td>Mohon periksa kembali data-data Anda !</td>
 			</tr>
 			<tr>
-				<td><a href='cf02_tutupbukusubmit.php'><button>Proses</button></a></td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><a href='cf02_tutupbukuproses.php'><button>Proses</button></a></td>
 			</tr>
 		</table>
 	</div>
 </div>
+<?php
+}
+?>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
