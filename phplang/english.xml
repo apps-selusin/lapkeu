@@ -652,7 +652,7 @@
       <phrase id="menutext" value="Closed Data" />
     </menu>
     <menu id="10025">
-      <phrase id="menutext" value="Laporan Penerimaan (Closed)" />
+      <phrase id="menutext" value="Penerimaan" />
     </menu>
     <menu id="10029">
       <phrase id="menutext" value="Pengeluaran" />
