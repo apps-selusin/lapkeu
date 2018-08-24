@@ -347,31 +347,189 @@ Page_Rendering();
 <?php
 $q = "select * from t09_periode";
 $r = Conn()->Execute($q);
+$periode_bulan = $r->fields["Bulan"];
+$periode_namabulan = $r->fields["NamaBulan"];
+$periode_tahun = $r->fields["Tahun"];
+$tanggalawal = date("d-m-Y", strtotime($r->fields["TanggalAwal"]));
+$tanggalakhir = date("d-m-Y", strtotime($r->fields["TanggalAkhir"]));
+
+$q = "select * from t10_saldo";
+$r = Conn()->Execute($q);
+$saldo = $r->fields["Jumlah"];
+
+$q = "select * from t08_penerimaan order by Tanggal";
+$rpenerimaan = Conn()->Execute($q);
+
+$q = "select * from v03_pengeluaran order by maingroup_nama, subgroup_nama, tanggal";
+$rpengeluaran = Conn()->Execute($q);
+
+$colspan = 4;
+$no = 1;
 ?>
 <div class="panel panel-default">
-	<!-- <div class="panel-heading">Laporan Keuangan</div> -->
 	<div class="panel-body">
-		<!-- <table class='table table-striped table-bordered table-hover table-condensed'> -->
 		<table class='table table-bordered table-hover table-condensed'>
 			<tr>
 				<td>Laporan Keuangan</td>
 			</tr>
 			<tr>
-				<td>Periode <?php echo $r->fields["NamaBulan"] . " " . $r->fields["Tahun"];?></td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
+				<td>Periode <?php echo $periode_namabulan . " " . $periode_tahun;?></td>
 			</tr>
 		</table>
+		
+		<p>&nbsp;</p>
+		
 		<table class='table table-bordered table-hover table-condensed'>
 			<tr>
-				<td>Laporan Keuangan</td>
+				<th>No.</th>
+				<th>Tanggal</th>
+				<th>Keterangan</th>
+				<th>Jumlah</th>
+			</tr>
+
+
+			<!-- saldo awal -->
+			<tr>
+				<td colspan="<?php echo $colspan;?>">&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Periode <?php echo $r->fields["NamaBulan"] . " " . $r->fields["Tahun"];?></td>
+				<td colspan="<?php echo $colspan;?>">Saldo Awal</td>
 			</tr>
 			<tr>
+				<td><?php echo $no++;?></td>
+				<td><?php echo $tanggalawal;?></td>
+				<td>Saldo Awal</td>
+				<td align="right"><?php echo number_format($saldo, 2);?></td>
+			</tr>
+
+
+			<!-- penerimaan -->
+			<tr>
+				<td colspan="<?php echo $colspan;?>">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="<?php echo $colspan;?>">Penerimaan</td>
+			</tr>
+			<tr>
+				<td colspan="<?php echo $colspan-1;?>">
+					<table class='table table-bordered table-hover table-condensed'>
+						<tr>
+							<td>No.</td>
+							<td>Tanggal</td>
+							<td>Keterangan</td>
+							<td>No. Kwitansi</td>
+							<td>Jumlah</td>
+						</tr>
+						<?php $penerimaan = 0;?>
+						<?php while (!$rpenerimaan->EOF) {?>
+						<tr>
+							<td><?php echo $no++;?></td>
+							<td><?php echo date("d-m-Y", strtotime($rpenerimaan->fields["Tanggal"]));?></td>
+							<td><?php echo $rpenerimaan->fields["Keterangan"];?></td>
+							<td><?php echo $rpenerimaan->fields["NoKwitansi"];?></td>
+							<td><?php echo number_format($rpenerimaan->fields["Jumlah"], 2);?></td>
+						</tr>
+						<?php	$penerimaan += $rpenerimaan->fields["Jumlah"];?>
+						<?php 	$rpenerimaan->MoveNext();?>
+						<?php }?>
+						<?php $saldo += $penerimaan;?>
+					</table>
+				</td>
 				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="<?php echo $colspan-1;?>" align="right" >Total Penerimaan</td>
+				<td align="right"><?php echo number_format($penerimaan, 2);?></td>
+			</tr>
+			<tr>
+				<td colspan="<?php echo $colspan-1;?>" align="right" >Saldo Awal + Total Penerimaan</td>
+				<td align="right"><b><?php echo number_format($saldo, 2);?></b></td>
+			</tr>
+
+
+			<!-- pengeluaran -->
+			<tr>
+				<td colspan="<?php echo $colspan;?>">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="<?php echo $colspan;?>">Pengeluaran</td>
+			</tr>
+			<tr>
+				<td colspan="<?php echo $colspan-1;?>">
+					<table class='table table-bordered table-hover table-condensed'>
+						<tr>
+							<td colspan="2">Jenis Pengeluaran</td>
+							<td>No.</td>
+							<td>Tanggal</td>
+							<td>Supplier</td>
+							<td>No. Nota</td>
+							<td>Barang</td>
+							<td>Banyaknya</td>
+							<td>Satuan</td>
+							<td>Harga</td>
+							<td>Jumlah</td>
+							<td>Sub Total</td>
+						</tr>
+						<?php $pengeluaran = 0;?>
+						<?php while (!$rpengeluaran->EOF) {?>
+						<?php 	$maingroup_nama = $rpengeluaran->fields["maingroup_nama"];?>
+						<tr>
+							<td><?php echo $maingroup_nama;?></td>
+							<td colspan="11">&nbsp;</td>
+						</tr>
+						<?php		$maingroup = 0;?>
+						<?php		while ($maingroup_nama == $rpengeluaran->fields["maingroup_nama"]) {?>
+						<?php			$subgroup_nama = $rpengeluaran->fields["subgroup_nama"];?>
+						<tr>
+							<td>&nbsp;</td>
+							<td><?php echo $subgroup_nama;?></td>
+							<td colspan="10">&nbsp;</td>
+						</tr>
+						<?php			$subgroup = 0;?>
+						<?php			while ($subgroup_nama == $rpengeluaran->fields["subgroup_nama"]) {?>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td><?php echo $no++;?></td>
+							<td><?php echo date("d-m-Y", strtotime($rpengeluaran->fields["tanggal"]));?></td>
+							<td><?php echo $rpengeluaran->fields["supplier_nama"];?></td>
+							<td><?php echo $rpengeluaran->fields["nonota"];?></td>
+							<td><?php echo $rpengeluaran->fields["barang_nama"];?></td>
+							<td><?php echo $rpengeluaran->fields["banyaknya"];?></td>
+							<td><?php echo $rpengeluaran->fields["barang_satuan"];?></td>
+							<td align="right"><?php echo number_format($rpengeluaran->fields["harga"], 2);?></td>
+							<td align="right"><?php echo number_format($rpengeluaran->fields["Jumlah"], 2);?></td>
+							<td>&nbsp;</td>
+						</tr>
+						<?php				$subgroup += $rpengeluaran->fields["Jumlah"];?>
+						<?php 				$rpengeluaran->MoveNext();?>
+						<?php			}?>
+						<tr>
+							<td>&nbsp;</td>
+							<td colspan="9" align="right">Sub Total <?php echo $subgroup_nama;?></td>
+							<td align="right"><?php echo number_format($subgroup, 2);?></td>
+							<td>&nbsp;</td>
+						</tr>
+						<?php			$maingroup += $subgroup;?>
+						<?php		}?>
+						<tr>
+							<td colspan="11" align="right">Sub Total <?php echo $maingroup_nama;?></td>
+							<td align="right"><?php echo number_format($maingroup, 2);?></td>
+						</tr>
+						<?php		$pengeluaran += $maingroup;?>
+						<?php }?>
+						<?php $saldo -= $pengeluaran;?>
+					</table>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="<?php echo $colspan-1;?>" align="right" >Total Pengeluaran</td>
+				<td align="right"><?php echo number_format($pengeluaran, 2);?></td>
+			</tr>
+			<tr>
+				<td colspan="<?php echo $colspan-1;?>" align="right" >(Saldo Awal + Total Penerimaan) - Total Pengeluaran</td>
+				<td align="right"><b><?php echo number_format($saldo, 2);?></b></td>
 			</tr>
 		</table>
 	</div>
