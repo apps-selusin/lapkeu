@@ -528,7 +528,7 @@ $no = 1;
 				<td align="right"><?php echo number_format($pengeluaran, 2);?></td>
 			</tr>
 			<tr>
-				<td colspan="<?php echo $colspan-1;?>" align="right" >(Saldo Awal + Total Penerimaan) - Total Pengeluaran</td>
+				<td colspan="<?php echo $colspan-1;?>" align="right">Saldo Akhir = (Saldo Awal + Total Penerimaan) - Total Pengeluaran</td>
 				<td align="right"><b><?php echo number_format($saldo, 2);?></b></td>
 			</tr>
 		</table>
