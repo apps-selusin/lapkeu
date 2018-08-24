@@ -2,7 +2,6 @@
 
 // Menu
 $RootMenu = new cMenu("RootMenu", TRUE);
-$RootMenu->AddMenuItem(10175, "mi_cf03_homeold_php", $Language->MenuPhrase("10175", "MenuText"), "cf03_homeold.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf03_homeold.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(11, "mi_cf01_home_php", $Language->MenuPhrase("11", "MenuText"), "cf01_home.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf01_home.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10016, "mi_t08_penerimaan", $Language->MenuPhrase("10016", "MenuText"), "t08_penerimaanlist.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t08_penerimaan'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(6, "mi_t06_pengeluaran", $Language->MenuPhrase("6", "MenuText"), "t06_pengeluaranlist.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t06_pengeluaran'), FALSE, FALSE, "");
@@ -12,6 +11,7 @@ $RootMenu->AddMenuItem(10019, "mri_r035fpengeluaran", $Language->MenuPhrase("100
 $RootMenu->AddMenuItem(10132, "mi_r02_keuangan_php", $Language->MenuPhrase("10132", "MenuText"), "r02_keuangan.php", 10088, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}r02_keuangan.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10131, "mi_cf02_tutupbuku_php", $Language->MenuPhrase("10131", "MenuText"), "cf02_tutupbuku.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf02_tutupbuku.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10171, "mci_Laporan_28Closed29", $Language->MenuPhrase("10171", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "");
+$RootMenu->AddMenuItem(10175, "mi_cf03_homeold_php", $Language->MenuPhrase("10175", "MenuText"), "cf03_homeold.php", 10171, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf03_homeold.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10027, "mri_t145fperiodeold", $Language->MenuPhrase("10027", "MenuText"), "t14_periodeoldrpt.php", 10171, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}t14_periodeold'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(10024, "mri_t115fsaldoold", $Language->MenuPhrase("10024", "MenuText"), "t11_saldooldrpt.php", 10171, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}t11_saldoold'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(10025, "mri_t125fpenerimaanold", $Language->MenuPhrase("10025", "MenuText"), "t12_penerimaanoldrpt.php", 10171, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}t12_penerimaanold'), FALSE, FALSE, "");
