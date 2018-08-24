@@ -1,12 +1,13 @@
 <?php
-if (session_id() == "") session_start(); // Initialize Session data
-ob_start();
+if (session_id() == "") session_start(); // Init session data
+ob_start(); // Turn on output buffering
 ?>
-<?php include_once "rcfg11.php" ?>
-<?php $EWR_ROOT_RELATIVE_PATH = ""; ?>
-<?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "phprptinc/ewmysql.php") ?>
-<?php include_once "rphpfn11.php" ?>
-<?php include_once "rusrfn11.php" ?>
+<?php include_once "ewcfg14.php" ?>
+<?php $EW_ROOT_RELATIVE_PATH = ""; ?>
+<?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql14.php") ?>
+<?php include_once "phpfn14.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
+<?php include_once "userfn14.php" ?>
 <?php
 
 //
@@ -15,13 +16,16 @@ ob_start();
 
 $r04_terima_keluar_php = NULL; // Initialize page object first
 
-class crr04_terima_keluar_php {
+class cr04_terima_keluar_php {
 
 	// Page ID
 	var $PageID = 'custom';
 
 	// Project ID
-	var $ProjectID = "{3CDC6268-D928-4495-B72A-CA5D35EAE344}";
+	var $ProjectID = '{239A2A32-109A-412F-A3CB-FF6290C167FC}';
+
+	// Table name
+	var $TableName = 'r04_terima_keluar.php';
 
 	// Page object name
 	var $PageObjName = 'r04_terima_keluar_php';
@@ -32,7 +36,7 @@ class crr04_terima_keluar_php {
 
 	// Page heading
 	function PageHeading() {
-		global $ReportLanguage;
+		global $Language;
 		if ($this->Heading <> "")
 			return $this->Heading;
 		if (method_exists($this, "TableCaption"))
@@ -42,7 +46,7 @@ class crr04_terima_keluar_php {
 
 	// Page subheading
 	function PageSubheading() {
-		global $ReportLanguage;
+		global $Language;
 		if ($this->Subheading <> "")
 			return $this->Subheading;
 		return "";
@@ -50,124 +54,148 @@ class crr04_terima_keluar_php {
 
 	// Page name
 	function PageName() {
-		return ewr_CurrentPage();
+		return ew_CurrentPage();
 	}
 
 	// Page URL
 	function PageUrl() {
-		$PageUrl = ewr_CurrentPage() . "?";
+		$PageUrl = ew_CurrentPage() . "?";
 		return $PageUrl;
 	}
 
 	// Message
 	function getMessage() {
-		return @$_SESSION[EWR_SESSION_MESSAGE];
+		return @$_SESSION[EW_SESSION_MESSAGE];
 	}
 
 	function setMessage($v) {
-		ewr_AddMessage($_SESSION[EWR_SESSION_MESSAGE], $v);
+		ew_AddMessage($_SESSION[EW_SESSION_MESSAGE], $v);
 	}
 
 	function getFailureMessage() {
-		return @$_SESSION[EWR_SESSION_FAILURE_MESSAGE];
+		return @$_SESSION[EW_SESSION_FAILURE_MESSAGE];
 	}
 
 	function setFailureMessage($v) {
-		ewr_AddMessage($_SESSION[EWR_SESSION_FAILURE_MESSAGE], $v);
+		ew_AddMessage($_SESSION[EW_SESSION_FAILURE_MESSAGE], $v);
 	}
 
 	function getSuccessMessage() {
-		return @$_SESSION[EWR_SESSION_SUCCESS_MESSAGE];
+		return @$_SESSION[EW_SESSION_SUCCESS_MESSAGE];
 	}
 
 	function setSuccessMessage($v) {
-		ewr_AddMessage($_SESSION[EWR_SESSION_SUCCESS_MESSAGE], $v);
+		ew_AddMessage($_SESSION[EW_SESSION_SUCCESS_MESSAGE], $v);
 	}
 
 	function getWarningMessage() {
-		return @$_SESSION[EWR_SESSION_WARNING_MESSAGE];
+		return @$_SESSION[EW_SESSION_WARNING_MESSAGE];
 	}
 
 	function setWarningMessage($v) {
-		ewr_AddMessage($_SESSION[EWR_SESSION_WARNING_MESSAGE], $v);
+		ew_AddMessage($_SESSION[EW_SESSION_WARNING_MESSAGE], $v);
 	}
 
-		// Show message
+	// Methods to clear message
+	function ClearMessage() {
+		$_SESSION[EW_SESSION_MESSAGE] = "";
+	}
+
+	function ClearFailureMessage() {
+		$_SESSION[EW_SESSION_FAILURE_MESSAGE] = "";
+	}
+
+	function ClearSuccessMessage() {
+		$_SESSION[EW_SESSION_SUCCESS_MESSAGE] = "";
+	}
+
+	function ClearWarningMessage() {
+		$_SESSION[EW_SESSION_WARNING_MESSAGE] = "";
+	}
+
+	function ClearMessages() {
+		$_SESSION[EW_SESSION_MESSAGE] = "";
+		$_SESSION[EW_SESSION_FAILURE_MESSAGE] = "";
+		$_SESSION[EW_SESSION_SUCCESS_MESSAGE] = "";
+		$_SESSION[EW_SESSION_WARNING_MESSAGE] = "";
+	}
+
+	// Show message
 	function ShowMessage() {
 		$hidden = FALSE;
 		$html = "";
 
 		// Message
 		$sMessage = $this->getMessage();
-		$this->Message_Showing($sMessage, "");
+		if (method_exists($this, "Message_Showing"))
+			$this->Message_Showing($sMessage, "");
 		if ($sMessage <> "") { // Message in Session, display
 			if (!$hidden)
 				$sMessage = "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>" . $sMessage;
 			$html .= "<div class=\"alert alert-info ewInfo\">" . $sMessage . "</div>";
-			$_SESSION[EWR_SESSION_MESSAGE] = ""; // Clear message in Session
+			$_SESSION[EW_SESSION_MESSAGE] = ""; // Clear message in Session
 		}
 
 		// Warning message
 		$sWarningMessage = $this->getWarningMessage();
-		$this->Message_Showing($sWarningMessage, "warning");
+		if (method_exists($this, "Message_Showing"))
+			$this->Message_Showing($sWarningMessage, "warning");
 		if ($sWarningMessage <> "") { // Message in Session, display
 			if (!$hidden)
 				$sWarningMessage = "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>" . $sWarningMessage;
 			$html .= "<div class=\"alert alert-warning ewWarning\">" . $sWarningMessage . "</div>";
-			$_SESSION[EWR_SESSION_WARNING_MESSAGE] = ""; // Clear message in Session
+			$_SESSION[EW_SESSION_WARNING_MESSAGE] = ""; // Clear message in Session
 		}
 
 		// Success message
 		$sSuccessMessage = $this->getSuccessMessage();
-		$this->Message_Showing($sSuccessMessage, "success");
+		if (method_exists($this, "Message_Showing"))
+			$this->Message_Showing($sSuccessMessage, "success");
 		if ($sSuccessMessage <> "") { // Message in Session, display
 			if (!$hidden)
 				$sSuccessMessage = "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>" . $sSuccessMessage;
 			$html .= "<div class=\"alert alert-success ewSuccess\">" . $sSuccessMessage . "</div>";
-			$_SESSION[EWR_SESSION_SUCCESS_MESSAGE] = ""; // Clear message in Session
+			$_SESSION[EW_SESSION_SUCCESS_MESSAGE] = ""; // Clear message in Session
 		}
 
 		// Failure message
 		$sErrorMessage = $this->getFailureMessage();
-		$this->Message_Showing($sErrorMessage, "failure");
+		if (method_exists($this, "Message_Showing"))
+			$this->Message_Showing($sErrorMessage, "failure");
 		if ($sErrorMessage <> "") { // Message in Session, display
 			if (!$hidden)
 				$sErrorMessage = "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>" . $sErrorMessage;
 			$html .= "<div class=\"alert alert-danger ewError\">" . $sErrorMessage . "</div>";
-			$_SESSION[EWR_SESSION_FAILURE_MESSAGE] = ""; // Clear message in Session
+			$_SESSION[EW_SESSION_FAILURE_MESSAGE] = ""; // Clear message in Session
 		}
 		echo "<div class=\"ewMessageDialog\"" . (($hidden) ? " style=\"display: none;\"" : "") . ">" . $html . "</div>";
 	}
-
-	// Validate page request
-	function IsPageRequest() {
-		return TRUE;
-	}
 	var $Token = "";
-	var $CheckToken = EWR_CHECK_TOKEN;
-	var $CheckTokenFn = "ewr_CheckToken";
-	var $CreateTokenFn = "ewr_CreateToken";
+	var $TokenTimeout = 0;
+	var $CheckToken = EW_CHECK_TOKEN;
+	var $CheckTokenFn = "ew_CheckToken";
+	var $CreateTokenFn = "ew_CreateToken";
 
 	// Valid Post
 	function ValidPost() {
-		if (!$this->CheckToken || !ewr_IsHttpPost())
+		if (!$this->CheckToken || !ew_IsPost())
 			return TRUE;
-		if (!isset($_POST[EWR_TOKEN_NAME]))
+		if (!isset($_POST[EW_TOKEN_NAME]))
 			return FALSE;
 		$fn = $this->CheckTokenFn;
 		if (is_callable($fn))
-			return $fn($_POST[EWR_TOKEN_NAME]);
+			return $fn($_POST[EW_TOKEN_NAME], $this->TokenTimeout);
 		return FALSE;
 	}
 
 	// Create Token
 	function CreateToken() {
-		global $grToken;
+		global $gsToken;
 		if ($this->CheckToken) {
 			$fn = $this->CreateTokenFn;
 			if ($this->Token == "" && is_callable($fn)) // Create token
 				$this->Token = $fn();
-			$grToken = $this->Token; // Save to global variable
+			$gsToken = $this->Token; // Save to global variable
 		}
 	}
 
@@ -175,73 +203,80 @@ class crr04_terima_keluar_php {
 	// Page class constructor
 	//
 	function __construct() {
-		global $conn, $ReportLanguage;
+		global $conn, $Language;
 		global $UserTable, $UserTableConn;
+		$GLOBALS["Page"] = &$this;
+		$this->TokenTimeout = ew_SessionTimeoutTime();
 
 		// Language object
-		$ReportLanguage = new crLanguage();
+		if (!isset($Language)) $Language = new cLanguage();
 
 		// Page ID
-		if (!defined("EWR_PAGE_ID"))
-			define("EWR_PAGE_ID", 'custom', TRUE);
+		if (!defined("EW_PAGE_ID"))
+			define("EW_PAGE_ID", 'custom', TRUE);
 
 		// Table name (for backward compatibility)
-		if (!defined("EWR_TABLE_NAME"))
-			define("EWR_TABLE_NAME", 'r04_terima_keluar.php', TRUE);
+		if (!defined("EW_TABLE_NAME"))
+			define("EW_TABLE_NAME", 'r04_terima_keluar.php', TRUE);
 
 		// Start timer
-		if (!isset($GLOBALS["grTimer"]))
-			$GLOBALS["grTimer"] = new crTimer();
+		if (!isset($GLOBALS["gTimer"]))
+			$GLOBALS["gTimer"] = new cTimer();
 
 		// Debug message
-		ewr_LoadDebugMsg();
+		ew_LoadDebugMsg();
 
 		// Open connection
-		if (!isset($conn)) $conn = ewr_Connect();
+		if (!isset($conn))
+			$conn = ew_Connect();
 
 		// User table object (t96_employees)
 		if (!isset($UserTable)) {
-			$UserTable = new crt96_employees();
-			$UserTableConn = ReportConn($UserTable->DBID);
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
 		}
 	}
 
 	//
-	// Page_Init
+	//  Page_Init
 	//
 	function Page_Init() {
-		global $gsExport, $gsExportFile, $gsEmailContentType, $ReportLanguage, $Security, $UserProfile;
-		global $gsCustomExport;
+		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
 
 		// User profile
-		$UserProfile = new crUserProfile();
+		$UserProfile = new cUserProfile();
 
 		// Security
-		$Security = new crAdvancedSecurity();
-		if (!$Security->IsLoggedIn()) $Security->AutoLogin(); // Auto login
-		$Security->TablePermission_Loading();
-		$Security->LoadCurrentUserLevel($this->ProjectID . 'r04_terima_keluar.php');
-		$Security->TablePermission_Loaded();
-		if (!$Security->CanList()) {
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanReport()) {
 			$Security->SaveLastUrl();
-			$this->setFailureMessage(ewr_DeniedMsg()); // Set no permission
-			$this->Page_Terminate(ewr_GetUrl("index.php"));
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			$this->Page_Terminate(ew_GetUrl("index.php"));
 		}
-		$Security->UserID_Loading();
-		if ($Security->IsLoggedIn()) $Security->LoadUserID();
-		$Security->UserID_Loaded();
-		if ($Security->IsLoggedIn() && strval($Security->CurrentUserID()) == "") {
-			$Security->SaveLastUrl();
-			$this->setFailureMessage(ewr_DeniedMsg()); // Set no permission
-			$this->Page_Terminate(ewr_GetUrl("login.php"));
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
 		}
+
+		// NOTE: Security object may be needed in other part of the script, skip set to Nothing
+		// 
+		// Security = null;
+		// 
+
+		if (@$_GET["export"] <> "")
+			$gsExport = $_GET["export"]; // Get export parameter, used in header
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
 
 		// Check token
 		if (!$this->ValidPost()) {
-			echo $ReportLanguage->Phrase("InvalidPostRequest");
+			echo $Language->Phrase("InvalidPostRequest");
 			$this->Page_Terminate();
 			exit();
 		}
@@ -254,20 +289,21 @@ class crr04_terima_keluar_php {
 	// Page_Terminate
 	//
 	function Page_Terminate($url = "") {
-		global $ReportLanguage, $EWR_EXPORT, $gsExportFile;
-		global $grDashboardReport;
+		global $gsExportFile, $gTmpImages;
 
 		// Global Page Unloaded event (in userfn*.php)
 		Page_Unloaded();
 
+		// Export
 		// Close connection
-		ewr_CloseConn();
+
+		ew_CloseConn();
 
 		// Go to URL if specified
 		if ($url <> "") {
-			if (!EWR_DEBUG_ENABLED && ob_get_length())
+			if (!EW_DEBUG_ENABLED && ob_get_length())
 				ob_end_clean();
-			ewr_SaveDebugMsg();
+			ew_SaveDebugMsg();
 			header("Location: " . $url);
 		}
 		exit();
@@ -284,62 +320,66 @@ class crr04_terima_keluar_php {
 
 	// Set up Breadcrumb
 	function SetupBreadcrumb() {
-		global $ReportBreadcrumb, $ReportLanguage;
-		$ReportBreadcrumb = new crBreadcrumb();
-		$url = substr(ewr_CurrentUrl(), strrpos(ewr_CurrentUrl(), "/")+1);
-		$ReportBreadcrumb->Add("custom", "r04_terima_keluar_php", $url, "", "r04_terima_keluar_php", TRUE);
-		$this->Heading = $ReportLanguage->TablePhrase("r04_terima_keluar_php", "TblCaption"); 
-	}
-
-	// Message Showing event
-	// $type = ''|'success'|'failure'|'warning'
-	function Message_Showing(&$msg, $type) {
-		if ($type == 'success') {
-
-			//$msg = "your success message";
-		} elseif ($type == 'failure') {
-
-			//$msg = "your failure message";
-		} elseif ($type == 'warning') {
-
-			//$msg = "your warning message";
-		} else {
-
-			//$msg = "your message";
-		}
+		global $Breadcrumb, $Language;
+		$Breadcrumb = new cBreadcrumb();
+		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
+		$Breadcrumb->Add("custom", "r04_terima_keluar_php", $url, "", "r04_terima_keluar_php", TRUE);
+		$this->Heading = $Language->TablePhrase("r04_terima_keluar_php", "TblCaption"); 
 	}
 }
 ?>
+<?php ew_Header(FALSE) ?>
 <?php
-ewr_Header(FALSE);
 
 // Create page object
-if (!isset($r04_terima_keluar_php)) $r04_terima_keluar_php = new crr04_terima_keluar_php();
-if (isset($Page)) $OldPage = $Page;
-$Page = &$r04_terima_keluar_php;
+if (!isset($r04_terima_keluar_php)) $r04_terima_keluar_php = new cr04_terima_keluar_php();
 
 // Page init
-$Page->Page_Init();
+$r04_terima_keluar_php->Page_Init();
 
 // Page main
-$Page->Page_Main();
+$r04_terima_keluar_php->Page_Main();
 
-// Global Page Rendering event (in ewrusrfn*.php)
+// Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 ?>
-<?php include_once "phprptinc/header.php" ?>
-<!-- div class="ewToolbar">
-<div class="clearfix"></div>
-</div -->
-<div class="panel panel-default">
-	<div class="panel-heading">Latest News</div>
-	<div class="panel-body">
-		<p>Laporan Keuangan. @2018 Selaras Solusindo. All rights reserved.</p>
-	</div>
-</div>
-<?php if (EWR_DEBUG_ENABLED) echo ewr_DebugMsg(); ?>
-<?php include_once "phprptinc/footer.php" ?>
+<?php include_once "header.php" ?>
 <?php
-$Page->Page_Terminate();
-if (isset($OldPage)) $Page = $OldPage;
+if (isset($_GET["ok"]) and $_GET["ok"] == "1") {
+	echo "Selesai";
+}
+else {
+?>
+<form id="myform" name="myform" class="form-horizontal" method="post" action="r04_terima_keluar_submit.php">
+	<div id="r_start" class="form-group">
+		<label for="start" class="col-sm-2 control-label ewLabel">Date Start</label>
+		<div class="col-sm-10">
+		  <span id="el_calendar_start">
+		  <input type="text" name="start" data-field="start" data-format="5" size="20" class="form-control" id="start">
+		  <script type="text/javascript">
+			ew_CreateDateTimePicker("myform", "start", {"ignoreReadonly":true,"useCurrent":false,"format":7});
+		  </script>
+		  </span>
+		</div>
+	</div>
+	<div id="r_end" class="form-group">
+		<label for="end" class="col-sm-2 control-label ewLabel">Date End</label>
+		<div class="col-sm-10">
+		  <span id="el_calendar_end">
+		  <input type="text" name="end" data-field="end" data-format="5" size="20" class="form-control" id="end">
+		  <script type="text/javascript">
+			ew_CreateDateTimePicker("myform", "end", {"ignoreReadonly":true,"useCurrent":false,"format":7});
+		  </script>
+		  </span>
+		</div>
+	</div>
+	<button class="btn btn-primary ewButton" name="btnsubmit" id="btnsubmit" type="submit">Submit</button>
+</form>
+<?php
+}
+?>
+<?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
+<?php include_once "footer.php" ?>
+<?php
+$r04_terima_keluar_php->Page_Terminate();
 ?>
