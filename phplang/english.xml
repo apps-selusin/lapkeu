@@ -618,20 +618,17 @@
   <project>
     <phrase id="bodytitle" value="Laporan Keuangan" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
-    <menu id="10133">
-      <phrase id="menutext" value="t 11 saldoold" />
-    </menu>
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
     <menu id="10016">
       <phrase id="menutext" value="Penerimaan" />
     </menu>
-    <menu id="10134">
-      <phrase id="menutext" value="t 12 penerimaanold" />
-    </menu>
     <menu id="6">
       <phrase id="menutext" value="Pengeluaran" />
+    </menu>
+    <menu id="10134">
+      <phrase id="menutext" value="t 12 penerimaanold" />
     </menu>
     <menu id="10088">
       <phrase id="menutext" value="Laporan" />
@@ -645,11 +642,17 @@
     <menu id="10132">
       <phrase id="menutext" value="Keuangan" />
     </menu>
-    <menu id="10135">
-      <phrase id="menutext" value="t 13 pengeluaranold" />
-    </menu>
     <menu id="10131">
       <phrase id="menutext" value="Tutup Buku" />
+    </menu>
+    <menu id="10171">
+      <phrase id="menutext" value="Closed Data" />
+    </menu>
+    <menu id="10029">
+      <phrase id="menutext" value="Pengeluaran" />
+    </menu>
+    <menu id="10135">
+      <phrase id="menutext" value="t 13 pengeluaranold" />
     </menu>
     <menu id="22">
       <phrase id="menutext" value="Setup" />
@@ -672,11 +675,11 @@
     <menu id="3">
       <phrase id="menutext" value="Barang" />
     </menu>
-    <menu id="4">
-      <phrase id="menutext" value="Jenis Pengeluaran" />
-    </menu>
     <menu id="10122">
       <phrase id="menutext" value="Sub Jenis Pengeluaran" />
+    </menu>
+    <menu id="4">
+      <phrase id="menutext" value="Jenis Pengeluaran" />
     </menu>
     <menu id="32">
       <phrase id="menutext" value="User" />
@@ -689,9 +692,6 @@
     </menu>
     <menu id="23">
       <phrase id="menutext" value="Log" />
-    </menu>
-    <menu id="10136">
-      <phrase id="menutext" value="t 14 periodeold" />
     </menu>
     <menu id="10118">
       <phrase id="menutext" value="List" />
@@ -714,6 +714,9 @@
     <menu id="10011">
       <phrase id="menutext" value="User Log" />
     </menu>
+    <menu id="10136">
+      <phrase id="menutext" value="t 14 periodeold" />
+    </menu>
     <menu id="10126">
       <phrase id="menutext" value="v 01 barang satuan" />
     </menu>
@@ -729,6 +732,33 @@
     <menu id="10125">
       <phrase id="menutext" value="v 02 terima keluar" />
     </menu>
+    <menu id="10124">
+      <phrase id="menutext" value="v 01 barang satuan" />
+    </menu>
+    <menu id="10022">
+      <phrase id="menutext" value="t 09 periode" />
+    </menu>
+    <menu id="10023">
+      <phrase id="menutext" value="t 10 saldo" />
+    </menu>
+    <menu id="10024">
+      <phrase id="menutext" value="t 11 saldoold" />
+    </menu>
+    <menu id="10025">
+      <phrase id="menutext" value="t 12 penerimaanold" />
+    </menu>
+    <menu id="10026">
+      <phrase id="menutext" value="t 13 pengeluaranold" />
+    </menu>
+    <menu id="10027">
+      <phrase id="menutext" value="t 14 periodeold" />
+    </menu>
+    <menu id="10028">
+      <phrase id="menutext" value="v 04 pengeluaranold" />
+    </menu>
+    <menu id="10133">
+      <phrase id="menutext" value="t 11 saldoold" />
+    </menu>
     <menu id="10020">
       <phrase id="menutext" value="v 03 pengeluaran" />
     </menu>
@@ -740,9 +770,6 @@
     </menu>
     <menu id="10015">
       <phrase id="menutext" value="v 02 terima keluar" />
-    </menu>
-    <menu id="10124">
-      <phrase id="menutext" value="v 01 barang satuan" />
     </menu>
     <menu id="10004">
       <phrase id="menutext" value="Jenis Pengeluaran" />
