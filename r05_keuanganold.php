@@ -368,12 +368,13 @@ Page_Rendering();
 </form>
 
 <?php
-if (isset($_GET["submit"])) {
-	if ($_GET["submit"] == 1) {
+if (isset($_GET["periodeold_id"])) {
+	if ($_GET["periodeold_id"]) {
+		$periodeold_id = $_GET["periodeold_id"];
 ?>
 
 <?php
-$q = "select * from t09_periode";
+$q = "select * from t14_periodeold where id = ".$periodeold_id."";
 $r = Conn()->Execute($q);
 $periode_bulan = $r->fields["Bulan"];
 $periode_namabulan = $r->fields["NamaBulan"];
