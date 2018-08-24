@@ -382,15 +382,17 @@ $periode_namabulan = $r->fields["NamaBulan"];
 $periode_tahun = $r->fields["Tahun"];
 $tanggalawal = date("d-m-Y", strtotime($r->fields["TanggalAwal"]));
 $tanggalakhir = date("d-m-Y", strtotime($r->fields["TanggalAkhir"]));
+$dtanggalawal = $r->fields["TanggalAwal"];
+$dtanggalakhir = $r->fields["TanggalAkhir"];
 
 $q = "select * from t11_saldoold where Bulan = ".$periode_bulan." and Tahun = ".$periode_tahun."";
 $r = Conn()->Execute($q);
 $saldo = $r->fields["Jumlah"];
 
-$q = "select * from t08_penerimaan order by Tanggal";
+$q = "select * from t12_penerimaanold where Tanggal between '".$dtanggalawal."' and '".$dtanggalakhir."' order by Tanggal";
 $rpenerimaan = Conn()->Execute($q);
 
-$q = "select * from v03_pengeluaran order by maingroup_nama, subgroup_nama, tanggal";
+$q = "select * from v04_pengeluaranold where Tanggal between '".$dtanggalawal."' and '".$dtanggalakhir."' order by maingroup_nama, subgroup_nama, tanggal";
 $rpengeluaran = Conn()->Execute($q);
 
 $colspan = 4;
