@@ -1069,6 +1069,10 @@ class ct09_periode extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		if (CheckPeriode($rsnew["Tahun"].substr("00".$rsnew["Bulan"], -2)."01") == FALSE) {
+			$this->setFailureMessage("Periode yang diinput salah, mohon periksa ulang !");
+			return FALSE;
+		}
 		return TRUE;
 	}
 

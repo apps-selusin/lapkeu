@@ -35,4 +35,15 @@ function CheckDateBetween($sDateInput) {
 		return FALSE;
 	}
 }
+
+function CheckPeriode($sPeriodeInput) {
+	$q = "select Bulan, Tahun from t09_periode";
+	$r = Conn()->Execute($q); //echo $sPeriodeInput."-".($r->fields["Tahun"].substr("00".$r->fields["Bulan"], -2)."01"); exit();
+	if ($sPeriodeInput < ($r->fields["Tahun"].substr("00".$r->fields["Bulan"], -2)."01")) {
+		return FALSE;
+	}
+	else {
+		return TRUE;
+	}
+}
 ?>
