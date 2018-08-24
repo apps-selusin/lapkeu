@@ -575,7 +575,6 @@ class crt12_penerimaanold_rpt extends crt12_penerimaanold {
 		global $grDashboardReport;
 
 		// Set field visibility for detail fields
-		$this->id->SetVisibility();
 		$this->Tanggal->SetVisibility();
 		$this->NoKwitansi->SetVisibility();
 		$this->Keterangan->SetVisibility();
@@ -585,7 +584,7 @@ class crt12_penerimaanold_rpt extends crt12_penerimaanold {
 		// 1st dimension = no of groups (level 0 used for grand total)
 		// 2nd dimension = no of fields
 
-		$nDtls = 6;
+		$nDtls = 5;
 		$nGrps = 1;
 		$this->Val = &ewr_InitArray($nDtls, 0);
 		$this->Cnt = &ewr_Init2DArray($nGrps, $nDtls, 0);
@@ -598,7 +597,7 @@ class crt12_penerimaanold_rpt extends crt12_penerimaanold {
 		$this->GrandMx = &ewr_InitArray($nDtls, NULL);
 
 		// Set up array if accumulation required: array(Accum, SkipNullOrZero)
-		$this->Col = array(array(FALSE, FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE));
+		$this->Col = array(array(FALSE, FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE));
 
 		// Set up groups per page dynamically
 		$this->SetUpDisplayGrps();
@@ -821,11 +820,10 @@ class crt12_penerimaanold_rpt extends crt12_penerimaanold {
 			$this->NoKwitansi->setDbValue($rs->fields('NoKwitansi'));
 			$this->Keterangan->setDbValue($rs->fields('Keterangan'));
 			$this->Jumlah->setDbValue($rs->fields('Jumlah'));
-			$this->Val[1] = $this->id->CurrentValue;
-			$this->Val[2] = $this->Tanggal->CurrentValue;
-			$this->Val[3] = $this->NoKwitansi->CurrentValue;
-			$this->Val[4] = $this->Keterangan->CurrentValue;
-			$this->Val[5] = $this->Jumlah->CurrentValue;
+			$this->Val[1] = $this->Tanggal->CurrentValue;
+			$this->Val[2] = $this->NoKwitansi->CurrentValue;
+			$this->Val[3] = $this->Keterangan->CurrentValue;
+			$this->Val[4] = $this->Jumlah->CurrentValue;
 		} else {
 			$this->id->setDbValue("");
 			$this->Tanggal->setDbValue("");
@@ -1026,9 +1024,6 @@ class crt12_penerimaanold_rpt extends crt12_penerimaanold {
 		if ($this->RowType == EWR_ROWTYPE_TOTAL && !($this->RowTotalType == EWR_ROWTOTAL_GROUP && $this->RowTotalSubType == EWR_ROWTOTAL_HEADER)) { // Summary row
 			ewr_PrependClass($this->RowAttrs["class"], ($this->RowTotalType == EWR_ROWTOTAL_PAGE || $this->RowTotalType == EWR_ROWTOTAL_GRAND) ? "ewRptGrpAggregate" : ""); // Set up row class
 
-			// id
-			$this->id->HrefValue = "";
-
 			// Tanggal
 			$this->Tanggal->HrefValue = "";
 
@@ -1045,10 +1040,6 @@ class crt12_penerimaanold_rpt extends crt12_penerimaanold {
 			} else {
 			}
 
-			// id
-			$this->id->ViewValue = $this->id->CurrentValue;
-			$this->id->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
-
 			// Tanggal
 			$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
 			$this->Tanggal->ViewValue = ewr_FormatDateTime($this->Tanggal->ViewValue, 7);
@@ -1064,11 +1055,9 @@ class crt12_penerimaanold_rpt extends crt12_penerimaanold {
 
 			// Jumlah
 			$this->Jumlah->ViewValue = $this->Jumlah->CurrentValue;
-			$this->Jumlah->ViewValue = ewr_FormatNumber($this->Jumlah->ViewValue, $this->Jumlah->DefaultDecimalPrecision, -1, 0, 0);
+			$this->Jumlah->ViewValue = ewr_FormatNumber($this->Jumlah->ViewValue, 2, -2, -2, -2);
 			$this->Jumlah->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
-
-			// id
-			$this->id->HrefValue = "";
+			$this->Jumlah->CellAttrs["style"] = "text-align:right;";
 
 			// Tanggal
 			$this->Tanggal->HrefValue = "";
@@ -1086,15 +1075,6 @@ class crt12_penerimaanold_rpt extends crt12_penerimaanold {
 		// Call Cell_Rendered event
 		if ($this->RowType == EWR_ROWTYPE_TOTAL) { // Summary row
 		} else {
-
-			// id
-			$CurrentValue = $this->id->CurrentValue;
-			$ViewValue = &$this->id->ViewValue;
-			$ViewAttrs = &$this->id->ViewAttrs;
-			$CellAttrs = &$this->id->CellAttrs;
-			$HrefValue = &$this->id->HrefValue;
-			$LinkAttrs = &$this->id->LinkAttrs;
-			$this->Cell_Rendered($this->id, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
 
 			// Tanggal
 			$CurrentValue = $this->Tanggal->CurrentValue;
@@ -1143,7 +1123,6 @@ class crt12_penerimaanold_rpt extends crt12_penerimaanold {
 		$this->GrpColumnCount = 0;
 		$this->SubGrpColumnCount = 0;
 		$this->DtlColumnCount = 0;
-		if ($this->id->Visible) $this->DtlColumnCount += 1;
 		if ($this->Tanggal->Visible) $this->DtlColumnCount += 1;
 		if ($this->NoKwitansi->Visible) $this->DtlColumnCount += 1;
 		if ($this->Keterangan->Visible) $this->DtlColumnCount += 1;
@@ -1489,11 +1468,11 @@ class crt12_penerimaanold_rpt extends crt12_penerimaanold {
 		// Check if validation required
 		if (!EWR_SERVER_VALIDATE)
 			return ($grFormError == "");
-		if (!EURODATE($this->Tanggal->SearchValue)) {
+		if (!ewr_CheckEuroDate($this->Tanggal->SearchValue)) {
 			if ($grFormError <> "") $grFormError .= "<br>";
 			$grFormError .= $this->Tanggal->FldErrMsg();
 		}
-		if (!EURODATE($this->Tanggal->SearchValue2)) {
+		if (!ewr_CheckEuroDate($this->Tanggal->SearchValue2)) {
 			if ($grFormError <> "") $grFormError .= "<br>";
 			$grFormError .= $this->Tanggal->FldErrMsg();
 		}
@@ -1673,7 +1652,6 @@ class crt12_penerimaanold_rpt extends crt12_penerimaanold {
 		if ($bResetSort) {
 			$this->setOrderBy("");
 			$this->setStartGroup(1);
-			$this->id->setSort("");
 			$this->Tanggal->setSort("");
 			$this->NoKwitansi->setSort("");
 			$this->Keterangan->setSort("");
@@ -1683,7 +1661,6 @@ class crt12_penerimaanold_rpt extends crt12_penerimaanold {
 		} elseif ($orderBy <> "") {
 			$this->CurrentOrder = $orderBy;
 			$this->CurrentOrderType = $orderType;
-			$this->UpdateSort($this->id, $bCtrl); // id
 			$this->UpdateSort($this->Tanggal, $bCtrl); // Tanggal
 			$this->UpdateSort($this->NoKwitansi, $bCtrl); // NoKwitansi
 			$this->UpdateSort($this->Keterangan, $bCtrl); // Keterangan
@@ -2032,12 +2009,12 @@ ft12_penerimaanoldrpt.Validate = function() {
 		return true; // Ignore validation
 	var $ = jQuery, fobj = this.GetForm(), $fobj = $(fobj);
 	var elm = fobj.sv_Tanggal;
-	if (elm && typeof(EURODATE) == "function" && !EURODATE(elm.value)) {
+	if (elm && !ewr_CheckEuroDate(elm.value)) {
 		if (!this.OnError(elm, "<?php echo ewr_JsEncode2($Page->Tanggal->FldErrMsg()) ?>"))
 			return false;
 	}
 	var elm = fobj.sv2_Tanggal;
-	if (elm && typeof(EURODATE) == "function" && !EURODATE(elm.value)) {
+	if (elm && !ewr_CheckEuroDate(elm.value)) {
 		if (!this.OnError(elm, "<?php echo ewr_JsEncode2($Page->Tanggal->FldErrMsg()) ?>"))
 			return false;
 	}
@@ -2113,12 +2090,12 @@ if (!$Page->DrillDownInPanel) {
 	<span class="ewSearchOperator"><?php echo $ReportLanguage->Phrase("BETWEEN"); ?><input type="hidden" name="so_Tanggal" id="so_Tanggal" value="BETWEEN"></span>
 	<span class="control-group ewSearchField">
 <?php ewr_PrependClass($Page->Tanggal->EditAttrs["class"], "form-control"); // PR8 ?>
-<input type="text" data-table="t12_penerimaanold" data-field="x_Tanggal" id="sv_Tanggal" name="sv_Tanggal" placeholder="<?php echo $Page->Tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->Tanggal->SearchValue) ?>"<?php echo $Page->Tanggal->EditAttributes() ?>>
+<input type="text" data-table="t12_penerimaanold" data-field="x_Tanggal" id="sv_Tanggal" name="sv_Tanggal" placeholder="<?php echo $Page->Tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->Tanggal->SearchValue) ?>" data-calendar='true' data-options='{"ignoreReadonly":true,"useCurrent":false,"format":7}'<?php echo $Page->Tanggal->EditAttributes() ?>>
 </span>
 	<span class="ewSearchCond btw1_Tanggal"><?php echo $ReportLanguage->Phrase("AND") ?></span>
 	<span class="ewSearchField btw1_Tanggal">
 <?php ewr_PrependClass($Page->Tanggal->EditAttrs["class"], "form-control"); // PR8 ?>
-<input type="text" data-table="t12_penerimaanold" data-field="x_Tanggal" id="sv2_Tanggal" name="sv2_Tanggal" placeholder="<?php echo $Page->Tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->Tanggal->SearchValue2) ?>"<?php echo $Page->Tanggal->EditAttributes() ?>>
+<input type="text" data-table="t12_penerimaanold" data-field="x_Tanggal" id="sv2_Tanggal" name="sv2_Tanggal" placeholder="<?php echo $Page->Tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->Tanggal->SearchValue2) ?>" data-calendar='true' data-options='{"ignoreReadonly":true,"useCurrent":false,"format":7}'<?php echo $Page->Tanggal->EditAttributes() ?>>
 </span>
 </div>
 </div>
@@ -2180,24 +2157,6 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 <thead>
 	<!-- Table header -->
 	<tr class="ewTableHeader">
-<?php if ($Page->id->Visible) { ?>
-<?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
-	<td data-field="id"><div class="t12_penerimaanold_id"><span class="ewTableHeaderCaption"><?php echo $Page->id->FldCaption() ?></span></div></td>
-<?php } else { ?>
-	<td data-field="id">
-<?php if ($Page->SortUrl($Page->id) == "") { ?>
-		<div class="ewTableHeaderBtn t12_penerimaanold_id">
-			<span class="ewTableHeaderCaption"><?php echo $Page->id->FldCaption() ?></span>
-		</div>
-<?php } else { ?>
-		<div class="ewTableHeaderBtn ewPointer t12_penerimaanold_id" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->id) ?>',2);">
-			<span class="ewTableHeaderCaption"><?php echo $Page->id->FldCaption() ?></span>
-			<span class="ewTableHeaderSort"><?php if ($Page->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
-		</div>
-<?php } ?>
-	</td>
-<?php } ?>
-<?php } ?>
 <?php if ($Page->Tanggal->Visible) { ?>
 <?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
 	<td data-field="Tanggal"><div class="t12_penerimaanold_Tanggal"><span class="ewTableHeaderCaption"><?php echo $Page->Tanggal->FldCaption() ?></span></div></td>
@@ -2254,15 +2213,15 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 <?php } ?>
 <?php if ($Page->Jumlah->Visible) { ?>
 <?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
-	<td data-field="Jumlah"><div class="t12_penerimaanold_Jumlah"><span class="ewTableHeaderCaption"><?php echo $Page->Jumlah->FldCaption() ?></span></div></td>
+	<td data-field="Jumlah"><div class="t12_penerimaanold_Jumlah" style="text-align: right;"><span class="ewTableHeaderCaption"><?php echo $Page->Jumlah->FldCaption() ?></span></div></td>
 <?php } else { ?>
 	<td data-field="Jumlah">
 <?php if ($Page->SortUrl($Page->Jumlah) == "") { ?>
-		<div class="ewTableHeaderBtn t12_penerimaanold_Jumlah">
+		<div class="ewTableHeaderBtn t12_penerimaanold_Jumlah" style="text-align: right;">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Jumlah->FldCaption() ?></span>
 		</div>
 <?php } else { ?>
-		<div class="ewTableHeaderBtn ewPointer t12_penerimaanold_Jumlah" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Jumlah) ?>',2);">
+		<div class="ewTableHeaderBtn ewPointer t12_penerimaanold_Jumlah" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Jumlah) ?>',2);" style="text-align: right;">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Jumlah->FldCaption() ?></span>
 			<span class="ewTableHeaderSort"><?php if ($Page->Jumlah->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->Jumlah->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
 		</div>
@@ -2288,10 +2247,6 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 		$Page->RenderRow();
 ?>
 	<tr<?php echo $Page->RowAttributes(); ?>>
-<?php if ($Page->id->Visible) { ?>
-		<td data-field="id"<?php echo $Page->id->CellAttributes() ?>>
-<span<?php echo $Page->id->ViewAttributes() ?>><?php echo $Page->id->ListViewValue() ?></span></td>
-<?php } ?>
 <?php if ($Page->Tanggal->Visible) { ?>
 		<td data-field="Tanggal"<?php echo $Page->Tanggal->CellAttributes() ?>>
 <span<?php echo $Page->Tanggal->ViewAttributes() ?>><?php echo $Page->Tanggal->ListViewValue() ?></span></td>
