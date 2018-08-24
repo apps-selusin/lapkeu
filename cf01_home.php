@@ -478,13 +478,13 @@ Page_Rendering();
 <!-- log -->
 <div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Log</a></strong></div>
-	<div id="log" class="panel-collapse collapse out">
+	<div id="log" class="panel-collapse collapse in">
 		<div class="panel-body">
 			<div>
 <p>to do:<br/>
-1. tidak diperkenankan ubah Periode mundur;<br/>
+1. tidak diperkenankan ubah Periode mundur; -> done;<br/>
 2. tampilkan menu semua Laporan untuk data yang sudah ditutup;<br/>
-3. Laporan Keuangan -> Export to Excel;<br/>
+3. Laporan Keuangan -> Export to Excel; -> progress<br/>
 			</div>
 		</div>
 	</div>
