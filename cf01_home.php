@@ -482,9 +482,8 @@ Page_Rendering();
 		<div class="panel-body">
 			<div>
 <p>to do:<br/>
-1. tidak diperkenankan ubah Periode mundur; -> done;<br/>
-2. tampilkan menu semua Laporan untuk data yang sudah ditutup;<br/>
-3. Laporan Keuangan -> Export to Excel; -> done;<br/>
+1. informasi identitas sekolah; -> noted;<br/>
+2. logo sekolah; -> noted<br/>
 			</div>
 		</div>
 	</div>
