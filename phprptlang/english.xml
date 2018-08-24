@@ -392,7 +392,7 @@
       <phrase id="menutext" value="v 04 pengeluaranold" />
     </menu>
     <menu id="29">
-      <phrase id="menutext" value="Laporan Pengeluaran" />
+      <phrase id="menutext" value="Laporan Pengeluaran (Closed)" />
     </menu>
     <menu id="20">
       <phrase id="menutext" value="v 03 pengeluaran" />
@@ -995,7 +995,7 @@
       </field>
     </table>
     <table id="r04_pengeluaranold">
-      <phrase id="tblcaption" value="Laporan Pengeluaran" />
+      <phrase id="tblcaption" value="Laporan Pengeluaran (Closed)" />
       <field id="tanggal">
         <phrase id="fldcaption" value="Tanggal" />
       </field>
