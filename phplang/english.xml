@@ -796,7 +796,7 @@
       <phrase id="menutext" value="t 98 userlevelpermissions" />
     </menu>
     <table id="cf01_home_php">
-      <phrase id="tblcaption" value="Home" />
+      <phrase id="tblcaption" value="Laporan Keuangan" />
     </table>
     <table id="cf02_tutupbuku_php">
       <phrase id="tblcaption" value="Tutup Buku" />
