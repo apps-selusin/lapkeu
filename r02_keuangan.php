@@ -368,18 +368,29 @@ $no = 1;
 ?>
 <div class="panel panel-default">
 	<div class="panel-body">
+		<div><a href='r02_keuanganexcel.php'><button>Export to Excel</button></a></div>
+		<p>&nbsp;</p>
 		<table class='table table-bordered table-hover table-condensed'>
-			<tr>
-				<td>Laporan Keuangan</td>
+			<!--<tr>
+				<td colspan="<?php echo $colspan;?>"><a href='r02_keuanganexcel.php'><button>Export to Excel</button></a></td>
 			</tr>
 			<tr>
-				<td>Periode <?php echo $periode_namabulan . " " . $periode_tahun;?></td>
+				<td colspan="<?php echo $colspan;?>">&nbsp;</td>
+			</tr>-->
+			<tr>
+				<th colspan="<?php echo $colspan;?>">Laporan Keuangan</th>
 			</tr>
-		</table>
+			<tr>
+				<th colspan="<?php echo $colspan;?>">Periode <?php echo $periode_namabulan . " " . $periode_tahun;?></th>
+			</tr>
+			<tr>
+				<td colspan="<?php echo $colspan;?>">&nbsp;</td>
+			</tr>
+		<!--</table>
 		
 		<p>&nbsp;</p>
 		
-		<table class='table table-bordered table-hover table-condensed'>
+		<table class='table table-bordered table-hover table-condensed'>-->
 
 
 			<!-- saldo awal -->
@@ -529,6 +540,7 @@ $no = 1;
 				<td align="right"><b><?php echo number_format($saldo, 2);?></b></td>
 			</tr>
 		</table>
+		<div><a href='r02_keuanganexcel.php'><button>Export to Excel</button></a></div>
 	</div>
 </div>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
