@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/8/23" version="14.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/8/24" version="14.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -618,26 +618,20 @@
   <project>
     <phrase id="bodytitle" value="Laporan Keuangan" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
-    <menu id="10126">
-      <phrase id="menutext" value="v 01 barang satuan" />
-    </menu>
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
-    <menu id="10089">
-      <phrase id="menutext" value="Excel" />
+    <menu id="10126">
+      <phrase id="menutext" value="v 01 barang satuan" />
     </menu>
     <menu id="10016">
       <phrase id="menutext" value="Penerimaan" />
     </menu>
-    <menu id="10120">
-      <phrase id="menutext" value="Excel Draft" />
-    </menu>
-    <menu id="10127">
-      <phrase id="menutext" value="v 03 pengeluaran" />
-    </menu>
     <menu id="6">
       <phrase id="menutext" value="Pengeluaran" />
+    </menu>
+    <menu id="10089">
+      <phrase id="menutext" value="Excel" />
     </menu>
     <menu id="10088">
       <phrase id="menutext" value="Laporan" />
@@ -647,6 +641,12 @@
     </menu>
     <menu id="10017">
       <phrase id="menutext" value="Keuangan" />
+    </menu>
+    <menu id="10131">
+      <phrase id="menutext" value="Tutup Buku" />
+    </menu>
+    <menu id="10120">
+      <phrase id="menutext" value="Excel Draft" />
     </menu>
     <menu id="22">
       <phrase id="menutext" value="Setup" />
@@ -687,8 +687,8 @@
     <menu id="23">
       <phrase id="menutext" value="Log" />
     </menu>
-    <menu id="10128">
-      <phrase id="menutext" value="Laporan Keuangan Excel" />
+    <menu id="10127">
+      <phrase id="menutext" value="v 03 pengeluaran" />
     </menu>
     <menu id="10118">
       <phrase id="menutext" value="List" />
@@ -710,6 +710,9 @@
     </menu>
     <menu id="10011">
       <phrase id="menutext" value="User Log" />
+    </menu>
+    <menu id="10128">
+      <phrase id="menutext" value="Laporan Keuangan Excel" />
     </menu>
     <menu id="10123">
       <phrase id="menutext" value="Hak Akses" />
@@ -749,6 +752,9 @@
     </menu>
     <table id="cf01_home_php">
       <phrase id="tblcaption" value="Home" />
+    </table>
+    <table id="cf02_tutupbuku_php">
+      <phrase id="tblcaption" value="Tutup Buku" />
     </table>
     <table id="r04_terima_keluar_php">
       <phrase id="tblcaption" value="Excel Draft" />

@@ -8,6 +8,7 @@ $RootMenu->AddMenuItem(6, "mi_t06_pengeluaran", $Language->MenuPhrase("6", "Menu
 $RootMenu->AddMenuItem(10088, "mci_Laporan", $Language->MenuPhrase("10088", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10019, "mri_r035fpengeluaran", $Language->MenuPhrase("10019", "MenuText"), "r03_pengeluaransmry.php", 10088, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}r03_pengeluaran'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(10017, "mri_r025fterima5fkeluar", $Language->MenuPhrase("10017", "MenuText"), "r02_terima_keluarsmry.php", 10088, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}r02_terima_keluar'), FALSE, FALSE, "");
+$RootMenu->AddMenuItem(10131, "mi_cf02_tutupbuku_php", $Language->MenuPhrase("10131", "MenuText"), "cf02_tutupbuku.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf02_tutupbuku.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(22, "mci_Setup", $Language->MenuPhrase("22", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10129, "mi_t09_periode", $Language->MenuPhrase("10129", "MenuText"), "t09_periodelist.php", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t09_periode'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(10130, "mi_t10_saldo", $Language->MenuPhrase("10130", "MenuText"), "t10_saldolist.php", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t10_saldo'), FALSE, FALSE, "");
