@@ -10,7 +10,7 @@ $RootMenu->AddMenuItem(10018, "mri_t085fpenerimaan", $Language->MenuPhrase("1001
 $RootMenu->AddMenuItem(10019, "mri_r035fpengeluaran", $Language->MenuPhrase("10019", "MenuText"), "r03_pengeluaransmry.php", 10088, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}r03_pengeluaran'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(10132, "mi_r02_keuangan_php", $Language->MenuPhrase("10132", "MenuText"), "r02_keuangan.php", 10088, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}r02_keuangan.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10131, "mi_cf02_tutupbuku_php", $Language->MenuPhrase("10131", "MenuText"), "cf02_tutupbuku.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf02_tutupbuku.php'), FALSE, TRUE, "");
-$RootMenu->AddMenuItem(10171, "mci_Closed_Data", $Language->MenuPhrase("10171", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "");
+$RootMenu->AddMenuItem(10171, "mci_Laporan_28Closed29", $Language->MenuPhrase("10171", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10025, "mri_t125fpenerimaanold", $Language->MenuPhrase("10025", "MenuText"), "t12_penerimaanoldrpt.php", 10171, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}t12_penerimaanold'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(10029, "mri_r045fpengeluaranold", $Language->MenuPhrase("10029", "MenuText"), "r04_pengeluaranoldsmry.php", 10171, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}r04_pengeluaranold'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(22, "mci_Setup", $Language->MenuPhrase("22", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "");
