@@ -344,7 +344,7 @@ $cf03_homeold_php->Page_Main();
 Page_Rendering();
 ?>
 <?php include_once "header.php" ?>
-<form id="myform" name="myform" class="form-horizontal" method="post" action="r05_keuanganoldsubmit.php">
+<form id="myform" name="myform" class="form-horizontal" method="post" action="cf03_homeoldsubmit.php">
 	<div id="r_start" class="form-group">
 		<!-- <label for="start" class="col-sm-2 control-label ewLabel">Periode</label> -->
 		<div class="col-sm-10">
