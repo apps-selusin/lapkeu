@@ -383,7 +383,7 @@ $periode_tahun = $r->fields["Tahun"];
 $tanggalawal = date("d-m-Y", strtotime($r->fields["TanggalAwal"]));
 $tanggalakhir = date("d-m-Y", strtotime($r->fields["TanggalAkhir"]));
 
-$q = "select * from t10_saldo";
+$q = "select * from t11_saldoold where Bulan = ".$periode_bulan." and Tahun = ".$periode_tahun."";
 $r = Conn()->Execute($q);
 $saldo = $r->fields["Jumlah"];
 
