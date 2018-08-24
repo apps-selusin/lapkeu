@@ -1,12 +1,12 @@
 <?php
 
 // Global variable for table object
-$r03_pengeluaran = NULL;
+$r04_pengeluaranold = NULL;
 
 //
-// Table class for r03_pengeluaran
+// Table class for r04_pengeluaranold
 //
-class crr03_pengeluaran extends crTableBase {
+class crr04_pengeluaranold extends crTableBase {
 	var $ShowGroupHeaderAsRow = TRUE;
 	var $ShowCompactSummaryFooter = TRUE;
 	var $tanggal;
@@ -25,8 +25,8 @@ class crr03_pengeluaran extends crTableBase {
 	//
 	function __construct() {
 		global $ReportLanguage, $grLanguage;
-		$this->TableVar = 'r03_pengeluaran';
-		$this->TableName = 'r03_pengeluaran';
+		$this->TableVar = 'r04_pengeluaranold';
+		$this->TableName = 'r04_pengeluaranold';
 		$this->TableType = 'REPORT';
 		$this->TableReportType = 'summary';
 		$this->SourcTableIsCustomView = FALSE;
@@ -36,16 +36,16 @@ class crr03_pengeluaran extends crTableBase {
 		$this->ExportPageOrientation = "portrait"; // Page orientation (PDF only)
 
 		// tanggal
-		$this->tanggal = new crField('r03_pengeluaran', 'r03_pengeluaran', 'x_tanggal', 'tanggal', '`tanggal`', 133, EWR_DATATYPE_DATE, 7);
+		$this->tanggal = new crField('r04_pengeluaranold', 'r04_pengeluaranold', 'x_tanggal', 'tanggal', '`tanggal`', 133, EWR_DATATYPE_DATE, 7);
 		$this->tanggal->Sortable = TRUE; // Allow sort
-		$this->tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EWR_DATE_SEPARATOR"], $ReportLanguage->Phrase("IncorrectDateDMY"));
+		$this->tanggal->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectField");
 		$this->tanggal->DateFilter = "";
 		$this->tanggal->SqlSelect = "";
 		$this->tanggal->SqlOrderBy = "";
 		$this->fields['tanggal'] = &$this->tanggal;
 
 		// maingroup_nama
-		$this->maingroup_nama = new crField('r03_pengeluaran', 'r03_pengeluaran', 'x_maingroup_nama', 'maingroup_nama', '`maingroup_nama`', 200, EWR_DATATYPE_STRING, -1);
+		$this->maingroup_nama = new crField('r04_pengeluaranold', 'r04_pengeluaranold', 'x_maingroup_nama', 'maingroup_nama', '`maingroup_nama`', 200, EWR_DATATYPE_STRING, -1);
 		$this->maingroup_nama->Sortable = TRUE; // Allow sort
 		$this->maingroup_nama->GroupingFieldId = 1;
 		$this->maingroup_nama->ShowGroupHeaderAsRow = $this->ShowGroupHeaderAsRow;
@@ -59,7 +59,7 @@ class crr03_pengeluaran extends crTableBase {
 		$this->fields['maingroup_nama'] = &$this->maingroup_nama;
 
 		// subgroup_nama
-		$this->subgroup_nama = new crField('r03_pengeluaran', 'r03_pengeluaran', 'x_subgroup_nama', 'subgroup_nama', '`subgroup_nama`', 200, EWR_DATATYPE_STRING, -1);
+		$this->subgroup_nama = new crField('r04_pengeluaranold', 'r04_pengeluaranold', 'x_subgroup_nama', 'subgroup_nama', '`subgroup_nama`', 200, EWR_DATATYPE_STRING, -1);
 		$this->subgroup_nama->Sortable = TRUE; // Allow sort
 		$this->subgroup_nama->GroupingFieldId = 2;
 		$this->subgroup_nama->ShowGroupHeaderAsRow = $this->ShowGroupHeaderAsRow;
@@ -73,7 +73,7 @@ class crr03_pengeluaran extends crTableBase {
 		$this->fields['subgroup_nama'] = &$this->subgroup_nama;
 
 		// supplier_nama
-		$this->supplier_nama = new crField('r03_pengeluaran', 'r03_pengeluaran', 'x_supplier_nama', 'supplier_nama', '`supplier_nama`', 200, EWR_DATATYPE_STRING, -1);
+		$this->supplier_nama = new crField('r04_pengeluaranold', 'r04_pengeluaranold', 'x_supplier_nama', 'supplier_nama', '`supplier_nama`', 200, EWR_DATATYPE_STRING, -1);
 		$this->supplier_nama->Sortable = TRUE; // Allow sort
 		$this->supplier_nama->DateFilter = "";
 		$this->supplier_nama->SqlSelect = "";
@@ -81,7 +81,7 @@ class crr03_pengeluaran extends crTableBase {
 		$this->fields['supplier_nama'] = &$this->supplier_nama;
 
 		// nonota
-		$this->nonota = new crField('r03_pengeluaran', 'r03_pengeluaran', 'x_nonota', 'nonota', '`nonota`', 200, EWR_DATATYPE_STRING, -1);
+		$this->nonota = new crField('r04_pengeluaranold', 'r04_pengeluaranold', 'x_nonota', 'nonota', '`nonota`', 200, EWR_DATATYPE_STRING, -1);
 		$this->nonota->Sortable = TRUE; // Allow sort
 		$this->nonota->DateFilter = "";
 		$this->nonota->SqlSelect = "";
@@ -89,7 +89,7 @@ class crr03_pengeluaran extends crTableBase {
 		$this->fields['nonota'] = &$this->nonota;
 
 		// barang_nama
-		$this->barang_nama = new crField('r03_pengeluaran', 'r03_pengeluaran', 'x_barang_nama', 'barang_nama', '`barang_nama`', 200, EWR_DATATYPE_STRING, -1);
+		$this->barang_nama = new crField('r04_pengeluaranold', 'r04_pengeluaranold', 'x_barang_nama', 'barang_nama', '`barang_nama`', 200, EWR_DATATYPE_STRING, -1);
 		$this->barang_nama->Sortable = TRUE; // Allow sort
 		$this->barang_nama->DateFilter = "";
 		$this->barang_nama->SqlSelect = "";
@@ -97,7 +97,7 @@ class crr03_pengeluaran extends crTableBase {
 		$this->fields['barang_nama'] = &$this->barang_nama;
 
 		// banyaknya
-		$this->banyaknya = new crField('r03_pengeluaran', 'r03_pengeluaran', 'x_banyaknya', 'banyaknya', '`banyaknya`', 4, EWR_DATATYPE_NUMBER, -1);
+		$this->banyaknya = new crField('r04_pengeluaranold', 'r04_pengeluaranold', 'x_banyaknya', 'banyaknya', '`banyaknya`', 4, EWR_DATATYPE_NUMBER, -1);
 		$this->banyaknya->Sortable = TRUE; // Allow sort
 		$this->banyaknya->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectFloat");
 		$this->banyaknya->DateFilter = "";
@@ -106,7 +106,7 @@ class crr03_pengeluaran extends crTableBase {
 		$this->fields['banyaknya'] = &$this->banyaknya;
 
 		// barang_satuan
-		$this->barang_satuan = new crField('r03_pengeluaran', 'r03_pengeluaran', 'x_barang_satuan', 'barang_satuan', '`barang_satuan`', 200, EWR_DATATYPE_STRING, -1);
+		$this->barang_satuan = new crField('r04_pengeluaranold', 'r04_pengeluaranold', 'x_barang_satuan', 'barang_satuan', '`barang_satuan`', 200, EWR_DATATYPE_STRING, -1);
 		$this->barang_satuan->Sortable = TRUE; // Allow sort
 		$this->barang_satuan->DateFilter = "";
 		$this->barang_satuan->SqlSelect = "";
@@ -114,7 +114,7 @@ class crr03_pengeluaran extends crTableBase {
 		$this->fields['barang_satuan'] = &$this->barang_satuan;
 
 		// harga
-		$this->harga = new crField('r03_pengeluaran', 'r03_pengeluaran', 'x_harga', 'harga', '`harga`', 4, EWR_DATATYPE_NUMBER, -1);
+		$this->harga = new crField('r04_pengeluaranold', 'r04_pengeluaranold', 'x_harga', 'harga', '`harga`', 4, EWR_DATATYPE_NUMBER, -1);
 		$this->harga->Sortable = TRUE; // Allow sort
 		$this->harga->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectFloat");
 		$this->harga->DateFilter = "";
@@ -123,7 +123,7 @@ class crr03_pengeluaran extends crTableBase {
 		$this->fields['harga'] = &$this->harga;
 
 		// Jumlah
-		$this->Jumlah = new crField('r03_pengeluaran', 'r03_pengeluaran', 'x_Jumlah', 'Jumlah', '`Jumlah`', 4, EWR_DATATYPE_NUMBER, -1);
+		$this->Jumlah = new crField('r04_pengeluaranold', 'r04_pengeluaranold', 'x_Jumlah', 'Jumlah', '`Jumlah`', 4, EWR_DATATYPE_NUMBER, -1);
 		$this->Jumlah->Sortable = TRUE; // Allow sort
 		$this->Jumlah->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectFloat");
 		$this->Jumlah->DateFilter = "";
@@ -189,7 +189,7 @@ class crr03_pengeluaran extends crTableBase {
 	var $_SqlFrom = "";
 
 	function getSqlFrom() {
-		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`v03_pengeluaran`";
+		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`v04_pengeluaranold`";
 	}
 
 	function SqlFrom() { // For backward compatibility
@@ -440,7 +440,7 @@ class crr03_pengeluaran extends crTableBase {
 			$fld->LookupFilters = array("d" => "DB", "f0" => '`maingroup_nama` = {filter_value}', "t0" => "200", "fn0" => "", "dlm" => ewr_Encrypt($fld->FldDelimiter), "af" => json_encode($fld->AdvancedFilters));
 		$sWhereWrk = "";
 		$fld->LookupFilters += array(
-			"select" => "SELECT DISTINCT `maingroup_nama`, `maingroup_nama` AS `DispFld`, '' AS `DispFld2`, '' AS `DispFld3`, '' AS `DispFld4` FROM `v03_pengeluaran`",
+			"select" => "SELECT DISTINCT `maingroup_nama`, `maingroup_nama` AS `DispFld`, '' AS `DispFld2`, '' AS `DispFld3`, '' AS `DispFld4` FROM `v04_pengeluaranold`",
 			"where" => $sWhereWrk,
 			"orderby" => "`maingroup_nama` ASC"
 		);
@@ -451,7 +451,7 @@ class crr03_pengeluaran extends crTableBase {
 			$fld->LookupFilters = array("d" => "DB", "f0" => '`subgroup_nama` = {filter_value}', "t0" => "200", "fn0" => "", "dlm" => ewr_Encrypt($fld->FldDelimiter), "f1" => '`maingroup_nama` = {filter_value}', "t1" => "200", "fn1" => "", "af" => json_encode($fld->AdvancedFilters));
 		$sWhereWrk = "{filter}";
 		$fld->LookupFilters += array(
-			"select" => "SELECT DISTINCT `subgroup_nama`, `subgroup_nama` AS `DispFld`, '' AS `DispFld2`, '' AS `DispFld3`, '' AS `DispFld4` FROM `v03_pengeluaran`",
+			"select" => "SELECT DISTINCT `subgroup_nama`, `subgroup_nama` AS `DispFld`, '' AS `DispFld2`, '' AS `DispFld3`, '' AS `DispFld4` FROM `v04_pengeluaranold`",
 			"where" => $sWhereWrk,
 			"orderby" => "`subgroup_nama` ASC"
 		);
@@ -473,7 +473,6 @@ class crr03_pengeluaran extends crTableBase {
 	function Page_Selecting(&$filter) {
 
 		// Enter your code here
-		$_SESSION["r03_pengeluaran_filter"] = $filter; //var_dump($filter);
 	}
 
 	// Page Breaking event

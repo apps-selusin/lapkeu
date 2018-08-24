@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/8/24" version="11.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/8/25" version="11.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -388,6 +388,12 @@
     <menu id="27">
       <phrase id="menutext" value="t 14 periodeold" />
     </menu>
+    <menu id="28">
+      <phrase id="menutext" value="v 04 pengeluaranold" />
+    </menu>
+    <menu id="29">
+      <phrase id="menutext" value="Laporan Pengeluaran" />
+    </menu>
     <menu id="20">
       <phrase id="menutext" value="v 03 pengeluaran" />
     </menu>
@@ -463,7 +469,7 @@
         <phrase id="fldcaption" value="Jenis Pengeluaran" />
       </field>
       <field id="subgroup_nama">
-        <phrase id="fldcaption" value="Sub Jenis Pengeluaran" />
+        <phrase id="fldcaption" value="Sub-Jenis Pengeluaran" />
       </field>
       <field id="supplier_nama">
         <phrase id="fldcaption" value="Supplier" />
@@ -950,6 +956,72 @@
       </field>
       <field id="harga">
         <phrase id="fldcaption" value="harga" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="Jumlah" />
+      </field>
+    </table>
+    <table id="v04_pengeluaranold">
+      <phrase id="tblcaption" value="v 04 pengeluaranold" />
+      <field id="tanggal">
+        <phrase id="fldcaption" value="tanggal" />
+      </field>
+      <field id="maingroup_nama">
+        <phrase id="fldcaption" value="maingroup nama" />
+      </field>
+      <field id="subgroup_nama">
+        <phrase id="fldcaption" value="subgroup nama" />
+      </field>
+      <field id="supplier_nama">
+        <phrase id="fldcaption" value="supplier nama" />
+      </field>
+      <field id="nonota">
+        <phrase id="fldcaption" value="nonota" />
+      </field>
+      <field id="barang_nama">
+        <phrase id="fldcaption" value="barang nama" />
+      </field>
+      <field id="banyaknya">
+        <phrase id="fldcaption" value="banyaknya" />
+      </field>
+      <field id="barang_satuan">
+        <phrase id="fldcaption" value="barang satuan" />
+      </field>
+      <field id="harga">
+        <phrase id="fldcaption" value="harga" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="Jumlah" />
+      </field>
+    </table>
+    <table id="r04_pengeluaranold">
+      <phrase id="tblcaption" value="Laporan Pengeluaran" />
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="maingroup_nama">
+        <phrase id="fldcaption" value="Jenis Pengeluaran" />
+      </field>
+      <field id="subgroup_nama">
+        <phrase id="fldcaption" value="Sub-Jenis Pengeluaran" />
+      </field>
+      <field id="supplier_nama">
+        <phrase id="fldcaption" value="Supplier" />
+      </field>
+      <field id="nonota">
+        <phrase id="fldcaption" value="No. Nota" />
+      </field>
+      <field id="barang_nama">
+        <phrase id="fldcaption" value="Nama Barang" />
+      </field>
+      <field id="banyaknya">
+        <phrase id="fldcaption" value="Banyaknya" />
+      </field>
+      <field id="barang_satuan">
+        <phrase id="fldcaption" value="Satuan" />
+      </field>
+      <field id="harga">
+        <phrase id="fldcaption" value="Harga" />
       </field>
       <field id="jumlah">
         <phrase id="fldcaption" value="Jumlah" />
