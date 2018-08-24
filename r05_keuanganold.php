@@ -344,6 +344,34 @@ $r05_keuanganold_php->Page_Main();
 Page_Rendering();
 ?>
 <?php include_once "header.php" ?>
+<form id="myform" name="myform" class="form-horizontal" method="post" action="r05_keuanganoldsubmit.php">
+	<div id="r_start" class="form-group">
+		<!-- <label for="start" class="col-sm-2 control-label ewLabel">Periode</label> -->
+		<div class="col-sm-10">
+			Periode :
+			<select class="form-control" name="periodeold_id">
+				<option value="0">Pilih Periode</option>
+				<?php
+				$q = "select id, concat(NamaBulan, ' ', Tahun) as Periode from t14_periodeold order by Bulan, Tahun";
+				$r = Conn()->Execute($q);
+				while (!$r->EOF) {
+				?>
+					<option value="<?php echo $r->fields["id"]?>"><?php echo $r->fields["Periode"]?></option>
+					<?php
+					$r->MoveNext();
+				}
+				?>
+			</select>
+		</div>
+	</div>
+	<button class="btn btn-primary ewButton" name="btnsubmit" id="btnsubmit" type="submit">Proses</button>
+</form>
+
+<?php
+if (isset($_GET["submit"])) {
+	if ($_GET["submit"] == 1) {
+?>
+
 <?php
 $q = "select * from t09_periode";
 $r = Conn()->Execute($q);
@@ -543,6 +571,11 @@ $no = 1;
 		<div><a href='r02_keuanganexcel.php'><button>Export to Excel</button></a></div>
 	</div>
 </div>
+
+<?php
+	}
+}
+?>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
