@@ -443,7 +443,7 @@ $dtanggalakhir = $r->fields["TanggalAkhir"];
 				<td>Pengeluaran</td>
 				<?php
 				$q = "select sum(jumlah) as jumlah from t06_pengeluaran";
-				$q = "select sum(jumlah) as jumlah from t13_pengeluaranold where Tanggal between '".$dtanggalawal."' and '".$dtanggalakhir."' order by maingroup_nama, subgroup_nama, tanggal";
+				$q = "select sum(jumlah) as jumlah from t13_pengeluaranold where Tanggal between '".$dtanggalawal."' and '".$dtanggalakhir."' ";
 				$jumlah = ew_ExecuteScalar($q);
 				$saldo_akhir -= $jumlah;
 				?>
