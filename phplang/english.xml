@@ -1343,7 +1343,7 @@
       </field>
     </table>
     <table id="r05_keuanganold_php">
-      <phrase id="tblcaption" value="Keuangan (Closed)" />
+      <phrase id="tblcaption" value="Laporan Keuangan (Closed)" />
     </table>
   </project>
 </ew-language>
