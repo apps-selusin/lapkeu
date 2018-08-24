@@ -483,7 +483,7 @@ Page_Rendering();
 			<div>
 <p>to do:<br/>
 1. informasi identitas sekolah; -> noted;<br/>
-2. logo sekolah; -> noted<br/>
+2. logo sekolah; -> noted;<br/>
 			</div>
 		</div>
 	</div>
