@@ -380,20 +380,17 @@ $no = 1;
 		<p>&nbsp;</p>
 		
 		<table class='table table-bordered table-hover table-condensed'>
+
+
+			<!-- saldo awal -->
+			<tr>
+				<th colspan="<?php echo $colspan;?>">Saldo Awal</th>
+			</tr>
 			<tr>
 				<th>No.</th>
 				<th>Tanggal</th>
 				<th>Keterangan</th>
 				<th>Jumlah</th>
-			</tr>
-
-
-			<!-- saldo awal -->
-			<tr>
-				<td colspan="<?php echo $colspan;?>">&nbsp;</td>
-			</tr>
-			<tr>
-				<td colspan="<?php echo $colspan;?>">Saldo Awal</td>
 			</tr>
 			<tr>
 				<td><?php echo $no++;?></td>
@@ -408,17 +405,17 @@ $no = 1;
 				<td colspan="<?php echo $colspan;?>">&nbsp;</td>
 			</tr>
 			<tr>
-				<td colspan="<?php echo $colspan;?>">Penerimaan</td>
+				<th colspan="<?php echo $colspan;?>">Penerimaan</th>
 			</tr>
 			<tr>
 				<td colspan="<?php echo $colspan-1;?>">
 					<table class='table table-bordered table-hover table-condensed'>
 						<tr>
-							<td>No.</td>
-							<td>Tanggal</td>
-							<td>Keterangan</td>
-							<td>No. Kwitansi</td>
-							<td>Jumlah</td>
+							<th>No.</th>
+							<th>Tanggal</th>
+							<th>Keterangan</th>
+							<th>No. Kwitansi</th>
+							<th>Jumlah</th>
 						</tr>
 						<?php $penerimaan = 0;?>
 						<?php while (!$rpenerimaan->EOF) {?>
@@ -427,7 +424,7 @@ $no = 1;
 							<td><?php echo date("d-m-Y", strtotime($rpenerimaan->fields["Tanggal"]));?></td>
 							<td><?php echo $rpenerimaan->fields["Keterangan"];?></td>
 							<td><?php echo $rpenerimaan->fields["NoKwitansi"];?></td>
-							<td><?php echo number_format($rpenerimaan->fields["Jumlah"], 2);?></td>
+							<td align="right"><?php echo number_format($rpenerimaan->fields["Jumlah"], 2);?></td>
 						</tr>
 						<?php	$penerimaan += $rpenerimaan->fields["Jumlah"];?>
 						<?php 	$rpenerimaan->MoveNext();?>
@@ -452,23 +449,23 @@ $no = 1;
 				<td colspan="<?php echo $colspan;?>">&nbsp;</td>
 			</tr>
 			<tr>
-				<td colspan="<?php echo $colspan;?>">Pengeluaran</td>
+				<th colspan="<?php echo $colspan;?>">Pengeluaran</th>
 			</tr>
 			<tr>
 				<td colspan="<?php echo $colspan-1;?>">
 					<table class='table table-bordered table-hover table-condensed'>
 						<tr>
-							<td colspan="2">Jenis Pengeluaran</td>
-							<td>No.</td>
-							<td>Tanggal</td>
-							<td>Supplier</td>
-							<td>No. Nota</td>
-							<td>Barang</td>
-							<td>Banyaknya</td>
-							<td>Satuan</td>
-							<td>Harga</td>
-							<td>Jumlah</td>
-							<td>Sub Total</td>
+							<th colspan="2">Jenis Pengeluaran</th>
+							<th>No.</th>
+							<th>Tanggal</th>
+							<th>Supplier</th>
+							<th>No. Nota</th>
+							<th>Barang</th>
+							<th>Banyaknya</th>
+							<th>Satuan</th>
+							<th>Harga</th>
+							<th>Jumlah</th>
+							<th>Sub Total</th>
 						</tr>
 						<?php $pengeluaran = 0;?>
 						<?php while (!$rpengeluaran->EOF) {?>
@@ -495,7 +492,7 @@ $no = 1;
 							<td><?php echo $rpengeluaran->fields["supplier_nama"];?></td>
 							<td><?php echo $rpengeluaran->fields["nonota"];?></td>
 							<td><?php echo $rpengeluaran->fields["barang_nama"];?></td>
-							<td><?php echo $rpengeluaran->fields["banyaknya"];?></td>
+							<td align="right"><?php echo $rpengeluaran->fields["banyaknya"];?></td>
 							<td><?php echo $rpengeluaran->fields["barang_satuan"];?></td>
 							<td align="right"><?php echo number_format($rpengeluaran->fields["harga"], 2);?></td>
 							<td align="right"><?php echo number_format($rpengeluaran->fields["Jumlah"], 2);?></td>
