@@ -1039,12 +1039,12 @@ class crt14_periodeold_rpt extends crt14_periodeold {
 
 			// TanggalAwal
 			$this->TanggalAwal->ViewValue = $this->TanggalAwal->CurrentValue;
-			$this->TanggalAwal->ViewValue = ewr_FormatDateTime($this->TanggalAwal->ViewValue, 0);
+			$this->TanggalAwal->ViewValue = ewr_FormatDateTime($this->TanggalAwal->ViewValue, 7);
 			$this->TanggalAwal->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
 
 			// TanggalAkhir
 			$this->TanggalAkhir->ViewValue = $this->TanggalAkhir->CurrentValue;
-			$this->TanggalAkhir->ViewValue = ewr_FormatDateTime($this->TanggalAkhir->ViewValue, 0);
+			$this->TanggalAkhir->ViewValue = ewr_FormatDateTime($this->TanggalAkhir->ViewValue, 7);
 			$this->TanggalAkhir->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
 
 			// NamaBulan

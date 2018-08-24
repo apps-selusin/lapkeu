@@ -59,18 +59,18 @@ class crt14_periodeold extends crTableBase {
 		$this->fields['Tahun'] = &$this->Tahun;
 
 		// TanggalAwal
-		$this->TanggalAwal = new crField('t14_periodeold', 't14_periodeold', 'x_TanggalAwal', 'TanggalAwal', '`TanggalAwal`', 133, EWR_DATATYPE_DATE, 0);
+		$this->TanggalAwal = new crField('t14_periodeold', 't14_periodeold', 'x_TanggalAwal', 'TanggalAwal', '`TanggalAwal`', 133, EWR_DATATYPE_DATE, 7);
 		$this->TanggalAwal->Sortable = TRUE; // Allow sort
-		$this->TanggalAwal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EWR_DATE_FORMAT"], $ReportLanguage->Phrase("IncorrectDate"));
+		$this->TanggalAwal->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectField");
 		$this->TanggalAwal->DateFilter = "";
 		$this->TanggalAwal->SqlSelect = "";
 		$this->TanggalAwal->SqlOrderBy = "";
 		$this->fields['TanggalAwal'] = &$this->TanggalAwal;
 
 		// TanggalAkhir
-		$this->TanggalAkhir = new crField('t14_periodeold', 't14_periodeold', 'x_TanggalAkhir', 'TanggalAkhir', '`TanggalAkhir`', 133, EWR_DATATYPE_DATE, 0);
+		$this->TanggalAkhir = new crField('t14_periodeold', 't14_periodeold', 'x_TanggalAkhir', 'TanggalAkhir', '`TanggalAkhir`', 133, EWR_DATATYPE_DATE, 7);
 		$this->TanggalAkhir->Sortable = TRUE; // Allow sort
-		$this->TanggalAkhir->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EWR_DATE_FORMAT"], $ReportLanguage->Phrase("IncorrectDate"));
+		$this->TanggalAkhir->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectField");
 		$this->TanggalAkhir->DateFilter = "";
 		$this->TanggalAkhir->SqlSelect = "";
 		$this->TanggalAkhir->SqlOrderBy = "";
