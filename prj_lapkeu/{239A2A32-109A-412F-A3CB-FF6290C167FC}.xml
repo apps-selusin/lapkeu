@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <configuration date="2018/08/25" author="e.World Technology Ltd.">
-  <project id="{239A2A32-109A-412F-A3CB-FF6290C167FC}" file="C:\xampp\htdocs\lapkeu\prj_lapkeu.pmp" name="prj_lapkeu" product="PHPMaker" version="14.0" datetime="2018/08/25 02:04:30" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" relatedid="{3CDC6268-D928-4495-B72A-CA5D35EAE344}">
+  <project id="{239A2A32-109A-412F-A3CB-FF6290C167FC}" file="C:\xampp\htdocs\lapkeu\prj_lapkeu.pmp" name="prj_lapkeu" product="PHPMaker" version="14.0" datetime="2018/08/25 02:10:50" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" relatedid="{3CDC6268-D928-4495-B72A-CA5D35EAE344}">
     <table id="cf01_home_php" name="cf01_home.php" caption="Home" userlevel="-2,&quot;Anonymous&quot;,8;0,&quot;Default&quot;,0" priv="1" />
     <table id="cf02_tutupbuku_php" name="cf02_tutupbuku.php" caption="Tutup Buku" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="r02_keuangan_php" name="r02_keuangan.php" caption="Keuangan" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -25,5 +25,7 @@
     <table id="v01_barang_satuan" name="v01_barang_satuan" caption="v 01 barang satuan" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v02_terima_keluar" name="v02_terima_keluar" caption="v 02 terima keluar" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v03_pengeluaran" name="v03_pengeluaran" caption="v 03 pengeluaran" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="v04_pengeluaranold" name="v04_pengeluaranold" caption="v 04 pengeluaranold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="r05_keuanganold_php" name="r05_keuanganold.php" caption="Keuangan (Closed)" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
   </project>
 </configuration>

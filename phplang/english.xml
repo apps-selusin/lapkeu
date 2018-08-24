@@ -618,6 +618,9 @@
   <project>
     <phrase id="bodytitle" value="Laporan Keuangan" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <menu id="10173">
+      <phrase id="menutext" value="v 04 pengeluaranold" />
+    </menu>
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
@@ -626,9 +629,6 @@
     </menu>
     <menu id="6">
       <phrase id="menutext" value="Pengeluaran" />
-    </menu>
-    <menu id="10134">
-      <phrase id="menutext" value="t 12 penerimaanold" />
     </menu>
     <menu id="10088">
       <phrase id="menutext" value="Laporan" />
@@ -644,6 +644,9 @@
     </menu>
     <menu id="10132">
       <phrase id="menutext" value="Keuangan" />
+    </menu>
+    <menu id="10134">
+      <phrase id="menutext" value="t 12 penerimaanold" />
     </menu>
     <menu id="10131">
       <phrase id="menutext" value="Tutup Buku" />
@@ -662,6 +665,9 @@
     </menu>
     <menu id="10029">
       <phrase id="menutext" value="Pengeluaran" />
+    </menu>
+    <menu id="10174">
+      <phrase id="menutext" value="Keuangan" />
     </menu>
     <menu id="22">
       <phrase id="menutext" value="Setup" />
@@ -1302,6 +1308,42 @@
       <field id="jumlah">
         <phrase id="fldcaption" value="Jumlah" />
       </field>
+    </table>
+    <table id="v04_pengeluaranold">
+      <phrase id="tblcaption" value="v 04 pengeluaranold" />
+      <field id="tanggal">
+        <phrase id="fldcaption" value="tanggal" />
+      </field>
+      <field id="maingroup_nama">
+        <phrase id="fldcaption" value="maingroup nama" />
+      </field>
+      <field id="subgroup_nama">
+        <phrase id="fldcaption" value="subgroup nama" />
+      </field>
+      <field id="supplier_nama">
+        <phrase id="fldcaption" value="supplier nama" />
+      </field>
+      <field id="nonota">
+        <phrase id="fldcaption" value="nonota" />
+      </field>
+      <field id="barang_nama">
+        <phrase id="fldcaption" value="barang nama" />
+      </field>
+      <field id="banyaknya">
+        <phrase id="fldcaption" value="banyaknya" />
+      </field>
+      <field id="barang_satuan">
+        <phrase id="fldcaption" value="barang satuan" />
+      </field>
+      <field id="harga">
+        <phrase id="fldcaption" value="harga" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="Jumlah" />
+      </field>
+    </table>
+    <table id="r05_keuanganold_php">
+      <phrase id="tblcaption" value="Keuangan (Closed)" />
     </table>
   </project>
 </ew-language>
