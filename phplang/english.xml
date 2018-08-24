@@ -651,6 +651,12 @@
     <menu id="10171">
       <phrase id="menutext" value="Laporan (Closed)" />
     </menu>
+    <menu id="10027">
+      <phrase id="menutext" value="Periode" />
+    </menu>
+    <menu id="10024">
+      <phrase id="menutext" value="Saldo" />
+    </menu>
     <menu id="10025">
       <phrase id="menutext" value="Penerimaan" />
     </menu>
@@ -696,9 +702,6 @@
     <menu id="23">
       <phrase id="menutext" value="Log" />
     </menu>
-    <menu id="10135">
-      <phrase id="menutext" value="t 13 pengeluaranold" />
-    </menu>
     <menu id="10118">
       <phrase id="menutext" value="List" />
     </menu>
@@ -719,6 +722,9 @@
     </menu>
     <menu id="10011">
       <phrase id="menutext" value="User Log" />
+    </menu>
+    <menu id="10135">
+      <phrase id="menutext" value="t 13 pengeluaranold" />
     </menu>
     <menu id="10136">
       <phrase id="menutext" value="t 14 periodeold" />
@@ -747,14 +753,8 @@
     <menu id="10023">
       <phrase id="menutext" value="t 10 saldo" />
     </menu>
-    <menu id="10024">
-      <phrase id="menutext" value="t 11 saldoold" />
-    </menu>
     <menu id="10026">
       <phrase id="menutext" value="t 13 pengeluaranold" />
-    </menu>
-    <menu id="10027">
-      <phrase id="menutext" value="t 14 periodeold" />
     </menu>
     <menu id="10028">
       <phrase id="menutext" value="v 04 pengeluaranold" />

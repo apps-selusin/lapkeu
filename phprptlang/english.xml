@@ -377,7 +377,7 @@
       <phrase id="menutext" value="t 10 saldo" />
     </menu>
     <menu id="24">
-      <phrase id="menutext" value="t 11 saldoold" />
+      <phrase id="menutext" value="Laporan Saldo (Closed)" />
     </menu>
     <menu id="25">
       <phrase id="menutext" value="Laporan Penerimaan (Closed)" />
@@ -386,7 +386,7 @@
       <phrase id="menutext" value="t 13 pengeluaranold" />
     </menu>
     <menu id="27">
-      <phrase id="menutext" value="t 14 periodeold" />
+      <phrase id="menutext" value="Laporan Periode (Closed)" />
     </menu>
     <menu id="28">
       <phrase id="menutext" value="v 04 pengeluaranold" />
@@ -665,7 +665,7 @@
       </field>
     </table>
     <table id="t11_saldoold">
-      <phrase id="tblcaption" value="t 11 saldoold" />
+      <phrase id="tblcaption" value="Laporan Saldo (Closed)" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
@@ -731,7 +731,7 @@
       </field>
     </table>
     <table id="t14_periodeold">
-      <phrase id="tblcaption" value="t 14 periodeold" />
+      <phrase id="tblcaption" value="Laporan Periode (Closed)" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
