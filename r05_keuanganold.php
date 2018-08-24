@@ -400,7 +400,7 @@ $no = 1;
 ?>
 <div class="panel panel-default">
 	<div class="panel-body">
-		<div><a href='r02_keuanganexcel.php'><button>Export to Excel</button></a></div>
+		<div><a href='r05_keuanganoldexcel.php'><button>Export to Excel</button></a></div>
 		<p>&nbsp;</p>
 		<table class='table table-bordered table-hover table-condensed'>
 			<!--<tr>
@@ -572,7 +572,7 @@ $no = 1;
 				<td align="right"><b><?php echo number_format($saldo, 2);?></b></td>
 			</tr>
 		</table>
-		<div><a href='r02_keuanganexcel.php'><button>Export to Excel</button></a></div>
+		<div><a href='r05_keuanganoldexcel.php'><button>Export to Excel</button></a></div>
 	</div>
 </div>
 
