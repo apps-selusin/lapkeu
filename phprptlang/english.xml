@@ -376,6 +376,18 @@
     <menu id="23">
       <phrase id="menutext" value="t 10 saldo" />
     </menu>
+    <menu id="24">
+      <phrase id="menutext" value="t 11 saldoold" />
+    </menu>
+    <menu id="25">
+      <phrase id="menutext" value="t 12 penerimaanold" />
+    </menu>
+    <menu id="26">
+      <phrase id="menutext" value="t 13 pengeluaranold" />
+    </menu>
+    <menu id="27">
+      <phrase id="menutext" value="t 14 periodeold" />
+    </menu>
     <menu id="20">
       <phrase id="menutext" value="v 03 pengeluaran" />
     </menu>
@@ -384,9 +396,6 @@
     </menu>
     <menu id="18">
       <phrase id="menutext" value="t 08 penerimaan" />
-    </menu>
-    <menu id="17">
-      <phrase id="menutext" value="Laporan Keuangan" />
     </menu>
     <menu id="5">
       <phrase id="menutext" value="Jenis Pengeluaran" />
@@ -443,33 +452,6 @@
       </field>
       <field id="nama">
         <phrase id="fldcaption" value="Sub Jenis Pengeluaran" />
-      </field>
-    </table>
-    <table id="r02_terima_keluar">
-      <phrase id="tblcaption" value="Laporan Keuangan" />
-      <field id="tanggal">
-        <phrase id="fldcaption" value="Tanggal" />
-      </field>
-      <field id="ket1">
-        <phrase id="fldcaption" value="Keterangan" />
-      </field>
-      <field id="ket2" />
-      <field id="ket3" />
-      <field id="ket4">
-        <phrase id="fldcaption" value="No. Kwitansi / Nota" />
-      </field>
-      <field id="ket5" />
-      <field id="nilai1" />
-      <field id="ket6" />
-      <field id="nilai2" />
-      <field id="terima_jumlah">
-        <phrase id="fldcaption" value="Penerimaan" />
-      </field>
-      <field id="keluar_jumlah">
-        <phrase id="fldcaption" value="Pengeluaran" />
-      </field>
-      <field id="saldo">
-        <phrase id="fldcaption" value="Saldo" />
       </field>
     </table>
     <table id="r03_pengeluaran">
@@ -674,6 +656,93 @@
       </field>
       <field id="jumlah">
         <phrase id="fldcaption" value="Jumlah" />
+      </field>
+    </table>
+    <table id="t11_saldoold">
+      <phrase id="tblcaption" value="t 11 saldoold" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="bulan">
+        <phrase id="fldcaption" value="Bulan" />
+      </field>
+      <field id="tahun">
+        <phrase id="fldcaption" value="Tahun" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="Jumlah" />
+      </field>
+    </table>
+    <table id="t12_penerimaanold">
+      <phrase id="tblcaption" value="t 12 penerimaanold" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="nokwitansi">
+        <phrase id="fldcaption" value="No Kwitansi" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="Jumlah" />
+      </field>
+    </table>
+    <table id="t13_pengeluaranold">
+      <phrase id="tblcaption" value="t 13 pengeluaranold" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="supplier_id">
+        <phrase id="fldcaption" value="supplier id" />
+      </field>
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="nonota">
+        <phrase id="fldcaption" value="No Nota" />
+      </field>
+      <field id="barang_id">
+        <phrase id="fldcaption" value="barang id" />
+      </field>
+      <field id="banyaknya">
+        <phrase id="fldcaption" value="Banyaknya" />
+      </field>
+      <field id="harga">
+        <phrase id="fldcaption" value="Harga" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="Jumlah" />
+      </field>
+      <field id="maingroup_id">
+        <phrase id="fldcaption" value="maingroup id" />
+      </field>
+      <field id="subgroup_id">
+        <phrase id="fldcaption" value="subgroup id" />
+      </field>
+    </table>
+    <table id="t14_periodeold">
+      <phrase id="tblcaption" value="t 14 periodeold" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="bulan">
+        <phrase id="fldcaption" value="Bulan" />
+      </field>
+      <field id="tahun">
+        <phrase id="fldcaption" value="Tahun" />
+      </field>
+      <field id="tanggalawal">
+        <phrase id="fldcaption" value="Tanggal Awal" />
+      </field>
+      <field id="tanggalakhir">
+        <phrase id="fldcaption" value="Tanggal Akhir" />
+      </field>
+      <field id="namabulan">
+        <phrase id="fldcaption" value="Nama Bulan" />
       </field>
     </table>
     <table id="t96_employees">
