@@ -42,7 +42,7 @@ class crt08_penerimaan extends crTableBase {
 		// Tanggal
 		$this->Tanggal = new crField('t08_penerimaan', 't08_penerimaan', 'x_Tanggal', 'Tanggal', '`Tanggal`', 133, EWR_DATATYPE_DATE, 7);
 		$this->Tanggal->Sortable = TRUE; // Allow sort
-		$this->Tanggal->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectField");
+		$this->Tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EWR_DATE_SEPARATOR"], $ReportLanguage->Phrase("IncorrectDateDMY"));
 		$this->Tanggal->DateFilter = "";
 		$this->Tanggal->SqlSelect = "";
 		$this->Tanggal->SqlOrderBy = "";

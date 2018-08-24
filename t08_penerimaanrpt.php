@@ -1064,8 +1064,9 @@ class crt08_penerimaan_rpt extends crt08_penerimaan {
 
 			// Jumlah
 			$this->Jumlah->ViewValue = $this->Jumlah->CurrentValue;
-			$this->Jumlah->ViewValue = ewr_FormatNumber($this->Jumlah->ViewValue, $this->Jumlah->DefaultDecimalPrecision, -1, 0, 0);
+			$this->Jumlah->ViewValue = ewr_FormatNumber($this->Jumlah->ViewValue, 2, -2, -2, -2);
 			$this->Jumlah->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
+			$this->Jumlah->CellAttrs["style"] = "text-align:right;";
 
 			// id
 			$this->id->HrefValue = "";
@@ -1489,11 +1490,11 @@ class crt08_penerimaan_rpt extends crt08_penerimaan {
 		// Check if validation required
 		if (!EWR_SERVER_VALIDATE)
 			return ($grFormError == "");
-		if (!EURODATE($this->Tanggal->SearchValue)) {
+		if (!ewr_CheckEuroDate($this->Tanggal->SearchValue)) {
 			if ($grFormError <> "") $grFormError .= "<br>";
 			$grFormError .= $this->Tanggal->FldErrMsg();
 		}
-		if (!EURODATE($this->Tanggal->SearchValue2)) {
+		if (!ewr_CheckEuroDate($this->Tanggal->SearchValue2)) {
 			if ($grFormError <> "") $grFormError .= "<br>";
 			$grFormError .= $this->Tanggal->FldErrMsg();
 		}
@@ -2032,12 +2033,12 @@ ft08_penerimaanrpt.Validate = function() {
 		return true; // Ignore validation
 	var $ = jQuery, fobj = this.GetForm(), $fobj = $(fobj);
 	var elm = fobj.sv_Tanggal;
-	if (elm && typeof(EURODATE) == "function" && !EURODATE(elm.value)) {
+	if (elm && !ewr_CheckEuroDate(elm.value)) {
 		if (!this.OnError(elm, "<?php echo ewr_JsEncode2($Page->Tanggal->FldErrMsg()) ?>"))
 			return false;
 	}
 	var elm = fobj.sv2_Tanggal;
-	if (elm && typeof(EURODATE) == "function" && !EURODATE(elm.value)) {
+	if (elm && !ewr_CheckEuroDate(elm.value)) {
 		if (!this.OnError(elm, "<?php echo ewr_JsEncode2($Page->Tanggal->FldErrMsg()) ?>"))
 			return false;
 	}
@@ -2113,12 +2114,12 @@ if (!$Page->DrillDownInPanel) {
 	<span class="ewSearchOperator"><?php echo $ReportLanguage->Phrase("BETWEEN"); ?><input type="hidden" name="so_Tanggal" id="so_Tanggal" value="BETWEEN"></span>
 	<span class="control-group ewSearchField">
 <?php ewr_PrependClass($Page->Tanggal->EditAttrs["class"], "form-control"); // PR8 ?>
-<input type="text" data-table="t08_penerimaan" data-field="x_Tanggal" id="sv_Tanggal" name="sv_Tanggal" placeholder="<?php echo $Page->Tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->Tanggal->SearchValue) ?>"<?php echo $Page->Tanggal->EditAttributes() ?>>
+<input type="text" data-table="t08_penerimaan" data-field="x_Tanggal" id="sv_Tanggal" name="sv_Tanggal" placeholder="<?php echo $Page->Tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->Tanggal->SearchValue) ?>" data-calendar='true' data-options='{"ignoreReadonly":true,"useCurrent":false,"format":7}'<?php echo $Page->Tanggal->EditAttributes() ?>>
 </span>
 	<span class="ewSearchCond btw1_Tanggal"><?php echo $ReportLanguage->Phrase("AND") ?></span>
 	<span class="ewSearchField btw1_Tanggal">
 <?php ewr_PrependClass($Page->Tanggal->EditAttrs["class"], "form-control"); // PR8 ?>
-<input type="text" data-table="t08_penerimaan" data-field="x_Tanggal" id="sv2_Tanggal" name="sv2_Tanggal" placeholder="<?php echo $Page->Tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->Tanggal->SearchValue2) ?>"<?php echo $Page->Tanggal->EditAttributes() ?>>
+<input type="text" data-table="t08_penerimaan" data-field="x_Tanggal" id="sv2_Tanggal" name="sv2_Tanggal" placeholder="<?php echo $Page->Tanggal->PlaceHolder ?>" value="<?php echo ewr_HtmlEncode($Page->Tanggal->SearchValue2) ?>" data-calendar='true' data-options='{"ignoreReadonly":true,"useCurrent":false,"format":7}'<?php echo $Page->Tanggal->EditAttributes() ?>>
 </span>
 </div>
 </div>
@@ -2254,15 +2255,15 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 <?php } ?>
 <?php if ($Page->Jumlah->Visible) { ?>
 <?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
-	<td data-field="Jumlah"><div class="t08_penerimaan_Jumlah"><span class="ewTableHeaderCaption"><?php echo $Page->Jumlah->FldCaption() ?></span></div></td>
+	<td data-field="Jumlah"><div class="t08_penerimaan_Jumlah" style="text-align: right;"><span class="ewTableHeaderCaption"><?php echo $Page->Jumlah->FldCaption() ?></span></div></td>
 <?php } else { ?>
 	<td data-field="Jumlah">
 <?php if ($Page->SortUrl($Page->Jumlah) == "") { ?>
-		<div class="ewTableHeaderBtn t08_penerimaan_Jumlah">
+		<div class="ewTableHeaderBtn t08_penerimaan_Jumlah" style="text-align: right;">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Jumlah->FldCaption() ?></span>
 		</div>
 <?php } else { ?>
-		<div class="ewTableHeaderBtn ewPointer t08_penerimaan_Jumlah" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Jumlah) ?>',2);">
+		<div class="ewTableHeaderBtn ewPointer t08_penerimaan_Jumlah" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Jumlah) ?>',2);" style="text-align: right;">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Jumlah->FldCaption() ?></span>
 			<span class="ewTableHeaderSort"><?php if ($Page->Jumlah->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->Jumlah->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
 		</div>
