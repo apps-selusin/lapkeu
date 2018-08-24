@@ -484,7 +484,7 @@ Page_Rendering();
 <p>to do:<br/>
 1. tidak diperkenankan ubah Periode mundur; -> done;<br/>
 2. tampilkan menu semua Laporan untuk data yang sudah ditutup;<br/>
-3. Laporan Keuangan -> Export to Excel; -> progress<br/>
+3. Laporan Keuangan -> Export to Excel; -> done;<br/>
 			</div>
 		</div>
 	</div>
