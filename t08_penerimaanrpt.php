@@ -575,7 +575,6 @@ class crt08_penerimaan_rpt extends crt08_penerimaan {
 		global $grDashboardReport;
 
 		// Set field visibility for detail fields
-		$this->id->SetVisibility();
 		$this->Tanggal->SetVisibility();
 		$this->NoKwitansi->SetVisibility();
 		$this->Keterangan->SetVisibility();
@@ -585,7 +584,7 @@ class crt08_penerimaan_rpt extends crt08_penerimaan {
 		// 1st dimension = no of groups (level 0 used for grand total)
 		// 2nd dimension = no of fields
 
-		$nDtls = 6;
+		$nDtls = 5;
 		$nGrps = 1;
 		$this->Val = &ewr_InitArray($nDtls, 0);
 		$this->Cnt = &ewr_Init2DArray($nGrps, $nDtls, 0);
@@ -598,7 +597,7 @@ class crt08_penerimaan_rpt extends crt08_penerimaan {
 		$this->GrandMx = &ewr_InitArray($nDtls, NULL);
 
 		// Set up array if accumulation required: array(Accum, SkipNullOrZero)
-		$this->Col = array(array(FALSE, FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE));
+		$this->Col = array(array(FALSE, FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE));
 
 		// Set up groups per page dynamically
 		$this->SetUpDisplayGrps();
@@ -821,11 +820,10 @@ class crt08_penerimaan_rpt extends crt08_penerimaan {
 			$this->NoKwitansi->setDbValue($rs->fields('NoKwitansi'));
 			$this->Keterangan->setDbValue($rs->fields('Keterangan'));
 			$this->Jumlah->setDbValue($rs->fields('Jumlah'));
-			$this->Val[1] = $this->id->CurrentValue;
-			$this->Val[2] = $this->Tanggal->CurrentValue;
-			$this->Val[3] = $this->NoKwitansi->CurrentValue;
-			$this->Val[4] = $this->Keterangan->CurrentValue;
-			$this->Val[5] = $this->Jumlah->CurrentValue;
+			$this->Val[1] = $this->Tanggal->CurrentValue;
+			$this->Val[2] = $this->NoKwitansi->CurrentValue;
+			$this->Val[3] = $this->Keterangan->CurrentValue;
+			$this->Val[4] = $this->Jumlah->CurrentValue;
 		} else {
 			$this->id->setDbValue("");
 			$this->Tanggal->setDbValue("");
@@ -1026,9 +1024,6 @@ class crt08_penerimaan_rpt extends crt08_penerimaan {
 		if ($this->RowType == EWR_ROWTYPE_TOTAL && !($this->RowTotalType == EWR_ROWTOTAL_GROUP && $this->RowTotalSubType == EWR_ROWTOTAL_HEADER)) { // Summary row
 			ewr_PrependClass($this->RowAttrs["class"], ($this->RowTotalType == EWR_ROWTOTAL_PAGE || $this->RowTotalType == EWR_ROWTOTAL_GRAND) ? "ewRptGrpAggregate" : ""); // Set up row class
 
-			// id
-			$this->id->HrefValue = "";
-
 			// Tanggal
 			$this->Tanggal->HrefValue = "";
 
@@ -1044,10 +1039,6 @@ class crt08_penerimaan_rpt extends crt08_penerimaan {
 			if ($this->RowTotalType == EWR_ROWTOTAL_GROUP && $this->RowTotalSubType == EWR_ROWTOTAL_HEADER) {
 			} else {
 			}
-
-			// id
-			$this->id->ViewValue = $this->id->CurrentValue;
-			$this->id->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
 
 			// Tanggal
 			$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
@@ -1068,9 +1059,6 @@ class crt08_penerimaan_rpt extends crt08_penerimaan {
 			$this->Jumlah->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
 			$this->Jumlah->CellAttrs["style"] = "text-align:right;";
 
-			// id
-			$this->id->HrefValue = "";
-
 			// Tanggal
 			$this->Tanggal->HrefValue = "";
 
@@ -1087,15 +1075,6 @@ class crt08_penerimaan_rpt extends crt08_penerimaan {
 		// Call Cell_Rendered event
 		if ($this->RowType == EWR_ROWTYPE_TOTAL) { // Summary row
 		} else {
-
-			// id
-			$CurrentValue = $this->id->CurrentValue;
-			$ViewValue = &$this->id->ViewValue;
-			$ViewAttrs = &$this->id->ViewAttrs;
-			$CellAttrs = &$this->id->CellAttrs;
-			$HrefValue = &$this->id->HrefValue;
-			$LinkAttrs = &$this->id->LinkAttrs;
-			$this->Cell_Rendered($this->id, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
 
 			// Tanggal
 			$CurrentValue = $this->Tanggal->CurrentValue;
@@ -1144,7 +1123,6 @@ class crt08_penerimaan_rpt extends crt08_penerimaan {
 		$this->GrpColumnCount = 0;
 		$this->SubGrpColumnCount = 0;
 		$this->DtlColumnCount = 0;
-		if ($this->id->Visible) $this->DtlColumnCount += 1;
 		if ($this->Tanggal->Visible) $this->DtlColumnCount += 1;
 		if ($this->NoKwitansi->Visible) $this->DtlColumnCount += 1;
 		if ($this->Keterangan->Visible) $this->DtlColumnCount += 1;
@@ -1674,7 +1652,6 @@ class crt08_penerimaan_rpt extends crt08_penerimaan {
 		if ($bResetSort) {
 			$this->setOrderBy("");
 			$this->setStartGroup(1);
-			$this->id->setSort("");
 			$this->Tanggal->setSort("");
 			$this->NoKwitansi->setSort("");
 			$this->Keterangan->setSort("");
@@ -1684,7 +1661,6 @@ class crt08_penerimaan_rpt extends crt08_penerimaan {
 		} elseif ($orderBy <> "") {
 			$this->CurrentOrder = $orderBy;
 			$this->CurrentOrderType = $orderType;
-			$this->UpdateSort($this->id, $bCtrl); // id
 			$this->UpdateSort($this->Tanggal, $bCtrl); // Tanggal
 			$this->UpdateSort($this->NoKwitansi, $bCtrl); // NoKwitansi
 			$this->UpdateSort($this->Keterangan, $bCtrl); // Keterangan
@@ -2181,24 +2157,6 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 <thead>
 	<!-- Table header -->
 	<tr class="ewTableHeader">
-<?php if ($Page->id->Visible) { ?>
-<?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
-	<td data-field="id"><div class="t08_penerimaan_id"><span class="ewTableHeaderCaption"><?php echo $Page->id->FldCaption() ?></span></div></td>
-<?php } else { ?>
-	<td data-field="id">
-<?php if ($Page->SortUrl($Page->id) == "") { ?>
-		<div class="ewTableHeaderBtn t08_penerimaan_id">
-			<span class="ewTableHeaderCaption"><?php echo $Page->id->FldCaption() ?></span>
-		</div>
-<?php } else { ?>
-		<div class="ewTableHeaderBtn ewPointer t08_penerimaan_id" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->id) ?>',2);">
-			<span class="ewTableHeaderCaption"><?php echo $Page->id->FldCaption() ?></span>
-			<span class="ewTableHeaderSort"><?php if ($Page->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
-		</div>
-<?php } ?>
-	</td>
-<?php } ?>
-<?php } ?>
 <?php if ($Page->Tanggal->Visible) { ?>
 <?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
 	<td data-field="Tanggal"><div class="t08_penerimaan_Tanggal"><span class="ewTableHeaderCaption"><?php echo $Page->Tanggal->FldCaption() ?></span></div></td>
@@ -2289,10 +2247,6 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 		$Page->RenderRow();
 ?>
 	<tr<?php echo $Page->RowAttributes(); ?>>
-<?php if ($Page->id->Visible) { ?>
-		<td data-field="id"<?php echo $Page->id->CellAttributes() ?>>
-<span<?php echo $Page->id->ViewAttributes() ?>><?php echo $Page->id->ListViewValue() ?></span></td>
-<?php } ?>
 <?php if ($Page->Tanggal->Visible) { ?>
 		<td data-field="Tanggal"<?php echo $Page->Tanggal->CellAttributes() ?>>
 <span<?php echo $Page->Tanggal->ViewAttributes() ?>><?php echo $Page->Tanggal->ListViewValue() ?></span></td>
