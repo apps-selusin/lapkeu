@@ -380,7 +380,7 @@
       <phrase id="menutext" value="t 11 saldoold" />
     </menu>
     <menu id="25">
-      <phrase id="menutext" value="t 12 penerimaanold" />
+      <phrase id="menutext" value="Laporan Penerimaan (Closed)" />
     </menu>
     <menu id="26">
       <phrase id="menutext" value="t 13 pengeluaranold" />
@@ -401,7 +401,7 @@
       <phrase id="menutext" value="Laporan Pengeluaran" />
     </menu>
     <menu id="18">
-      <phrase id="menutext" value="t 08 penerimaan" />
+      <phrase id="menutext" value="Laporan Penerimaan" />
     </menu>
     <menu id="5">
       <phrase id="menutext" value="Jenis Pengeluaran" />
@@ -611,7 +611,7 @@
       </field>
     </table>
     <table id="t08_penerimaan">
-      <phrase id="tblcaption" value="t 08 penerimaan" />
+      <phrase id="tblcaption" value="Laporan Penerimaan" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
@@ -680,7 +680,7 @@
       </field>
     </table>
     <table id="t12_penerimaanold">
-      <phrase id="tblcaption" value="t 12 penerimaanold" />
+      <phrase id="tblcaption" value="Laporan Penerimaan (Closed)" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
