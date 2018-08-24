@@ -207,6 +207,17 @@ $styleThinBlackBorderOutline = array(
 );
 $objPHPExcel->getActiveSheet()->getStyle('A4:L'.$baris)->applyFromArray($styleThinBlackBorderOutline);
 
+//$objPHPExcel->getActiveSheet()->getStyle('A4:' . $objPHPExcel->getActiveSheet()->getHighestColumn() . $objPHPExcel->getActiveSheet()->getHighestRow())->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+
+$styleArray = array(
+	'borders' => array(
+		'allborders' => array(
+			'style' => PHPExcel_Style_Border::BORDER_THIN
+		)
+	)
+);
+$objPHPExcel->getActiveSheet()->getStyle('A4:L'.$baris)->applyFromArray($styleArray);
+
 
 /*$objPHPExcel->getActiveSheet()->setCellValue('A4', '1001');
 $objPHPExcel->getActiveSheet()->setCellValue('B4', 'PHP for dummies');
