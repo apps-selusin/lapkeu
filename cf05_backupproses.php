@@ -45,7 +45,8 @@ $db->includeDatabases = [$info["db"]];
 //$db->dumpDatabases();
 
 require('mysql_backup_import.php');
-$dir  = dirname(__file__) . "/backup/"; // directory files
+//$dir  = dirname(__file__) . "/backup/"; echo $dir; // directory files
+$dir  = "backup"; //echo $dir; // directory files
 $name = 'backup'; // name sql backup
 //print_r( backup_database( $dir, $name, 'localhost', 'user', 'password', 'databasename') ); // execute
 backup_database($dir, $name, $info["host"], $info["user"], $info["pass"], $info["db"]); // execute
