@@ -379,7 +379,8 @@ class clogout {
 		}
 
 		//backup_tables('localhost','root','admin','db_lapkeu');
-		backup_tables($info["host"], $info["user"], $info["pass"], $info["db"]);
+		//backup_tables($info["host"], $info["user"], $info["pass"], $info["db"]);
+
 		$url = ".";
 	}
 
