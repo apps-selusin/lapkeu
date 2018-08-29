@@ -84,7 +84,7 @@ function backup_tables_old($host,$user,$pass,$name,$tables = '*')
 	}
 	
 	//save file
-	$handle = fopen('db-backup-'.time().'-'.(md5(implode(',',$tables))).'.sql','w+');
+	$handle = fopen('backup/db-backup-'.time().'-'.(md5(implode(',',$tables))).'.sql','w+');
 	fwrite($handle,$return);
 	fclose($handle);
 }
