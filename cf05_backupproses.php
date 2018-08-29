@@ -27,66 +27,22 @@ if (ew_CurrentUserIP () == "127.0.0.1"  || ew_CurrentUserIP () == ":: 1"  || ew_
 	$info["db"] = "u433254588_lapke"; // sesuaikan dengan nama database di komputer server
 }
 //backup_tables('localhost','root','admin','db_lapkeu');
-backup_tables($info["host"], $info["user"], $info["pass"], $info["db"]);
+//backup_tables($info["host"], $info["user"], $info["pass"], $info["db"]);
+
+require('phpmybackup.php');
+$db = new MYSQL_DUMP;
+$db->dbhost = $info["host"]; //'server.com';
+$db->dbuser = $info["user"]; //'backup-user';
+$db->dbpwd = $info["pass"]; //'backup-password';
+$db->backupsToKeep = 30;
+$db->showDebug = false;
+$db->backupDir = '/backup/';
+//$db->ignoreDatabases = ['test','unimportant_db'];
+//$db->emptyTables = ['largedb.large_table1','largedb.cachetable'];
+$db->dumpDatabases();
 
 // kembali ke cf05_backup
 header("location: cf05_backup.php?ok=1");
 //header("location: .");
-
-/* backup the db OR just a table */
-function backup_tables_old($host,$user,$pass,$name,$tables = '*')
-{
-	
-	$link = mysql_connect($host,$user,$pass);
-	mysql_select_db($name,$link);
-	
-	//get all of the tables
-	if($tables == '*')
-	{
-		$tables = array();
-		$result = mysql_query('SHOW TABLES');
-		while($row = mysql_fetch_row($result))
-		{
-			$tables[] = $row[0];
-		}
-	}
-	else
-	{
-		$tables = is_array($tables) ? $tables : explode(',',$tables);
-	}
-	
-	//cycle through
-	foreach($tables as $table)
-	{
-		$result = mysql_query('SELECT * FROM '.$table);
-		$num_fields = mysql_num_fields($result);
-		
-		$return.= 'DROP TABLE '.$table.';';
-		$row2 = mysql_fetch_row(mysql_query('SHOW CREATE TABLE '.$table));
-		$return.= "\n\n".$row2[1].";\n\n";
-		
-		for ($i = 0; $i < $num_fields; $i++) 
-		{
-			while($row = mysql_fetch_row($result))
-			{
-				$return.= 'INSERT INTO '.$table.' VALUES(';
-				for($j=0; $j < $num_fields; $j++) 
-				{
-					$row[$j] = addslashes($row[$j]);
-					$row[$j] = ereg_replace("\n","\\n",$row[$j]);
-					if (isset($row[$j])) { $return.= '"'.$row[$j].'"' ; } else { $return.= '""'; }
-					if ($j < ($num_fields-1)) { $return.= ','; }
-				}
-				$return.= ");\n";
-			}
-		}
-		$return.="\n\n\n";
-	}
-	
-	//save file
-	$handle = fopen('backup/db-backup-'.time().'-'.(md5(implode(',',$tables))).'.sql','w+');
-	fwrite($handle,$return);
-	fclose($handle);
-}
 
 ?>
