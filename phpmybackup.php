@@ -38,7 +38,7 @@ class MYSQL_DUMP
     */
     public $emptyTables = [];
 
-    public $showDebug = false;
+    public $showDebug = true;
     public $dropTables = true;
     public $hex4blob = true;
     public $createDatabase = true;
@@ -47,7 +47,7 @@ class MYSQL_DUMP
     public $backupRepository = false;
     public $backupsToKeep = 180;
     public $header = '';
-    public $timezone = 'Pacific/Auckland';
+    public $timezone = 'Asia/Jakarta';
     public $tar_binary = '/bin/tar';
     public $mysqldump_binary = '/usr/bin/mysqldump';
     public $savePermissions = 0664; // Save files with the following permissions
@@ -221,10 +221,11 @@ class MYSQL_DUMP
             }
 
             /* Create create checksum */
-            $create_sql = $this->db_query('SHOW CREATE TABLE `' . $tblName . '`');
+            if (substr($tblName, 0, 1) <> 'v') {
+            $create_sql = $this->db_query('SHOW CREATE TABLE `' . $tblName . '`'); //echo substr($tblName,0,1);
             while ($create = $create_sql->fetch_array(MYSQLI_ASSOC)) {
                 $tblChecksum .= '-' . substr(base_convert(md5($create['Create Table']), 16,32), 0, 12);
-            }
+            }}
 
             if ($row['Engine'] == null) {
                 $row['Engine'] = 'View';
