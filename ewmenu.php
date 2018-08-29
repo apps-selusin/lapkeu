@@ -2,7 +2,6 @@
 
 // Menu
 $RootMenu = new cMenu("RootMenu", TRUE);
-$RootMenu->AddMenuItem(10177, "mi_cf05_backup_php", $Language->MenuPhrase("10177", "MenuText"), "cf05_backup.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf05_backup.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(11, "mi_cf01_home_php", $Language->MenuPhrase("11", "MenuText"), "cf01_home.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf01_home.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10016, "mi_t08_penerimaan", $Language->MenuPhrase("10016", "MenuText"), "t08_penerimaanlist.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t08_penerimaan'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(6, "mi_t06_pengeluaran", $Language->MenuPhrase("6", "MenuText"), "t06_pengeluaranlist.php", -1, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t06_pengeluaran'), FALSE, FALSE, "");
@@ -31,6 +30,7 @@ $RootMenu->AddMenuItem(7, "mi_t96_employees", $Language->MenuPhrase("7", "MenuTe
 $RootMenu->AddMenuItem(8, "mi_t97_userlevels", $Language->MenuPhrase("8", "MenuText"), "t97_userlevelslist.php", 32, "", IsAdmin(), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(23, "mi_t99_audittrail", $Language->MenuPhrase("23", "MenuText"), "t99_audittraillist.php", 32, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t99_audittrail'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(10176, "mi_cf04_update_php", $Language->MenuPhrase("10176", "MenuText"), "cf04_update.php", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf04_update.php'), FALSE, TRUE, "");
+$RootMenu->AddMenuItem(10177, "mi_cf05_backup_php", $Language->MenuPhrase("10177", "MenuText"), "cf05_backup.php", 22, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf05_backup.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10118, "mci_List", $Language->MenuPhrase("10118", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10007, "mri_t075fsekolah", $Language->MenuPhrase("10007", "MenuText"), "t07_sekolahrpt.php", 10118, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}t07_sekolah'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(10001, "mri_t015fsupplier", $Language->MenuPhrase("10001", "MenuText"), "t01_supplierrpt.php", 10118, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}t01_supplier'), FALSE, FALSE, "");
