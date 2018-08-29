@@ -33,7 +33,7 @@ backup_tables($info["host"], $info["user"], $info["pass"], $info["db"]);
 header("location: cf05_backup.php?ok=1");
 
 /* backup the db OR just a table */
-function backup_tables($host,$user,$pass,$name,$tables = '*')
+function backup_tables_old($host,$user,$pass,$name,$tables = '*')
 {
 	
 	$link = mysql_connect($host,$user,$pass);
