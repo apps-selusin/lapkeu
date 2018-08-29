@@ -101,7 +101,7 @@ function backup_tables($host,$user,$pass,$name,$tables = '*')
 	fclose($handle);
 }
 
-function backup_database( $directory, $outname , $dbhost, $dbuser, $dbpass ,$dbname ) {
+function backup_database__old( $directory, $outname , $dbhost, $dbuser, $dbpass ,$dbname ) {
 
   // check mysqli extension installed
   if( ! function_exists('mysqli_connect') ) {

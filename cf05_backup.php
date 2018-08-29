@@ -367,7 +367,7 @@ if (isset($_GET["ok"])) {
 		<?php
 
 		// backup database
-		$info = array();
+		/*$info = array();
 		if (ew_CurrentUserIP () == "127.0.0.1"  || ew_CurrentUserIP () == ":: 1"  || ew_CurrentHost () == "localhost" ) { // testing on local PC
 			$info["host"] = "localhost";
 			$info["user"] = "root"; // sesuaikan dengan username database di komputer localhost
@@ -386,6 +386,7 @@ if (isset($_GET["ok"])) {
 		$name = 'backup'; // name sql backup
 		//print_r( backup_database( $dir, $name, 'localhost', 'user', 'password', 'databasename') ); // execute
 		backup_database($dir, $name, $info["host"], $info["user"], $info["pass"], $info["db"]); // execute
+		*/
 		?>
 		<!--<div class="panel panel-default">
 			<div class="panel-heading">Backup Database</div>
@@ -419,7 +420,7 @@ else {
 						<td>&nbsp;</td>
 					</tr>
 					<tr>
-						<td><a href='cf05_backup.php?ok=1'><button>Proses</button></a></td>
+						<td><a href='mybackup.php'><button>Proses</button></a></td>
 					</tr>
 				</table>
 			</div>

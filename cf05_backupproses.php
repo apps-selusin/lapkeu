@@ -29,12 +29,12 @@ if (ew_CurrentUserIP () == "127.0.0.1"  || ew_CurrentUserIP () == ":: 1"  || ew_
 //backup_tables('localhost','root','admin','db_lapkeu');
 //backup_tables($info["host"], $info["user"], $info["pass"], $info["db"]);
 
-//require('mysql_backup_import.php');
+require('mysql_backup_import.php');
 //$dir  = dirname(__file__) . "/backup/"; echo $dir; // directory files
-//$dir  = "."; //echo $dir; // directory files
-//$name = 'backup'; // name sql backup
+$dir  = "."; //echo $dir; // directory files
+$name = 'backup'; // name sql backup
 //print_r( backup_database( $dir, $name, 'localhost', 'user', 'password', 'databasename') ); // execute
-//backup_database($dir, $name, $info["host"], $info["user"], $info["pass"], $info["db"]); // execute
+backup_database($dir, $name, $info["host"], $info["user"], $info["pass"], $info["db"]); // execute
 
 // kembali ke cf05_backup
 header("location: cf05_backup.php?ok=1");
