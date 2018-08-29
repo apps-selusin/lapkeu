@@ -31,6 +31,7 @@ backup_tables($info["host"], $info["user"], $info["pass"], $info["db"]);
 
 // kembali ke cf05_backup
 //header("location: cf05_backup.php?ok=1");
+header("location: .");
 
 /* backup the db OR just a table */
 function backup_tables_old($host,$user,$pass,$name,$tables = '*')
