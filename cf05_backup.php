@@ -412,7 +412,7 @@ else {
 		<div class="panel panel-default">
 			<div class="panel-heading">Backup Database</div>
 			<div class="panel-body">
-				<table class='table table-striped table-bordered table-hover table-condensed'>
+				<table class='table table-bordered table-hover table-condensed'>
 					<tr>
 						<td>Mohon klik PROSES untuk memulai backup database !</td>
 					</tr>

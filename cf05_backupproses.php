@@ -408,7 +408,7 @@ createNewArchive($archiveName) ;
 		<div class="panel panel-default">
 			<div class="panel-heading">Backup Database</div>
 			<div class="panel-body">
-				<table class='table table-striped table-bordered table-hover table-condensed'>
+				<table class='table table-bordered table-hover table-condensed'>
 					<tr>
 						<td><?php echo 'Sorry the latest Archive is not older than 24Hours , try a few hours later '  ;?></td>
 					</tr>
@@ -519,7 +519,7 @@ msg;
 		<div class="panel panel-default">
 			<div class="panel-heading">Backup Database</div>
 			<div class="panel-body">
-				<table class='table table-striped table-bordered table-hover table-condensed'>
+				<table class='table table-bordered table-hover table-condensed'>
 					<tr>
 						<td><?php echo $message;?></td>
 					</tr>
