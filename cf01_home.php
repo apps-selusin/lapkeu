@@ -484,6 +484,8 @@ Page_Rendering();
 <p>to do:<br/>
 1. informasi identitas sekolah; -> noted;<br/>
 2. logo sekolah; -> noted;<br/>
+3. setup halaman excel F4 -> noted; -> noted;<br/>
+4. auto backup -> noted; -> noted;<br/>
 			</div>
 		</div>
 	</div>
