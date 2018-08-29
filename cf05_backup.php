@@ -344,71 +344,6 @@ $cf05_backup_php->Page_Main();
 Page_Rendering();
 ?>
 <?php include_once "header.php" ?>
-<?php
-if (isset($_GET["ok"])) {
-	if ($_GET["ok"] == 1) {
-		?>
-		<div class="panel panel-default">
-			<div class="panel-heading">Backup Database</div>
-			<div class="panel-body">
-				<table class='table table-striped table-bordered table-hover table-condensed'>
-					<tr>
-						<td>Proses backup database telah selesai !</td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<td><a href='.'><button>Selesai</button></a></td>
-					</tr>
-				</table>
-			</div>
-		</div>
-		<?php
-
-		// backup database
-		/*$info = array();
-		if (ew_CurrentUserIP () == "127.0.0.1"  || ew_CurrentUserIP () == ":: 1"  || ew_CurrentHost () == "localhost" ) { // testing on local PC
-			$info["host"] = "localhost";
-			$info["user"] = "root"; // sesuaikan dengan username database di komputer localhost
-			$info["pass"] = "admin"; // sesuaikan dengan password database di komputer localhost
-			$info["db"] = "db_lapkeu"; // sesuaikan dengan nama database di komputer localhost
-		} elseif (ew_CurrentHost () == "lapkeu.selusin.net") { // setting koneksi database untuk komputer server
-			$info["host"] = "mysql.hostinger.co.id";  // sesuaikan dengan ip address atau hostname komputer server
-			$info["user"] = "u433254588_lapke"; // sesuaikan dengan username database di komputer server
-			$info["pass"] = "M457r1P 81"; // sesuaikan deengan password database di komputer server
-			$info["db"] = "u433254588_lapke"; // sesuaikan dengan nama database di komputer server
-		}
-
-		//require('mysql_backup_import.php');
-		//$dir  = dirname(__file__) . "/backup/"; echo $dir; // directory files
-		$dir  = "."; //echo $dir; // directory files
-		$name = 'backup'; // name sql backup
-		//print_r( backup_database( $dir, $name, 'localhost', 'user', 'password', 'databasename') ); // execute
-		backup_database($dir, $name, $info["host"], $info["user"], $info["pass"], $info["db"]); // execute
-		*/
-		?>
-		<!--<div class="panel panel-default">
-			<div class="panel-heading">Backup Database</div>
-			<div class="panel-body">
-				<table class='table table-striped table-bordered table-hover table-condensed'>
-					<tr>
-						<td>Proses backup database telah selesai !</td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<td><a href='.'><button>Selesai</button></a></td>
-					</tr>
-				</table>
-			</div>
-		</div>-->
-		<?php
-	}
-}
-else {
-?>
 		<div class="panel panel-default">
 			<div class="panel-heading">Backup Database</div>
 			<div class="panel-body">
@@ -425,9 +360,6 @@ else {
 				</table>
 			</div>
 		</div>
-		<?php
-}
-?>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
