@@ -478,7 +478,7 @@ Page_Rendering();
 <!-- log -->
 <div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Log</a></strong></div>
-	<div id="log" class="panel-collapse collapse in">
+	<div id="log" class="panel-collapse collapse out">
 		<div class="panel-body">
 			<div>
 <p>to do:<br/>
@@ -486,6 +486,7 @@ Page_Rendering();
 2. logo sekolah; -> noted;<br/>
 3. setup halaman excel F4 -> noted;<br/>
 4. auto backup -> noted;<br/>
+5. pembedaan hak akses tiap2 user -> noted;<br/>
 			</div>
 		</div>
 	</div>
