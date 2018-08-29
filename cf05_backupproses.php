@@ -30,7 +30,7 @@ if (ew_CurrentUserIP () == "127.0.0.1"  || ew_CurrentUserIP () == ":: 1"  || ew_
 backup_tables($info["host"], $info["user"], $info["pass"], $info["db"]);
 
 // kembali ke cf05_backup
-header("location: cf05_backup.php?ok=1");
+//header("location: cf05_backup.php?ok=1");
 
 /* backup the db OR just a table */
 function backup_tables_old($host,$user,$pass,$name,$tables = '*')
