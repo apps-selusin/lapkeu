@@ -1,6 +1,6 @@
 <?php
 
-backup_tables('localhost','root','admin');
+backup_tables('localhost','root','admin','db_lapkeu');
 
 // kembali ke cf05_backup
 header("location: cf05_backup.php?ok=1");
