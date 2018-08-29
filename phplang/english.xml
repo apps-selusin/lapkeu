@@ -708,11 +708,11 @@
     <menu id="23">
       <phrase id="menutext" value="Log" />
     </menu>
-    <menu id="10134">
-      <phrase id="menutext" value="t 12 penerimaanold" />
-    </menu>
     <menu id="10176">
       <phrase id="menutext" value="Check for Update" />
+    </menu>
+    <menu id="10134">
+      <phrase id="menutext" value="t 12 penerimaanold" />
     </menu>
     <menu id="10118">
       <phrase id="menutext" value="List" />
