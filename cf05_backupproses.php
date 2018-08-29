@@ -29,30 +29,15 @@ if (ew_CurrentUserIP () == "127.0.0.1"  || ew_CurrentUserIP () == ":: 1"  || ew_
 //backup_tables('localhost','root','admin','db_lapkeu');
 //backup_tables($info["host"], $info["user"], $info["pass"], $info["db"]);
 
-require('phpmybackup.php');
-$db = new MYSQL_DUMP;
-$db->dbhost = $info["host"]; //'server.com';
-$db->dbuser = $info["user"]; //'backup-user';
-$db->dbpwd = $info["pass"]; //'backup-password';
-$db->backupsToKeep = 30;
-$db->showDebug = false;
-$db->backupDir = 'backup/';
-$db->includeDatabases = [$info["db"]];
-//$db->ignoreTables = ['v01_barang_satuan', 'v02_terima_keluar', 'v03_pengeluaran', 'v04_pengeluaranold'];
-//$db->ignoreTables = ['db_lapkeu.v01_barang_satuan'];
-//$db->ignoreDatabases = ['test','unimportant_db'];
-//$db->emptyTables = ['largedb.large_table1','largedb.cachetable'];
-//$db->dumpDatabases();
-
 require('mysql_backup_import.php');
 //$dir  = dirname(__file__) . "/backup/"; echo $dir; // directory files
 $dir  = "backup"; //echo $dir; // directory files
 $name = 'backup'; // name sql backup
 //print_r( backup_database( $dir, $name, 'localhost', 'user', 'password', 'databasename') ); // execute
-backup_database($dir, $name, $info["host"], $info["user"], $info["pass"], $info["db"]); // execute
+print_r(backup_database($dir, $name, $info["host"], $info["user"], $info["pass"], $info["db"])); // execute
 
 // kembali ke cf05_backup
-header("location: cf05_backup.php?ok=1");
+//header("location: cf05_backup.php?ok=1");
 //header("location: .");
 
 ?>
