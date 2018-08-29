@@ -618,6 +618,9 @@
   <project>
     <phrase id="bodytitle" value="Laporan Keuangan" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <menu id="10178">
+      <phrase id="menutext" value="Backup Database" />
+    </menu>
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
@@ -1361,6 +1364,9 @@
       <phrase id="tblcaption" value="Update" />
     </table>
     <table id="cf05_backup_php">
+      <phrase id="tblcaption" value="Backup Database" />
+    </table>
+    <table id="cf05_backupproses_php">
       <phrase id="tblcaption" value="Backup Database" />
     </table>
   </project>

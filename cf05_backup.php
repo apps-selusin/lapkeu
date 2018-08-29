@@ -420,7 +420,7 @@ else {
 						<td>&nbsp;</td>
 					</tr>
 					<tr>
-						<td><a href='mybackup.php'><button>Proses</button></a></td>
+						<td><a href='cf05_backupproses.php'><button>Proses</button></a></td>
 					</tr>
 				</table>
 			</div>

@@ -345,6 +345,8 @@ class cdefault {
 			$this->Page_Terminate("cf04_update.php");
 		if ($Security->AllowList(CurrentProjectID() . 'cf05_backup.php'))
 			$this->Page_Terminate("cf05_backup.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf05_backupproses.php'))
+			$this->Page_Terminate("cf05_backupproses.php");
 		if ($Security->IsLoggedIn()) {
 			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
 		} else {
