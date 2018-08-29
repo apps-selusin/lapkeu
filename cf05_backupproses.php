@@ -51,7 +51,7 @@ $name = 'backup'; // name sql backup
 backup_database($dir, $name, $info["host"], $info["user"], $info["pass"], $info["db"]); // execute
 
 // kembali ke cf05_backup
-//header("location: cf05_backup.php?ok=1");
+header("location: cf05_backup.php?ok=1");
 //header("location: .");
 
 ?>
