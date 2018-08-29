@@ -43,7 +43,7 @@ $db->includeDatabases = [$info["db"]];
 $db->dumpDatabases();
 
 // kembali ke cf05_backup
-//header("location: cf05_backup.php?ok=1");
+header("location: cf05_backup.php?ok=1");
 //header("location: .");
 
 ?>
