@@ -192,7 +192,7 @@
       <Field FldName="Jumlah" FldAlias="0" FldSourceName="" FldSourceTable="" FldSourceField="" FldType="4" FldTypeName="FLOAT" NativeDataType="4" FldSQL="" FldIsCustom="0" FldSupport="1" FldSort="1" FldSize="14" FldUniqueIdx="0" FldZeroLen="0" FldReq="1" FldIsPrimaryKey="0" FldAutoIncrement="0" FldAttribute="4" FldMin="" FldMax="" FldErrMsg="" FldValidate="FLOAT" FldServerValidateArgs="" FldClientValidateArgs="" FldRequired="0" FldPopCalendar="0" FldGenerate="1" FldList="1" FldExport="1" FldView="1" FldEdit="1" FldAdd="1" FldAddOpt="1" FldSearch="1" FldBasicSearch="0" FldExtendedBasicSearch="0" FldRegister="0" FldSrchOpr="=" FldSrchOpr2="" FldDefault="" FldSearchDefault="" FldSearchDefault2="" FldDbDefault="" FldCaption="Jumlah" FldViewTag="FORMATTED TEXT" FldViewThumbnail="0" FldHtmlTag="TEXT" FldTagSize="30" FldTagMaxLength="0" FldTagValues="" FldHtmlTagReadOnly="0" FldTagHiddenValue="" FldSelectType="Values" FldTagLnkTbl="" FldTagLnkFld="" FldTagLnkDisplay="" FldTagLnkDisp2="" FldTagLnkDisp3="" FldTagLnkDisp4="" FldTagLnkOrderBy="" FldTagLnkOrderType="" FldTagLnkDistinct="0" FldTagCols="0" FldTagRows="0" FldTagImgWidth="0" FldTagImgHeight="0" FldTagAType="" FldTagATarget="" FldTagAPrefix="None" FldTagASuffix="" FldBold="0" FldItalic="0" FldAlign="" FldFmtType="None" FldDtFormat="0" FldNumDigits="0" FldIncLeadDigit="-2" FldUseParen="-2" FldGpDigits="-2" FileNameFld="" FileTypeFld="" FileSizeFld="" ImageWidthFld="" ImageHeightFld="" FldHrefFld="" FldHrefFldOrig="0" FldStrFunc="" FldUseDHTMLEditor="0" FldMemoMaxLength="0" FldSelectSize="0" FldSelectMultiple="0" FldSelectFilter="" FldAutoFillSourceFields="" FldAutoFillTargetFields="" FldParentSelect="" FldParentSelect2="" FldParentSelect3="" FldParentSelect4="" FldSelectFilterFld="" FldSelectFilterFld2="" FldSelectFilterFld3="" FldSelectFilterFld4="" FldParentSelectTbl="" FldParentSelectTbl2="" FldParentSelectTbl3="" FldParentSelectTbl4="" FldSelectAllowAdd="0" FldQuoteS="" FldQuoteE="" FldColumnWidth="" FldColumnWrap="1" FldAggregate="" FldGroupBy="0" FldOrderBy="0" FldOrder="" FldGroupByShowSummary="0" FldRptAggSum="0" FldRptAggAvg="0" FldRptAggMin="0" FldRptAggMax="0" FldRepeatColumns="5" FldUploadPath="" FldUploadMultiple="0" UploadAllowedFileExt="" UploadMaxFileSize="0" UploadMaxFileCount="0" FldCheckDuplicate="0" FldPageIndex="1" FldAjax="1" FldAutoUpdateValue="" FldUploadResize="0" FldResizeWidth="0" FldResizeHeight="0" FldMultiUpdate="1" FldTitle="" FldAlt="" FldEditCustomAttributes="" FldViewCustomAttributes="" FldTagACustomAttributes="" FldResizeQuality="75" FldEditTableField="" FldAutoFill="0" FldSelectForceSelection="0" FldMemoCRLFReplace="0" FldTooltipFld="" FldTooltipWidth="0" FldVirtualLookup="0" FldVirtualLookupSearch="0" FldViewTemplate="" FldEditTemplate="" FldOptionTemplate="" FldDropdown="0" FldDropdownWidth="0" FldDropdownHeight="0" FldModalLookup="0" FldModalLookupPageSize="0" FldCheckPasswordStrength="0" FldGeneratePassword="0" />
     </Table>
     <Table TblSchema="" TblName="cf04_update.php" TblType="REPORT" TblGen="1" TblGenList="custom=0" TblList="1" TblView="0" TblInlineEdit="0" TblGridEdit="0" TblEdit="0" TblEditConfirm="0" TblEditCaptcha="0" TblGridAdd="0" TblAdd="0" TblAddReturnPage="" TblAddOpt="0" TblAddConfirm="0" TblAddCaptcha="0" TblInlineAdd="0" TblInlineCopy="0" TblMultiUpdate="0" TblMultiUpdateConfirm="0" TblAnonymous="0" TblIsMaster="0" TblIsDetail="0" TblDelete="0" TblCaption="Update" TblUpdatable="0" TblSQL="" TblError="" TblSrchType="NONE" TblSearchHighlight="0" TblSearchColor="" TblSearch="0" TblBasicSearch="1" TblExtendedBasicSearch="1" TblBasicSearchDefault="" TblBasicSearchTypeDefault="" TblExtSearchFldPerRow="0" TblDefault="0" TblCopy="0" TblFilter="" TblUserIDFld="" TblSecurity="0,&quot;Default&quot;,0" TblUserIDAllow="0" TblExpanded="0" TblLoaded="1" TblRptShowDetails="0" TblRptShowGrandTotal="0" OutputFolder="" IncludeFiles="1" TblReportType="custom" TblCustomSQL="" TblCustomError="" TblRptSrc="" TblRptIndent="0" TblUseGlobal="1" TblRecPerPage="20" TblRecPerPageList="" TblPrinterFriendly="0" TblExportHtml="0" TblExportWord="0" TblExportExcel="0" TblExportXml="0" TblExportCsv="0" TblExportEmail="0" TblExportPDF="0" TblExportType="" TblRecPerRow="0" TblMultiDelete="0" TblSortType="0" TblPagerStyle="2" TblTopPageLink="0" TblBottomPageLink="1" TblViewExport="0" TblListExport="0" TblLinkOnLeft="0" TblInlineDelete="0" TblDetailViewPaging="0" TblDetailEditPaging="0" TblModalSearch="0" TblModalAdd="0" TblModalEdit="0" TblModalUpdate="0" TblModalView="0" TblAuditTrail="0" TblSendMailOnAdd="0" TblSendMailOnEdit="0" TblSendMailOnDelete="0" TblShowBlankListPage="0" TblDetailShowCount="0" TblDetailAdd="0" TblDetailEdit="0" TblDetailView="0" TblShowMultipleDetails="0" TblEditReturnPage="" TblMultiPageAdd="0" TblMultiPageEdit="0" TblMultiPageView="0" TblMultiPageSearch="0" TblCheckConcurrentUpdate="0" TblUserLevelPriv="1" TblDisplayRowCount="0" TblUseButtonsForLinks="1" TblUseDropDownForAction="1" TblUseDropDownForListOptions="1" TblMultiPageType="" TblUseDropDownForExport="1" LinkDBID="" LinkTableName="" LinkTableType="" TblPageCaptions="" />
-    <Table TblSchema="" TblName="cf05_backup.php" TblType="REPORT" TblGen="1" TblGenList="custom=0" TblList="1" TblView="0" TblInlineEdit="0" TblGridEdit="0" TblEdit="0" TblEditConfirm="0" TblEditCaptcha="0" TblGridAdd="0" TblAdd="0" TblAddReturnPage="" TblAddOpt="0" TblAddConfirm="0" TblAddCaptcha="0" TblInlineAdd="0" TblInlineCopy="0" TblMultiUpdate="0" TblMultiUpdateConfirm="0" TblAnonymous="0" TblIsMaster="0" TblIsDetail="0" TblDelete="0" TblCaption="Backup Database" TblUpdatable="0" TblSQL="" TblError="" TblSrchType="NONE" TblSearchHighlight="0" TblSearchColor="" TblSearch="0" TblBasicSearch="1" TblExtendedBasicSearch="1" TblBasicSearchDefault="" TblBasicSearchTypeDefault="" TblExtSearchFldPerRow="0" TblDefault="0" TblCopy="0" TblFilter="" TblUserIDFld="" TblSecurity="0,&quot;Default&quot;,0" TblUserIDAllow="0" TblExpanded="0" TblLoaded="1" TblRptShowDetails="0" TblRptShowGrandTotal="0" OutputFolder="" IncludeFiles="1" TblReportType="custom" TblCustomSQL="" TblCustomError="" TblRptSrc="" TblRptIndent="0" TblUseGlobal="1" TblRecPerPage="20" TblRecPerPageList="" TblPrinterFriendly="0" TblExportHtml="0" TblExportWord="0" TblExportExcel="0" TblExportXml="0" TblExportCsv="0" TblExportEmail="0" TblExportPDF="0" TblExportType="" TblRecPerRow="0" TblMultiDelete="0" TblSortType="0" TblPagerStyle="2" TblTopPageLink="0" TblBottomPageLink="1" TblViewExport="0" TblListExport="0" TblLinkOnLeft="0" TblInlineDelete="0" TblDetailViewPaging="0" TblDetailEditPaging="0" TblModalSearch="0" TblModalAdd="0" TblModalEdit="0" TblModalUpdate="0" TblModalView="0" TblAuditTrail="0" TblSendMailOnAdd="0" TblSendMailOnEdit="0" TblSendMailOnDelete="0" TblShowBlankListPage="0" TblDetailShowCount="0" TblDetailAdd="0" TblDetailEdit="0" TblDetailView="0" TblShowMultipleDetails="0" TblEditReturnPage="" TblMultiPageAdd="0" TblMultiPageEdit="0" TblMultiPageView="0" TblMultiPageSearch="0" TblCheckConcurrentUpdate="0" TblUserLevelPriv="1" TblDisplayRowCount="0" TblUseButtonsForLinks="1" TblUseDropDownForAction="1" TblUseDropDownForListOptions="1" TblMultiPageType="" TblUseDropDownForExport="1" LinkDBID="" LinkTableName="" LinkTableType="" TblPageCaptions="" />
+    <Table TblSchema="" TblName="cf05_backup.php" TblType="REPORT" TblGen="1" TblGenList="custom=1" TblList="1" TblView="0" TblInlineEdit="0" TblGridEdit="0" TblEdit="0" TblEditConfirm="0" TblEditCaptcha="0" TblGridAdd="0" TblAdd="0" TblAddReturnPage="" TblAddOpt="0" TblAddConfirm="0" TblAddCaptcha="0" TblInlineAdd="0" TblInlineCopy="0" TblMultiUpdate="0" TblMultiUpdateConfirm="0" TblAnonymous="0" TblIsMaster="0" TblIsDetail="0" TblDelete="0" TblCaption="Backup Database" TblUpdatable="0" TblSQL="" TblError="" TblSrchType="NONE" TblSearchHighlight="0" TblSearchColor="" TblSearch="0" TblBasicSearch="1" TblExtendedBasicSearch="1" TblBasicSearchDefault="" TblBasicSearchTypeDefault="" TblExtSearchFldPerRow="0" TblDefault="0" TblCopy="0" TblFilter="" TblUserIDFld="" TblSecurity="0,&quot;Default&quot;,0" TblUserIDAllow="0" TblExpanded="0" TblLoaded="1" TblRptShowDetails="0" TblRptShowGrandTotal="0" OutputFolder="" IncludeFiles="1" TblReportType="custom" TblCustomSQL="" TblCustomError="" TblRptSrc="" TblRptIndent="0" TblUseGlobal="1" TblRecPerPage="20" TblRecPerPageList="" TblPrinterFriendly="0" TblExportHtml="0" TblExportWord="0" TblExportExcel="0" TblExportXml="0" TblExportCsv="0" TblExportEmail="0" TblExportPDF="0" TblExportType="" TblRecPerRow="0" TblMultiDelete="0" TblSortType="0" TblPagerStyle="2" TblTopPageLink="0" TblBottomPageLink="1" TblViewExport="0" TblListExport="0" TblLinkOnLeft="0" TblInlineDelete="0" TblDetailViewPaging="0" TblDetailEditPaging="0" TblModalSearch="0" TblModalAdd="0" TblModalEdit="0" TblModalUpdate="0" TblModalView="0" TblAuditTrail="0" TblSendMailOnAdd="0" TblSendMailOnEdit="0" TblSendMailOnDelete="0" TblShowBlankListPage="0" TblDetailShowCount="0" TblDetailAdd="0" TblDetailEdit="0" TblDetailView="0" TblShowMultipleDetails="0" TblEditReturnPage="" TblMultiPageAdd="0" TblMultiPageEdit="0" TblMultiPageView="0" TblMultiPageSearch="0" TblCheckConcurrentUpdate="0" TblUserLevelPriv="1" TblDisplayRowCount="0" TblUseButtonsForLinks="1" TblUseDropDownForAction="1" TblUseDropDownForListOptions="1" TblMultiPageType="" TblUseDropDownForExport="1" LinkDBID="" LinkTableName="" LinkTableType="" TblPageCaptions="" />
   </Database>
   <Extension Name="Audit Trail" Template="" XmlFile="audittrail.xml" Enabled="1">
     <ExtProject>
@@ -790,6 +790,205 @@ function backup_tables($host,$user,$pass,$name,$tables = '*')
 	$handle = fopen('backup/db-backup-'.time().'-'.(md5(implode(',',$tables))).'.sql','w+');
 	fwrite($handle,$return);
 	fclose($handle);
+}
+
+function backup_database( $directory, $outname , $dbhost, $dbuser, $dbpass ,$dbname ) {
+  
+  // check mysqli extension installed
+  if( ! function_exists('mysqli_connect') ) {
+	die(' This scripts need mysql extension to be running properly ! please resolve!!');
+  }
+
+	$mysqli = @new mysqli($dbhost, $dbuser, $dbpass, $dbname);
+	
+	if( $mysqli->connect_error ) {
+		print_r( $mysqli->connect_error );
+		return false;
+	}
+
+  	$dir = $directory;
+  	$result = '<p> Could not create backup directory on :'.$dir.' Please Please make sure you have set Directory on 755 or 777 for a while.</p>';  
+  	$res = true;
+  	if( ! is_dir( $dir ) ) {
+  	  if( ! @mkdir( $dir, 755 )) {
+  	    $res = false;
+  	  }
+  	}
+
+  $n = 1;
+  if( $res ) {
+
+	$name     = $outname;
+	# counts
+	if( file_exists($dir.'/'.$name.'.sql.gz' ) ) {
+
+	  for($i=1;@count( file($dir.'/'.$name.'_'.$i.'.sql.gz') );$i++){
+		$name = $name;
+		if( ! file_exists( $dir.'/'.$name.'_'.$i.'.sql.gz') ) {
+		  $name = $name.'_'.$i;
+		  break;
+		}
+	  }
+	}
+
+	$fullname = $dir.'/'.$name.'.sql.gz'; # full structures
+
+	if( ! $mysqli->error ) {
+	  $sql = "SHOW TABLES";
+	  $show = $mysqli->query($sql);
+	  while ( $r = $show->fetch_array() ) {
+		$tables[] = $r[0];
+	  }
+
+	  if( ! empty( $tables ) ) {
+
+  //cycle through
+  $return = '';
+  foreach( $tables as $table )
+  {
+	$result     = $mysqli->query('SELECT * FROM '.$table);
+	$num_fields = $result->field_count;
+	$row2       = $mysqli->query('SHOW CREATE TABLE '.$table );
+
+	$row2       = $row2->fetch_row();
+	$return    .= 
+"\n
+-- ---------------------------------------------------------
+--
+-- Table structure for table : `{$table}`
+--
+-- ---------------------------------------------------------
+
+".$row2[1].";\n";
+
+	for ($i = 0; $i < $num_fields; $i++) 
+	{
+
+	  $n = 1 ;
+	  while( $row = $result->fetch_row() )
+	  { 
+		
+
+		if( $n++ == 1 ) { # set the first statements
+		  $return .= 
+"
+--
+-- Dumping data for table `{$table}`
+--
+
+";  
+		/**
+		 * Get structural of fields each tables
+		 */
+		$array_field = array(); #reset ! important to resetting when loop 
+		 while( $field = $result->fetch_field() ) # get field
+		{
+		  $array_field[] = '`'.$field->name.'`';
+		  
+		}
+		$array_f[$table] = $array_field;
+		// $array_f = $array_f;
+		# endwhile
+		$array_field = implode(', ', $array_f[$table]); #implode arrays
+
+		  $return .= "INSERT INTO `{$table}` ({$array_field}) VALUES\n(";
+		} else {
+		  $return .= '(';
+		}
+		for($j=0; $j<$num_fields; $j++) 
+		{
+		  
+		  $row[$j] = str_replace('\'','\'\'', preg_replace("/\n/","\\n", $row[$j] ) );
+		  if ( isset( $row[$j] ) ) { $return .= is_numeric( $row[$j] ) ? $row[$j] : '\''.$row[$j].'\'' ; } else { $return.= '\'\''; }
+		  if ($j<($num_fields-1)) { $return.= ', '; }
+		}
+		  $return.= "),\n";
+	  }
+	  # check matching
+	  @preg_match("/\),\n/", $return, $match, false, -3); # check match
+	  if( isset( $match[0] ) )
+	  {
+		$return = substr_replace( $return, ";\n", -2);
+	  }
+
+	}
+	
+	  $return .= "\n";
+
+  }
+
+$return = 
+"-- ---------------------------------------------------------
+--
+-- SIMPLE SQL Dump
+-- 
+-- nawa (at) yahoo (dot) com
+--
+-- Host Connection Info: ".$mysqli->host_info."
+-- Generation Time: ".date('F d, Y \a\t H:i A ( e )')."
+-- Server version: ".mysql_get_server_info()."
+-- PHP Version: ".PHP_VERSION."
+--
+-- ---------------------------------------------------------\n\n
+
+SET SQL_MODE = \"NO_AUTO_VALUE_ON_ZERO\";
+SET time_zone = \"+00:00\";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+".$return."
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;";
+
+# end values result
+
+	@ini_set('zlib.output_compression','Off');
+	$gzipoutput = gzencode( $return, 9);
+
+ /*if(  @ file_put_contents( $fullname, $gzipoutput  ) ) { # 9 as compression levels
+  
+	$result = $name.'.sql.gz'; # show the name
+  
+  } else { # if could not put file , automaticly you will get the file as downloadable
+*/
+	$result = false;   
+	// various headers, those with # are mandatory
+	header('Content-Type: application/x-gzip'); // change it to mimetype
+	header("Content-Description: File Transfer");
+	header('Content-Encoding: gzip'); #
+	header('Content-Length: '.strlen( $gzipoutput ) ); #
+	header('Content-Disposition: attachment; filename="'.$name.'.sql.gz'.'"');
+	header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+	header('Connection: Keep-Alive');
+	header("Content-Transfer-Encoding: binary");
+	header('Expires: 0');
+	header('Pragma: no-cache');
+	
+	echo $gzipoutput;
+
+  //}
+
+	   } else {
+
+		 $result = '<p>Error when executing database query to export.</p>'.$mysqli->error;
+	   
+	   }
+	 }
+
+ } else {
+	  $result = '<p>Wrong mysqli input</p>';
+ }
+ 
+ if( $mysqli && ! $mysqli->error ) {
+	  @$mysqli->close();
+ }
+
+  return $result;
+
 }
 ]]></CustomScript>
   <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Row_Inserting" ScriptCtrlID="" ScriptL1Key="t08_penerimaan" ScriptL2Key=""><![CDATA[// Row Inserting event
@@ -1697,6 +1896,27 @@ else {
   <CustomScript ScriptType="Template" ScriptCodeType="Table" ScriptName="Content" ScriptCtrlID="custom" ScriptL1Key="cf05_backup.php" ScriptL2Key=""><![CDATA[<?php
 if (isset($_GET["ok"])) {
 	if ($_GET["ok"] == 1) {
+
+		// backup database
+		$info = array();
+		if (ew_CurrentUserIP () == "127.0.0.1"  || ew_CurrentUserIP () == ":: 1"  || ew_CurrentHost () == "localhost" ) { // testing on local PC
+			$info["host"] = "localhost";
+			$info["user"] = "root"; // sesuaikan dengan username database di komputer localhost
+			$info["pass"] = "admin"; // sesuaikan dengan password database di komputer localhost
+			$info["db"] = "db_lapkeu"; // sesuaikan dengan nama database di komputer localhost
+		} elseif (ew_CurrentHost () == "lapkeu.selusin.net") { // setting koneksi database untuk komputer server
+			$info["host"] = "mysql.hostinger.co.id";  // sesuaikan dengan ip address atau hostname komputer server
+			$info["user"] = "u433254588_lapke"; // sesuaikan dengan username database di komputer server
+			$info["pass"] = "M457r1P 81"; // sesuaikan deengan password database di komputer server
+			$info["db"] = "u433254588_lapke"; // sesuaikan dengan nama database di komputer server
+		}
+
+		//require('mysql_backup_import.php');
+		//$dir  = dirname(__file__) . "/backup/"; echo $dir; // directory files
+		$dir  = "."; //echo $dir; // directory files
+		$name = 'backup'; // name sql backup
+		//print_r( backup_database( $dir, $name, 'localhost', 'user', 'password', 'databasename') ); // execute
+		backup_database($dir, $name, $info["host"], $info["user"], $info["pass"], $info["db"]); // execute
 		?>
 		<div class="panel panel-default">
 			<div class="panel-heading">Backup Database</div>

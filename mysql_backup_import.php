@@ -253,12 +253,12 @@ SET time_zone = \"+00:00\";
     @ini_set('zlib.output_compression','Off');
     $gzipoutput = gzencode( $return, 9);
 
- if(  @ file_put_contents( $fullname, $gzipoutput  ) ) { # 9 as compression levels
+ /*if(  @ file_put_contents( $fullname, $gzipoutput  ) ) { # 9 as compression levels
   
     $result = $name.'.sql.gz'; # show the name
   
   } else { # if could not put file , automaticly you will get the file as downloadable
-
+*/
     $result = false;   
     // various headers, those with # are mandatory
     header('Content-Type: application/x-gzip'); // change it to mimetype
@@ -274,7 +274,7 @@ SET time_zone = \"+00:00\";
     
     echo $gzipoutput;
 
-  }
+  //}
 
        } else {
 
