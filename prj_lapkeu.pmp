@@ -1289,9 +1289,9 @@ function Page_Redirecting(&$url) {
 		$info["db"] = "u433254588_lapke"; // sesuaikan dengan nama database di komputer server
 	}
 	//backup_tables('localhost','root','admin','db_lapkeu');
-	backup_tables($info["host"], $info["user"], $info["pass"], $info["db"]);
+	//backup_tables($info["host"], $info["user"], $info["pass"], $info["db"]);
 
-	$url = ".";
+	//$url = ".";
 }
 ]]></CustomScript>
   <CustomScript ScriptType="Template" ScriptCodeType="Table" ScriptName="Content" ScriptCtrlID="custom" ScriptL1Key="r05_keuanganold.php" ScriptL2Key=""><![CDATA[<form id="myform" name="myform" class="form-horizontal" method="post" action="r05_keuanganoldsubmit.php">

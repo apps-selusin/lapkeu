@@ -380,8 +380,8 @@ class clogout {
 
 		//backup_tables('localhost','root','admin','db_lapkeu');
 		//backup_tables($info["host"], $info["user"], $info["pass"], $info["db"]);
+		//$url = ".";
 
-		$url = ".";
 	}
 
 	// Message Showing event
