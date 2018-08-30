@@ -152,8 +152,8 @@ $baris++;
 // kolom header penerimaan
 $objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, 'No.');
 $objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, 'Tanggal');
-$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, 'Keterangan');
-$objPHPExcel->getActiveSheet()->setCellValue('D'.$baris, 'No. Kwitansi'); $objPHPExcel->getActiveSheet()->mergeCells('D'.$baris.':K'.$baris.'');
+$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, 'Keterangan'); $objPHPExcel->getActiveSheet()->mergeCells('C'.$baris.':F'.$baris.'');
+$objPHPExcel->getActiveSheet()->setCellValue('G'.$baris, 'No. Kwitansi'); $objPHPExcel->getActiveSheet()->mergeCells('G'.$baris.':K'.$baris.'');
 $objPHPExcel->getActiveSheet()->setCellValue('L'.$baris, 'Jumlah');
 $baris++;
 
@@ -161,8 +161,8 @@ $penerimaan = 0;
 while (!$rpenerimaan->EOF) {
 	$objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, $no++);
 	$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, date("d-m-Y", strtotime($rpenerimaan->fields["Tanggal"])));
-	$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, $rpenerimaan->fields["Keterangan"]);
-	$objPHPExcel->getActiveSheet()->setCellValue('D'.$baris, $rpenerimaan->fields["NoKwitansi"]); $objPHPExcel->getActiveSheet()->getStyle('D'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT); $objPHPExcel->getActiveSheet()->mergeCells('D'.$baris.':K'.$baris.'');
+	$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, $rpenerimaan->fields["Keterangan"]); $objPHPExcel->getActiveSheet()->getStyle('C'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT); $objPHPExcel->getActiveSheet()->mergeCells('C'.$baris.':F'.$baris.'');
+	$objPHPExcel->getActiveSheet()->setCellValue('G'.$baris, $rpenerimaan->fields["NoKwitansi"]); $objPHPExcel->getActiveSheet()->getStyle('G'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT); $objPHPExcel->getActiveSheet()->mergeCells('G'.$baris.':K'.$baris.'');
 	$objPHPExcel->getActiveSheet()->setCellValue('L'.$baris, $rpenerimaan->fields["Jumlah"]); $objPHPExcel->getActiveSheet()->getStyle('L'.$baris)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
 	$baris++;
 	$penerimaan += $rpenerimaan->fields["Jumlah"];
