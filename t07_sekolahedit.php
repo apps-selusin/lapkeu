@@ -334,6 +334,10 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		$this->Nama->SetVisibility();
 		$this->Alamat->SetVisibility();
 		$this->NoTelpHp->SetVisibility();
+		$this->TTD1Nama->SetVisibility();
+		$this->TTD1Jabatan->SetVisibility();
+		$this->TTD2Nama->SetVisibility();
+		$this->TTD2Jabatan->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -627,6 +631,18 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		if (!$this->NoTelpHp->FldIsDetailKey) {
 			$this->NoTelpHp->setFormValue($objForm->GetValue("x_NoTelpHp"));
 		}
+		if (!$this->TTD1Nama->FldIsDetailKey) {
+			$this->TTD1Nama->setFormValue($objForm->GetValue("x_TTD1Nama"));
+		}
+		if (!$this->TTD1Jabatan->FldIsDetailKey) {
+			$this->TTD1Jabatan->setFormValue($objForm->GetValue("x_TTD1Jabatan"));
+		}
+		if (!$this->TTD2Nama->FldIsDetailKey) {
+			$this->TTD2Nama->setFormValue($objForm->GetValue("x_TTD2Nama"));
+		}
+		if (!$this->TTD2Jabatan->FldIsDetailKey) {
+			$this->TTD2Jabatan->setFormValue($objForm->GetValue("x_TTD2Jabatan"));
+		}
 		if (!$this->id->FldIsDetailKey)
 			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
@@ -638,6 +654,10 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		$this->Nama->CurrentValue = $this->Nama->FormValue;
 		$this->Alamat->CurrentValue = $this->Alamat->FormValue;
 		$this->NoTelpHp->CurrentValue = $this->NoTelpHp->FormValue;
+		$this->TTD1Nama->CurrentValue = $this->TTD1Nama->FormValue;
+		$this->TTD1Jabatan->CurrentValue = $this->TTD1Jabatan->FormValue;
+		$this->TTD2Nama->CurrentValue = $this->TTD2Nama->FormValue;
+		$this->TTD2Jabatan->CurrentValue = $this->TTD2Jabatan->FormValue;
 	}
 
 	// Load recordset
@@ -703,6 +723,10 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		$this->Nama->setDbValue($row['Nama']);
 		$this->Alamat->setDbValue($row['Alamat']);
 		$this->NoTelpHp->setDbValue($row['NoTelpHp']);
+		$this->TTD1Nama->setDbValue($row['TTD1Nama']);
+		$this->TTD1Jabatan->setDbValue($row['TTD1Jabatan']);
+		$this->TTD2Nama->setDbValue($row['TTD2Nama']);
+		$this->TTD2Jabatan->setDbValue($row['TTD2Jabatan']);
 	}
 
 	// Return a row with default values
@@ -712,6 +736,10 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		$row['Nama'] = NULL;
 		$row['Alamat'] = NULL;
 		$row['NoTelpHp'] = NULL;
+		$row['TTD1Nama'] = NULL;
+		$row['TTD1Jabatan'] = NULL;
+		$row['TTD2Nama'] = NULL;
+		$row['TTD2Jabatan'] = NULL;
 		return $row;
 	}
 
@@ -724,6 +752,10 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		$this->Nama->DbValue = $row['Nama'];
 		$this->Alamat->DbValue = $row['Alamat'];
 		$this->NoTelpHp->DbValue = $row['NoTelpHp'];
+		$this->TTD1Nama->DbValue = $row['TTD1Nama'];
+		$this->TTD1Jabatan->DbValue = $row['TTD1Jabatan'];
+		$this->TTD2Nama->DbValue = $row['TTD2Nama'];
+		$this->TTD2Jabatan->DbValue = $row['TTD2Jabatan'];
 	}
 
 	// Load old record
@@ -762,6 +794,10 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		// Nama
 		// Alamat
 		// NoTelpHp
+		// TTD1Nama
+		// TTD1Jabatan
+		// TTD2Nama
+		// TTD2Jabatan
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -781,6 +817,22 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		$this->NoTelpHp->ViewValue = $this->NoTelpHp->CurrentValue;
 		$this->NoTelpHp->ViewCustomAttributes = "";
 
+		// TTD1Nama
+		$this->TTD1Nama->ViewValue = $this->TTD1Nama->CurrentValue;
+		$this->TTD1Nama->ViewCustomAttributes = "";
+
+		// TTD1Jabatan
+		$this->TTD1Jabatan->ViewValue = $this->TTD1Jabatan->CurrentValue;
+		$this->TTD1Jabatan->ViewCustomAttributes = "";
+
+		// TTD2Nama
+		$this->TTD2Nama->ViewValue = $this->TTD2Nama->CurrentValue;
+		$this->TTD2Nama->ViewCustomAttributes = "";
+
+		// TTD2Jabatan
+		$this->TTD2Jabatan->ViewValue = $this->TTD2Jabatan->CurrentValue;
+		$this->TTD2Jabatan->ViewCustomAttributes = "";
+
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
 			$this->Nama->HrefValue = "";
@@ -795,6 +847,26 @@ class ct07_sekolah_edit extends ct07_sekolah {
 			$this->NoTelpHp->LinkCustomAttributes = "";
 			$this->NoTelpHp->HrefValue = "";
 			$this->NoTelpHp->TooltipValue = "";
+
+			// TTD1Nama
+			$this->TTD1Nama->LinkCustomAttributes = "";
+			$this->TTD1Nama->HrefValue = "";
+			$this->TTD1Nama->TooltipValue = "";
+
+			// TTD1Jabatan
+			$this->TTD1Jabatan->LinkCustomAttributes = "";
+			$this->TTD1Jabatan->HrefValue = "";
+			$this->TTD1Jabatan->TooltipValue = "";
+
+			// TTD2Nama
+			$this->TTD2Nama->LinkCustomAttributes = "";
+			$this->TTD2Nama->HrefValue = "";
+			$this->TTD2Nama->TooltipValue = "";
+
+			// TTD2Jabatan
+			$this->TTD2Jabatan->LinkCustomAttributes = "";
+			$this->TTD2Jabatan->HrefValue = "";
+			$this->TTD2Jabatan->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// Nama
@@ -815,6 +887,30 @@ class ct07_sekolah_edit extends ct07_sekolah {
 			$this->NoTelpHp->EditValue = ew_HtmlEncode($this->NoTelpHp->CurrentValue);
 			$this->NoTelpHp->PlaceHolder = ew_RemoveHtml($this->NoTelpHp->FldCaption());
 
+			// TTD1Nama
+			$this->TTD1Nama->EditAttrs["class"] = "form-control";
+			$this->TTD1Nama->EditCustomAttributes = "";
+			$this->TTD1Nama->EditValue = ew_HtmlEncode($this->TTD1Nama->CurrentValue);
+			$this->TTD1Nama->PlaceHolder = ew_RemoveHtml($this->TTD1Nama->FldCaption());
+
+			// TTD1Jabatan
+			$this->TTD1Jabatan->EditAttrs["class"] = "form-control";
+			$this->TTD1Jabatan->EditCustomAttributes = "";
+			$this->TTD1Jabatan->EditValue = ew_HtmlEncode($this->TTD1Jabatan->CurrentValue);
+			$this->TTD1Jabatan->PlaceHolder = ew_RemoveHtml($this->TTD1Jabatan->FldCaption());
+
+			// TTD2Nama
+			$this->TTD2Nama->EditAttrs["class"] = "form-control";
+			$this->TTD2Nama->EditCustomAttributes = "";
+			$this->TTD2Nama->EditValue = ew_HtmlEncode($this->TTD2Nama->CurrentValue);
+			$this->TTD2Nama->PlaceHolder = ew_RemoveHtml($this->TTD2Nama->FldCaption());
+
+			// TTD2Jabatan
+			$this->TTD2Jabatan->EditAttrs["class"] = "form-control";
+			$this->TTD2Jabatan->EditCustomAttributes = "";
+			$this->TTD2Jabatan->EditValue = ew_HtmlEncode($this->TTD2Jabatan->CurrentValue);
+			$this->TTD2Jabatan->PlaceHolder = ew_RemoveHtml($this->TTD2Jabatan->FldCaption());
+
 			// Edit refer script
 			// Nama
 
@@ -828,6 +924,22 @@ class ct07_sekolah_edit extends ct07_sekolah {
 			// NoTelpHp
 			$this->NoTelpHp->LinkCustomAttributes = "";
 			$this->NoTelpHp->HrefValue = "";
+
+			// TTD1Nama
+			$this->TTD1Nama->LinkCustomAttributes = "";
+			$this->TTD1Nama->HrefValue = "";
+
+			// TTD1Jabatan
+			$this->TTD1Jabatan->LinkCustomAttributes = "";
+			$this->TTD1Jabatan->HrefValue = "";
+
+			// TTD2Nama
+			$this->TTD2Nama->LinkCustomAttributes = "";
+			$this->TTD2Nama->HrefValue = "";
+
+			// TTD2Jabatan
+			$this->TTD2Jabatan->LinkCustomAttributes = "";
+			$this->TTD2Jabatan->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD || $this->RowType == EW_ROWTYPE_EDIT || $this->RowType == EW_ROWTYPE_SEARCH) // Add/Edit/Search row
 			$this->SetupFieldTitles();
@@ -894,6 +1006,18 @@ class ct07_sekolah_edit extends ct07_sekolah {
 
 			// NoTelpHp
 			$this->NoTelpHp->SetDbValueDef($rsnew, $this->NoTelpHp->CurrentValue, NULL, $this->NoTelpHp->ReadOnly);
+
+			// TTD1Nama
+			$this->TTD1Nama->SetDbValueDef($rsnew, $this->TTD1Nama->CurrentValue, NULL, $this->TTD1Nama->ReadOnly);
+
+			// TTD1Jabatan
+			$this->TTD1Jabatan->SetDbValueDef($rsnew, $this->TTD1Jabatan->CurrentValue, NULL, $this->TTD1Jabatan->ReadOnly);
+
+			// TTD2Nama
+			$this->TTD2Nama->SetDbValueDef($rsnew, $this->TTD2Nama->CurrentValue, NULL, $this->TTD2Nama->ReadOnly);
+
+			// TTD2Jabatan
+			$this->TTD2Jabatan->SetDbValueDef($rsnew, $this->TTD2Jabatan->CurrentValue, NULL, $this->TTD2Jabatan->ReadOnly);
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -1185,6 +1309,46 @@ $t07_sekolah_edit->ShowMessage();
 <input type="text" data-table="t07_sekolah" data-field="x_NoTelpHp" name="x_NoTelpHp" id="x_NoTelpHp" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t07_sekolah->NoTelpHp->getPlaceHolder()) ?>" value="<?php echo $t07_sekolah->NoTelpHp->EditValue ?>"<?php echo $t07_sekolah->NoTelpHp->EditAttributes() ?>>
 </span>
 <?php echo $t07_sekolah->NoTelpHp->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t07_sekolah->TTD1Nama->Visible) { // TTD1Nama ?>
+	<div id="r_TTD1Nama" class="form-group">
+		<label id="elh_t07_sekolah_TTD1Nama" for="x_TTD1Nama" class="<?php echo $t07_sekolah_edit->LeftColumnClass ?>"><?php echo $t07_sekolah->TTD1Nama->FldCaption() ?></label>
+		<div class="<?php echo $t07_sekolah_edit->RightColumnClass ?>"><div<?php echo $t07_sekolah->TTD1Nama->CellAttributes() ?>>
+<span id="el_t07_sekolah_TTD1Nama">
+<input type="text" data-table="t07_sekolah" data-field="x_TTD1Nama" name="x_TTD1Nama" id="x_TTD1Nama" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t07_sekolah->TTD1Nama->getPlaceHolder()) ?>" value="<?php echo $t07_sekolah->TTD1Nama->EditValue ?>"<?php echo $t07_sekolah->TTD1Nama->EditAttributes() ?>>
+</span>
+<?php echo $t07_sekolah->TTD1Nama->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t07_sekolah->TTD1Jabatan->Visible) { // TTD1Jabatan ?>
+	<div id="r_TTD1Jabatan" class="form-group">
+		<label id="elh_t07_sekolah_TTD1Jabatan" for="x_TTD1Jabatan" class="<?php echo $t07_sekolah_edit->LeftColumnClass ?>"><?php echo $t07_sekolah->TTD1Jabatan->FldCaption() ?></label>
+		<div class="<?php echo $t07_sekolah_edit->RightColumnClass ?>"><div<?php echo $t07_sekolah->TTD1Jabatan->CellAttributes() ?>>
+<span id="el_t07_sekolah_TTD1Jabatan">
+<input type="text" data-table="t07_sekolah" data-field="x_TTD1Jabatan" name="x_TTD1Jabatan" id="x_TTD1Jabatan" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t07_sekolah->TTD1Jabatan->getPlaceHolder()) ?>" value="<?php echo $t07_sekolah->TTD1Jabatan->EditValue ?>"<?php echo $t07_sekolah->TTD1Jabatan->EditAttributes() ?>>
+</span>
+<?php echo $t07_sekolah->TTD1Jabatan->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t07_sekolah->TTD2Nama->Visible) { // TTD2Nama ?>
+	<div id="r_TTD2Nama" class="form-group">
+		<label id="elh_t07_sekolah_TTD2Nama" for="x_TTD2Nama" class="<?php echo $t07_sekolah_edit->LeftColumnClass ?>"><?php echo $t07_sekolah->TTD2Nama->FldCaption() ?></label>
+		<div class="<?php echo $t07_sekolah_edit->RightColumnClass ?>"><div<?php echo $t07_sekolah->TTD2Nama->CellAttributes() ?>>
+<span id="el_t07_sekolah_TTD2Nama">
+<input type="text" data-table="t07_sekolah" data-field="x_TTD2Nama" name="x_TTD2Nama" id="x_TTD2Nama" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t07_sekolah->TTD2Nama->getPlaceHolder()) ?>" value="<?php echo $t07_sekolah->TTD2Nama->EditValue ?>"<?php echo $t07_sekolah->TTD2Nama->EditAttributes() ?>>
+</span>
+<?php echo $t07_sekolah->TTD2Nama->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t07_sekolah->TTD2Jabatan->Visible) { // TTD2Jabatan ?>
+	<div id="r_TTD2Jabatan" class="form-group">
+		<label id="elh_t07_sekolah_TTD2Jabatan" for="x_TTD2Jabatan" class="<?php echo $t07_sekolah_edit->LeftColumnClass ?>"><?php echo $t07_sekolah->TTD2Jabatan->FldCaption() ?></label>
+		<div class="<?php echo $t07_sekolah_edit->RightColumnClass ?>"><div<?php echo $t07_sekolah->TTD2Jabatan->CellAttributes() ?>>
+<span id="el_t07_sekolah_TTD2Jabatan">
+<input type="text" data-table="t07_sekolah" data-field="x_TTD2Jabatan" name="x_TTD2Jabatan" id="x_TTD2Jabatan" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t07_sekolah->TTD2Jabatan->getPlaceHolder()) ?>" value="<?php echo $t07_sekolah->TTD2Jabatan->EditValue ?>"<?php echo $t07_sekolah->TTD2Jabatan->EditAttributes() ?>>
+</span>
+<?php echo $t07_sekolah->TTD2Jabatan->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div><!-- /page* -->

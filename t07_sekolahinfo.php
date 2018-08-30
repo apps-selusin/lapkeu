@@ -17,6 +17,10 @@ class ct07_sekolah extends cTable {
 	var $Nama;
 	var $Alamat;
 	var $NoTelpHp;
+	var $TTD1Nama;
+	var $TTD1Jabatan;
+	var $TTD2Nama;
+	var $TTD2Jabatan;
 
 	//
 	// Table class constructor
@@ -70,6 +74,26 @@ class ct07_sekolah extends cTable {
 		$this->NoTelpHp = new cField('t07_sekolah', 't07_sekolah', 'x_NoTelpHp', 'NoTelpHp', '`NoTelpHp`', '`NoTelpHp`', 200, -1, FALSE, '`NoTelpHp`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->NoTelpHp->Sortable = TRUE; // Allow sort
 		$this->fields['NoTelpHp'] = &$this->NoTelpHp;
+
+		// TTD1Nama
+		$this->TTD1Nama = new cField('t07_sekolah', 't07_sekolah', 'x_TTD1Nama', 'TTD1Nama', '`TTD1Nama`', '`TTD1Nama`', 200, -1, FALSE, '`TTD1Nama`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->TTD1Nama->Sortable = TRUE; // Allow sort
+		$this->fields['TTD1Nama'] = &$this->TTD1Nama;
+
+		// TTD1Jabatan
+		$this->TTD1Jabatan = new cField('t07_sekolah', 't07_sekolah', 'x_TTD1Jabatan', 'TTD1Jabatan', '`TTD1Jabatan`', '`TTD1Jabatan`', 200, -1, FALSE, '`TTD1Jabatan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->TTD1Jabatan->Sortable = TRUE; // Allow sort
+		$this->fields['TTD1Jabatan'] = &$this->TTD1Jabatan;
+
+		// TTD2Nama
+		$this->TTD2Nama = new cField('t07_sekolah', 't07_sekolah', 'x_TTD2Nama', 'TTD2Nama', '`TTD2Nama`', '`TTD2Nama`', 200, -1, FALSE, '`TTD2Nama`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->TTD2Nama->Sortable = TRUE; // Allow sort
+		$this->fields['TTD2Nama'] = &$this->TTD2Nama;
+
+		// TTD2Jabatan
+		$this->TTD2Jabatan = new cField('t07_sekolah', 't07_sekolah', 'x_TTD2Jabatan', 'TTD2Jabatan', '`TTD2Jabatan`', '`TTD2Jabatan`', 200, -1, FALSE, '`TTD2Jabatan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->TTD2Jabatan->Sortable = TRUE; // Allow sort
+		$this->fields['TTD2Jabatan'] = &$this->TTD2Jabatan;
 	}
 
 	// Field Visibility
@@ -622,6 +646,10 @@ class ct07_sekolah extends cTable {
 		$this->Nama->setDbValue($rs->fields('Nama'));
 		$this->Alamat->setDbValue($rs->fields('Alamat'));
 		$this->NoTelpHp->setDbValue($rs->fields('NoTelpHp'));
+		$this->TTD1Nama->setDbValue($rs->fields('TTD1Nama'));
+		$this->TTD1Jabatan->setDbValue($rs->fields('TTD1Jabatan'));
+		$this->TTD2Nama->setDbValue($rs->fields('TTD2Nama'));
+		$this->TTD2Jabatan->setDbValue($rs->fields('TTD2Jabatan'));
 	}
 
 	// Render list row values
@@ -636,6 +664,10 @@ class ct07_sekolah extends cTable {
 		// Nama
 		// Alamat
 		// NoTelpHp
+		// TTD1Nama
+		// TTD1Jabatan
+		// TTD2Nama
+		// TTD2Jabatan
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -652,6 +684,22 @@ class ct07_sekolah extends cTable {
 		// NoTelpHp
 		$this->NoTelpHp->ViewValue = $this->NoTelpHp->CurrentValue;
 		$this->NoTelpHp->ViewCustomAttributes = "";
+
+		// TTD1Nama
+		$this->TTD1Nama->ViewValue = $this->TTD1Nama->CurrentValue;
+		$this->TTD1Nama->ViewCustomAttributes = "";
+
+		// TTD1Jabatan
+		$this->TTD1Jabatan->ViewValue = $this->TTD1Jabatan->CurrentValue;
+		$this->TTD1Jabatan->ViewCustomAttributes = "";
+
+		// TTD2Nama
+		$this->TTD2Nama->ViewValue = $this->TTD2Nama->CurrentValue;
+		$this->TTD2Nama->ViewCustomAttributes = "";
+
+		// TTD2Jabatan
+		$this->TTD2Jabatan->ViewValue = $this->TTD2Jabatan->CurrentValue;
+		$this->TTD2Jabatan->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -672,6 +720,26 @@ class ct07_sekolah extends cTable {
 		$this->NoTelpHp->LinkCustomAttributes = "";
 		$this->NoTelpHp->HrefValue = "";
 		$this->NoTelpHp->TooltipValue = "";
+
+		// TTD1Nama
+		$this->TTD1Nama->LinkCustomAttributes = "";
+		$this->TTD1Nama->HrefValue = "";
+		$this->TTD1Nama->TooltipValue = "";
+
+		// TTD1Jabatan
+		$this->TTD1Jabatan->LinkCustomAttributes = "";
+		$this->TTD1Jabatan->HrefValue = "";
+		$this->TTD1Jabatan->TooltipValue = "";
+
+		// TTD2Nama
+		$this->TTD2Nama->LinkCustomAttributes = "";
+		$this->TTD2Nama->HrefValue = "";
+		$this->TTD2Nama->TooltipValue = "";
+
+		// TTD2Jabatan
+		$this->TTD2Jabatan->LinkCustomAttributes = "";
+		$this->TTD2Jabatan->HrefValue = "";
+		$this->TTD2Jabatan->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -711,6 +779,30 @@ class ct07_sekolah extends cTable {
 		$this->NoTelpHp->EditValue = $this->NoTelpHp->CurrentValue;
 		$this->NoTelpHp->PlaceHolder = ew_RemoveHtml($this->NoTelpHp->FldCaption());
 
+		// TTD1Nama
+		$this->TTD1Nama->EditAttrs["class"] = "form-control";
+		$this->TTD1Nama->EditCustomAttributes = "";
+		$this->TTD1Nama->EditValue = $this->TTD1Nama->CurrentValue;
+		$this->TTD1Nama->PlaceHolder = ew_RemoveHtml($this->TTD1Nama->FldCaption());
+
+		// TTD1Jabatan
+		$this->TTD1Jabatan->EditAttrs["class"] = "form-control";
+		$this->TTD1Jabatan->EditCustomAttributes = "";
+		$this->TTD1Jabatan->EditValue = $this->TTD1Jabatan->CurrentValue;
+		$this->TTD1Jabatan->PlaceHolder = ew_RemoveHtml($this->TTD1Jabatan->FldCaption());
+
+		// TTD2Nama
+		$this->TTD2Nama->EditAttrs["class"] = "form-control";
+		$this->TTD2Nama->EditCustomAttributes = "";
+		$this->TTD2Nama->EditValue = $this->TTD2Nama->CurrentValue;
+		$this->TTD2Nama->PlaceHolder = ew_RemoveHtml($this->TTD2Nama->FldCaption());
+
+		// TTD2Jabatan
+		$this->TTD2Jabatan->EditAttrs["class"] = "form-control";
+		$this->TTD2Jabatan->EditCustomAttributes = "";
+		$this->TTD2Jabatan->EditValue = $this->TTD2Jabatan->CurrentValue;
+		$this->TTD2Jabatan->PlaceHolder = ew_RemoveHtml($this->TTD2Jabatan->FldCaption());
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -741,11 +833,19 @@ class ct07_sekolah extends cTable {
 					if ($this->Nama->Exportable) $Doc->ExportCaption($this->Nama);
 					if ($this->Alamat->Exportable) $Doc->ExportCaption($this->Alamat);
 					if ($this->NoTelpHp->Exportable) $Doc->ExportCaption($this->NoTelpHp);
+					if ($this->TTD1Nama->Exportable) $Doc->ExportCaption($this->TTD1Nama);
+					if ($this->TTD1Jabatan->Exportable) $Doc->ExportCaption($this->TTD1Jabatan);
+					if ($this->TTD2Nama->Exportable) $Doc->ExportCaption($this->TTD2Nama);
+					if ($this->TTD2Jabatan->Exportable) $Doc->ExportCaption($this->TTD2Jabatan);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->Nama->Exportable) $Doc->ExportCaption($this->Nama);
 					if ($this->Alamat->Exportable) $Doc->ExportCaption($this->Alamat);
 					if ($this->NoTelpHp->Exportable) $Doc->ExportCaption($this->NoTelpHp);
+					if ($this->TTD1Nama->Exportable) $Doc->ExportCaption($this->TTD1Nama);
+					if ($this->TTD1Jabatan->Exportable) $Doc->ExportCaption($this->TTD1Jabatan);
+					if ($this->TTD2Nama->Exportable) $Doc->ExportCaption($this->TTD2Nama);
+					if ($this->TTD2Jabatan->Exportable) $Doc->ExportCaption($this->TTD2Jabatan);
 				}
 				$Doc->EndExportRow();
 			}
@@ -780,11 +880,19 @@ class ct07_sekolah extends cTable {
 						if ($this->Nama->Exportable) $Doc->ExportField($this->Nama);
 						if ($this->Alamat->Exportable) $Doc->ExportField($this->Alamat);
 						if ($this->NoTelpHp->Exportable) $Doc->ExportField($this->NoTelpHp);
+						if ($this->TTD1Nama->Exportable) $Doc->ExportField($this->TTD1Nama);
+						if ($this->TTD1Jabatan->Exportable) $Doc->ExportField($this->TTD1Jabatan);
+						if ($this->TTD2Nama->Exportable) $Doc->ExportField($this->TTD2Nama);
+						if ($this->TTD2Jabatan->Exportable) $Doc->ExportField($this->TTD2Jabatan);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->Nama->Exportable) $Doc->ExportField($this->Nama);
 						if ($this->Alamat->Exportable) $Doc->ExportField($this->Alamat);
 						if ($this->NoTelpHp->Exportable) $Doc->ExportField($this->NoTelpHp);
+						if ($this->TTD1Nama->Exportable) $Doc->ExportField($this->TTD1Nama);
+						if ($this->TTD1Jabatan->Exportable) $Doc->ExportField($this->TTD1Jabatan);
+						if ($this->TTD2Nama->Exportable) $Doc->ExportField($this->TTD2Nama);
+						if ($this->TTD2Jabatan->Exportable) $Doc->ExportField($this->TTD2Jabatan);
 					}
 					$Doc->EndExportRow($RowCnt);
 				}

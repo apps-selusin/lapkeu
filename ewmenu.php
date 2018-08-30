@@ -40,6 +40,7 @@ $RootMenu->AddMenuItem(10240, "mci_Tools", $Language->MenuPhrase("10240", "MenuT
 $RootMenu->AddMenuItem(10176, "mi_cf04_update_php", $Language->MenuPhrase("10176", "MenuText"), "cf04_update.php", 10240, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf04_update.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10241, "mi_cf06_updatedb_php", $Language->MenuPhrase("10241", "MenuText"), "cf06_updatedb.php", 10240, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf06_updatedb.php'), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10177, "mi_cf05_backup_php", $Language->MenuPhrase("10177", "MenuText"), "cf05_backup.php", 10240, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf05_backup.php'), FALSE, TRUE, "");
+$RootMenu->AddMenuItem(10242, "mi_cf07_restore_php", $Language->MenuPhrase("10242", "MenuText"), "cf07_restore.php", 10240, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}cf07_restore.php'), FALSE, TRUE, "");
 echo $RootMenu->ToScript();
 ?>
 <div class="ewVertical" id="ewMenu"></div>

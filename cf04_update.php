@@ -349,9 +349,8 @@ if (isset($_GET["ok"])) {
 	if ($_GET["ok"] == 1) {
 		?>
 		<div class="panel panel-default">
-			<div class="panel-heading">Update Aplikasi</div>
 			<div class="panel-body">
-				<table class='table table-striped table-bordered table-hover table-condensed'>
+				<table class='table table-bordered table-hover table-condensed'>
 					<tr>
 						<td>Proses update aplikasi telah selesai !</td>
 					</tr>
@@ -370,9 +369,8 @@ if (isset($_GET["ok"])) {
 else {
 ?>
 		<div class="panel panel-default">
-			<div class="panel-heading">Update Aplikasi</div>
 			<div class="panel-body">
-				<table class='table table-striped table-bordered table-hover table-condensed'>
+				<table class='table table-bordered table-hover table-condensed'>
 					<tr>
 						<td>Mohon klik PROSES untuk memulai update aplikasi !</td>
 					</tr>

@@ -14,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$cf05_backup_php = NULL; // Initialize page object first
+$cf07_restore_php = NULL; // Initialize page object first
 
-class ccf05_backup_php {
+class ccf07_restore_php {
 
 	// Page ID
 	var $PageID = 'custom';
@@ -25,10 +25,10 @@ class ccf05_backup_php {
 	var $ProjectID = '{239A2A32-109A-412F-A3CB-FF6290C167FC}';
 
 	// Table name
-	var $TableName = 'cf05_backup.php';
+	var $TableName = 'cf07_restore.php';
 
 	// Page object name
-	var $PageObjName = 'cf05_backup_php';
+	var $PageObjName = 'cf07_restore_php';
 
 	// Page headings
 	var $Heading = '';
@@ -217,7 +217,7 @@ class ccf05_backup_php {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 'cf05_backup.php', TRUE);
+			define("EW_TABLE_NAME", 'cf07_restore.php', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"]))
@@ -323,8 +323,8 @@ class ccf05_backup_php {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("custom", "cf05_backup_php", $url, "", "cf05_backup_php", TRUE);
-		$this->Heading = $Language->TablePhrase("cf05_backup_php", "TblCaption"); 
+		$Breadcrumb->Add("custom", "cf07_restore_php", $url, "", "cf07_restore_php", TRUE);
+		$this->Heading = $Language->TablePhrase("cf07_restore_php", "TblCaption"); 
 	}
 }
 ?>
@@ -332,35 +332,20 @@ class ccf05_backup_php {
 <?php
 
 // Create page object
-if (!isset($cf05_backup_php)) $cf05_backup_php = new ccf05_backup_php();
+if (!isset($cf07_restore_php)) $cf07_restore_php = new ccf07_restore_php();
 
 // Page init
-$cf05_backup_php->Page_Init();
+$cf07_restore_php->Page_Init();
 
 // Page main
-$cf05_backup_php->Page_Main();
+$cf07_restore_php->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 ?>
 <?php include_once "header.php" ?>
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<table class='table table-bordered table-hover table-condensed'>
-					<tr>
-						<td>Mohon klik PROSES untuk memulai backup database !</td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<td><a href='cf05_backupproses.php'><button>Proses</button></a></td>
-					</tr>
-				</table>
-			</div>
-		</div>
-<?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
+<!-- %%Custom page content begin%% --><!-- %%Custom page content end%% --><?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
-$cf05_backup_php->Page_Terminate();
+$cf07_restore_php->Page_Terminate();
 ?>

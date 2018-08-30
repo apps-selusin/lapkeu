@@ -344,7 +344,43 @@ $cf06_updatedb_php->Page_Main();
 Page_Rendering();
 ?>
 <?php include_once "header.php" ?>
-<!-- %%Custom page content begin%% --><!-- %%Custom page content end%% --><?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<table class='table table-bordered table-hover table-condensed'>
+				<?php
+				if (isset($_GET["ok"])) {
+					if ($_GET["ok"] == 1) {
+					?>				
+					<tr>
+						<td>Proses update database telah selesai !</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td><a href='.'><button>Selesai</button></a></td>
+					</tr>
+					<?php
+					}
+				}
+				else {
+				?>
+					<tr>
+						<td>Mohon klik PROSES untuk memulai update database !</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td><a href='cf06_updatedbproses.php'><button>Proses</button></a></td>
+					</tr>
+				<?php
+				}
+				?>
+				</table>
+			</div>
+		</div>
+<?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
 $cf06_updatedb_php->Page_Terminate();
