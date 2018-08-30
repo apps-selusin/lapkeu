@@ -624,11 +624,11 @@
     <menu id="11">
       <phrase id="menutext" value="Home" />
     </menu>
-    <menu id="10173">
-      <phrase id="menutext" value="v 04 pengeluaranold" />
-    </menu>
     <menu id="10016">
       <phrase id="menutext" value="Penerimaan" />
+    </menu>
+    <menu id="10173">
+      <phrase id="menutext" value="v 04 pengeluaranold" />
     </menu>
     <menu id="6">
       <phrase id="menutext" value="Pengeluaran" />
@@ -732,17 +732,20 @@
     <menu id="10011">
       <phrase id="menutext" value="User Log" />
     </menu>
-    <menu id="10134">
-      <phrase id="menutext" value="t 12 penerimaanold" />
-    </menu>
     <menu id="10240">
       <phrase id="menutext" value="Tools" />
     </menu>
     <menu id="10176">
-      <phrase id="menutext" value="Check for Update" />
+      <phrase id="menutext" value="Update Aplikasi" />
+    </menu>
+    <menu id="10241">
+      <phrase id="menutext" value="Update Database" />
     </menu>
     <menu id="10177">
       <phrase id="menutext" value="Backup Database" />
+    </menu>
+    <menu id="10134">
+      <phrase id="menutext" value="t 12 penerimaanold" />
     </menu>
     <menu id="10135">
       <phrase id="menutext" value="t 13 pengeluaranold" />
@@ -1364,13 +1367,16 @@
       </field>
     </table>
     <table id="cf04_update_php">
-      <phrase id="tblcaption" value="Update" />
+      <phrase id="tblcaption" value="Update Aplikasi" />
     </table>
     <table id="cf05_backup_php">
       <phrase id="tblcaption" value="Backup Database" />
     </table>
     <table id="cf05_backupproses_php">
       <phrase id="tblcaption" value="Backup Database" />
+    </table>
+    <table id="cf06_updatedb_php">
+      <phrase id="tblcaption" value="Update Database" />
     </table>
   </project>
 </ew-language>
