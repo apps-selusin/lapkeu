@@ -13,6 +13,10 @@ class crt07_sekolah extends crTableBase {
 	var $Nama;
 	var $Alamat;
 	var $NoTelpHp;
+	var $TTD1Nama;
+	var $TTD1Jabatan;
+	var $TTD2Nama;
+	var $TTD2Jabatan;
 
 	//
 	// Table class constructor
@@ -61,6 +65,38 @@ class crt07_sekolah extends crTableBase {
 		$this->NoTelpHp->SqlSelect = "";
 		$this->NoTelpHp->SqlOrderBy = "";
 		$this->fields['NoTelpHp'] = &$this->NoTelpHp;
+
+		// TTD1Nama
+		$this->TTD1Nama = new crField('t07_sekolah', 't07_sekolah', 'x_TTD1Nama', 'TTD1Nama', '`TTD1Nama`', 200, EWR_DATATYPE_STRING, -1);
+		$this->TTD1Nama->Sortable = TRUE; // Allow sort
+		$this->TTD1Nama->DateFilter = "";
+		$this->TTD1Nama->SqlSelect = "";
+		$this->TTD1Nama->SqlOrderBy = "";
+		$this->fields['TTD1Nama'] = &$this->TTD1Nama;
+
+		// TTD1Jabatan
+		$this->TTD1Jabatan = new crField('t07_sekolah', 't07_sekolah', 'x_TTD1Jabatan', 'TTD1Jabatan', '`TTD1Jabatan`', 200, EWR_DATATYPE_STRING, -1);
+		$this->TTD1Jabatan->Sortable = TRUE; // Allow sort
+		$this->TTD1Jabatan->DateFilter = "";
+		$this->TTD1Jabatan->SqlSelect = "";
+		$this->TTD1Jabatan->SqlOrderBy = "";
+		$this->fields['TTD1Jabatan'] = &$this->TTD1Jabatan;
+
+		// TTD2Nama
+		$this->TTD2Nama = new crField('t07_sekolah', 't07_sekolah', 'x_TTD2Nama', 'TTD2Nama', '`TTD2Nama`', 200, EWR_DATATYPE_STRING, -1);
+		$this->TTD2Nama->Sortable = TRUE; // Allow sort
+		$this->TTD2Nama->DateFilter = "";
+		$this->TTD2Nama->SqlSelect = "";
+		$this->TTD2Nama->SqlOrderBy = "";
+		$this->fields['TTD2Nama'] = &$this->TTD2Nama;
+
+		// TTD2Jabatan
+		$this->TTD2Jabatan = new crField('t07_sekolah', 't07_sekolah', 'x_TTD2Jabatan', 'TTD2Jabatan', '`TTD2Jabatan`', 200, EWR_DATATYPE_STRING, -1);
+		$this->TTD2Jabatan->Sortable = TRUE; // Allow sort
+		$this->TTD2Jabatan->DateFilter = "";
+		$this->TTD2Jabatan->SqlSelect = "";
+		$this->TTD2Jabatan->SqlOrderBy = "";
+		$this->fields['TTD2Jabatan'] = &$this->TTD2Jabatan;
 	}
 
 	// Set Field Visibility

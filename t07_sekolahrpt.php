@@ -577,12 +577,16 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 		$this->Nama->SetVisibility();
 		$this->Alamat->SetVisibility();
 		$this->NoTelpHp->SetVisibility();
+		$this->TTD1Nama->SetVisibility();
+		$this->TTD1Jabatan->SetVisibility();
+		$this->TTD2Nama->SetVisibility();
+		$this->TTD2Jabatan->SetVisibility();
 
 		// Aggregate variables
 		// 1st dimension = no of groups (level 0 used for grand total)
 		// 2nd dimension = no of fields
 
-		$nDtls = 4;
+		$nDtls = 8;
 		$nGrps = 1;
 		$this->Val = &ewr_InitArray($nDtls, 0);
 		$this->Cnt = &ewr_Init2DArray($nGrps, $nDtls, 0);
@@ -595,7 +599,7 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 		$this->GrandMx = &ewr_InitArray($nDtls, NULL);
 
 		// Set up array if accumulation required: array(Accum, SkipNullOrZero)
-		$this->Col = array(array(FALSE, FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE));
+		$this->Col = array(array(FALSE, FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE));
 
 		// Set up groups per page dynamically
 		$this->SetUpDisplayGrps();
@@ -797,6 +801,10 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 				$this->FirstRowData['Nama'] = ewr_Conv($rs->fields('Nama'), 200);
 				$this->FirstRowData['Alamat'] = ewr_Conv($rs->fields('Alamat'), 200);
 				$this->FirstRowData['NoTelpHp'] = ewr_Conv($rs->fields('NoTelpHp'), 200);
+				$this->FirstRowData['TTD1Nama'] = ewr_Conv($rs->fields('TTD1Nama'), 200);
+				$this->FirstRowData['TTD1Jabatan'] = ewr_Conv($rs->fields('TTD1Jabatan'), 200);
+				$this->FirstRowData['TTD2Nama'] = ewr_Conv($rs->fields('TTD2Nama'), 200);
+				$this->FirstRowData['TTD2Jabatan'] = ewr_Conv($rs->fields('TTD2Jabatan'), 200);
 		} else { // Get next row
 			$rs->MoveNext();
 		}
@@ -805,14 +813,26 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 			$this->Nama->setDbValue($rs->fields('Nama'));
 			$this->Alamat->setDbValue($rs->fields('Alamat'));
 			$this->NoTelpHp->setDbValue($rs->fields('NoTelpHp'));
+			$this->TTD1Nama->setDbValue($rs->fields('TTD1Nama'));
+			$this->TTD1Jabatan->setDbValue($rs->fields('TTD1Jabatan'));
+			$this->TTD2Nama->setDbValue($rs->fields('TTD2Nama'));
+			$this->TTD2Jabatan->setDbValue($rs->fields('TTD2Jabatan'));
 			$this->Val[1] = $this->Nama->CurrentValue;
 			$this->Val[2] = $this->Alamat->CurrentValue;
 			$this->Val[3] = $this->NoTelpHp->CurrentValue;
+			$this->Val[4] = $this->TTD1Nama->CurrentValue;
+			$this->Val[5] = $this->TTD1Jabatan->CurrentValue;
+			$this->Val[6] = $this->TTD2Nama->CurrentValue;
+			$this->Val[7] = $this->TTD2Jabatan->CurrentValue;
 		} else {
 			$this->id->setDbValue("");
 			$this->Nama->setDbValue("");
 			$this->Alamat->setDbValue("");
 			$this->NoTelpHp->setDbValue("");
+			$this->TTD1Nama->setDbValue("");
+			$this->TTD1Jabatan->setDbValue("");
+			$this->TTD2Nama->setDbValue("");
+			$this->TTD2Jabatan->setDbValue("");
 		}
 	}
 
@@ -1008,6 +1028,18 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 
 			// NoTelpHp
 			$this->NoTelpHp->HrefValue = "";
+
+			// TTD1Nama
+			$this->TTD1Nama->HrefValue = "";
+
+			// TTD1Jabatan
+			$this->TTD1Jabatan->HrefValue = "";
+
+			// TTD2Nama
+			$this->TTD2Nama->HrefValue = "";
+
+			// TTD2Jabatan
+			$this->TTD2Jabatan->HrefValue = "";
 		} else {
 			if ($this->RowTotalType == EWR_ROWTOTAL_GROUP && $this->RowTotalSubType == EWR_ROWTOTAL_HEADER) {
 			} else {
@@ -1025,6 +1057,22 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 			$this->NoTelpHp->ViewValue = $this->NoTelpHp->CurrentValue;
 			$this->NoTelpHp->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
 
+			// TTD1Nama
+			$this->TTD1Nama->ViewValue = $this->TTD1Nama->CurrentValue;
+			$this->TTD1Nama->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
+
+			// TTD1Jabatan
+			$this->TTD1Jabatan->ViewValue = $this->TTD1Jabatan->CurrentValue;
+			$this->TTD1Jabatan->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
+
+			// TTD2Nama
+			$this->TTD2Nama->ViewValue = $this->TTD2Nama->CurrentValue;
+			$this->TTD2Nama->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
+
+			// TTD2Jabatan
+			$this->TTD2Jabatan->ViewValue = $this->TTD2Jabatan->CurrentValue;
+			$this->TTD2Jabatan->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
+
 			// Nama
 			$this->Nama->HrefValue = "";
 
@@ -1033,6 +1081,18 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 
 			// NoTelpHp
 			$this->NoTelpHp->HrefValue = "";
+
+			// TTD1Nama
+			$this->TTD1Nama->HrefValue = "";
+
+			// TTD1Jabatan
+			$this->TTD1Jabatan->HrefValue = "";
+
+			// TTD2Nama
+			$this->TTD2Nama->HrefValue = "";
+
+			// TTD2Jabatan
+			$this->TTD2Jabatan->HrefValue = "";
 		}
 
 		// Call Cell_Rendered event
@@ -1065,6 +1125,42 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 			$HrefValue = &$this->NoTelpHp->HrefValue;
 			$LinkAttrs = &$this->NoTelpHp->LinkAttrs;
 			$this->Cell_Rendered($this->NoTelpHp, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
+
+			// TTD1Nama
+			$CurrentValue = $this->TTD1Nama->CurrentValue;
+			$ViewValue = &$this->TTD1Nama->ViewValue;
+			$ViewAttrs = &$this->TTD1Nama->ViewAttrs;
+			$CellAttrs = &$this->TTD1Nama->CellAttrs;
+			$HrefValue = &$this->TTD1Nama->HrefValue;
+			$LinkAttrs = &$this->TTD1Nama->LinkAttrs;
+			$this->Cell_Rendered($this->TTD1Nama, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
+
+			// TTD1Jabatan
+			$CurrentValue = $this->TTD1Jabatan->CurrentValue;
+			$ViewValue = &$this->TTD1Jabatan->ViewValue;
+			$ViewAttrs = &$this->TTD1Jabatan->ViewAttrs;
+			$CellAttrs = &$this->TTD1Jabatan->CellAttrs;
+			$HrefValue = &$this->TTD1Jabatan->HrefValue;
+			$LinkAttrs = &$this->TTD1Jabatan->LinkAttrs;
+			$this->Cell_Rendered($this->TTD1Jabatan, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
+
+			// TTD2Nama
+			$CurrentValue = $this->TTD2Nama->CurrentValue;
+			$ViewValue = &$this->TTD2Nama->ViewValue;
+			$ViewAttrs = &$this->TTD2Nama->ViewAttrs;
+			$CellAttrs = &$this->TTD2Nama->CellAttrs;
+			$HrefValue = &$this->TTD2Nama->HrefValue;
+			$LinkAttrs = &$this->TTD2Nama->LinkAttrs;
+			$this->Cell_Rendered($this->TTD2Nama, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
+
+			// TTD2Jabatan
+			$CurrentValue = $this->TTD2Jabatan->CurrentValue;
+			$ViewValue = &$this->TTD2Jabatan->ViewValue;
+			$ViewAttrs = &$this->TTD2Jabatan->ViewAttrs;
+			$CellAttrs = &$this->TTD2Jabatan->CellAttrs;
+			$HrefValue = &$this->TTD2Jabatan->HrefValue;
+			$LinkAttrs = &$this->TTD2Jabatan->LinkAttrs;
+			$this->Cell_Rendered($this->TTD2Jabatan, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
 		}
 
 		// Call Row_Rendered event
@@ -1080,6 +1176,10 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 		if ($this->Nama->Visible) $this->DtlColumnCount += 1;
 		if ($this->Alamat->Visible) $this->DtlColumnCount += 1;
 		if ($this->NoTelpHp->Visible) $this->DtlColumnCount += 1;
+		if ($this->TTD1Nama->Visible) $this->DtlColumnCount += 1;
+		if ($this->TTD1Jabatan->Visible) $this->DtlColumnCount += 1;
+		if ($this->TTD2Nama->Visible) $this->DtlColumnCount += 1;
+		if ($this->TTD2Jabatan->Visible) $this->DtlColumnCount += 1;
 	}
 
 	// Set up Breadcrumb
@@ -1130,6 +1230,10 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 			$this->Nama->setSort("");
 			$this->Alamat->setSort("");
 			$this->NoTelpHp->setSort("");
+			$this->TTD1Nama->setSort("");
+			$this->TTD1Jabatan->setSort("");
+			$this->TTD2Nama->setSort("");
+			$this->TTD2Jabatan->setSort("");
 
 		// Check for an Order parameter
 		} elseif ($orderBy <> "") {
@@ -1138,6 +1242,10 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 			$this->UpdateSort($this->Nama, $bCtrl); // Nama
 			$this->UpdateSort($this->Alamat, $bCtrl); // Alamat
 			$this->UpdateSort($this->NoTelpHp, $bCtrl); // NoTelpHp
+			$this->UpdateSort($this->TTD1Nama, $bCtrl); // TTD1Nama
+			$this->UpdateSort($this->TTD1Jabatan, $bCtrl); // TTD1Jabatan
+			$this->UpdateSort($this->TTD2Nama, $bCtrl); // TTD2Nama
+			$this->UpdateSort($this->TTD2Jabatan, $bCtrl); // TTD2Jabatan
 			$sSortSql = $this->SortSql();
 			$this->setOrderBy($sSortSql);
 			$this->setStartGroup(1);
@@ -1608,6 +1716,78 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 	</td>
 <?php } ?>
 <?php } ?>
+<?php if ($Page->TTD1Nama->Visible) { ?>
+<?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
+	<td data-field="TTD1Nama"><div class="t07_sekolah_TTD1Nama"><span class="ewTableHeaderCaption"><?php echo $Page->TTD1Nama->FldCaption() ?></span></div></td>
+<?php } else { ?>
+	<td data-field="TTD1Nama">
+<?php if ($Page->SortUrl($Page->TTD1Nama) == "") { ?>
+		<div class="ewTableHeaderBtn t07_sekolah_TTD1Nama">
+			<span class="ewTableHeaderCaption"><?php echo $Page->TTD1Nama->FldCaption() ?></span>
+		</div>
+<?php } else { ?>
+		<div class="ewTableHeaderBtn ewPointer t07_sekolah_TTD1Nama" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->TTD1Nama) ?>',2);">
+			<span class="ewTableHeaderCaption"><?php echo $Page->TTD1Nama->FldCaption() ?></span>
+			<span class="ewTableHeaderSort"><?php if ($Page->TTD1Nama->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->TTD1Nama->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
+		</div>
+<?php } ?>
+	</td>
+<?php } ?>
+<?php } ?>
+<?php if ($Page->TTD1Jabatan->Visible) { ?>
+<?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
+	<td data-field="TTD1Jabatan"><div class="t07_sekolah_TTD1Jabatan"><span class="ewTableHeaderCaption"><?php echo $Page->TTD1Jabatan->FldCaption() ?></span></div></td>
+<?php } else { ?>
+	<td data-field="TTD1Jabatan">
+<?php if ($Page->SortUrl($Page->TTD1Jabatan) == "") { ?>
+		<div class="ewTableHeaderBtn t07_sekolah_TTD1Jabatan">
+			<span class="ewTableHeaderCaption"><?php echo $Page->TTD1Jabatan->FldCaption() ?></span>
+		</div>
+<?php } else { ?>
+		<div class="ewTableHeaderBtn ewPointer t07_sekolah_TTD1Jabatan" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->TTD1Jabatan) ?>',2);">
+			<span class="ewTableHeaderCaption"><?php echo $Page->TTD1Jabatan->FldCaption() ?></span>
+			<span class="ewTableHeaderSort"><?php if ($Page->TTD1Jabatan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->TTD1Jabatan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
+		</div>
+<?php } ?>
+	</td>
+<?php } ?>
+<?php } ?>
+<?php if ($Page->TTD2Nama->Visible) { ?>
+<?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
+	<td data-field="TTD2Nama"><div class="t07_sekolah_TTD2Nama"><span class="ewTableHeaderCaption"><?php echo $Page->TTD2Nama->FldCaption() ?></span></div></td>
+<?php } else { ?>
+	<td data-field="TTD2Nama">
+<?php if ($Page->SortUrl($Page->TTD2Nama) == "") { ?>
+		<div class="ewTableHeaderBtn t07_sekolah_TTD2Nama">
+			<span class="ewTableHeaderCaption"><?php echo $Page->TTD2Nama->FldCaption() ?></span>
+		</div>
+<?php } else { ?>
+		<div class="ewTableHeaderBtn ewPointer t07_sekolah_TTD2Nama" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->TTD2Nama) ?>',2);">
+			<span class="ewTableHeaderCaption"><?php echo $Page->TTD2Nama->FldCaption() ?></span>
+			<span class="ewTableHeaderSort"><?php if ($Page->TTD2Nama->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->TTD2Nama->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
+		</div>
+<?php } ?>
+	</td>
+<?php } ?>
+<?php } ?>
+<?php if ($Page->TTD2Jabatan->Visible) { ?>
+<?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
+	<td data-field="TTD2Jabatan"><div class="t07_sekolah_TTD2Jabatan"><span class="ewTableHeaderCaption"><?php echo $Page->TTD2Jabatan->FldCaption() ?></span></div></td>
+<?php } else { ?>
+	<td data-field="TTD2Jabatan">
+<?php if ($Page->SortUrl($Page->TTD2Jabatan) == "") { ?>
+		<div class="ewTableHeaderBtn t07_sekolah_TTD2Jabatan">
+			<span class="ewTableHeaderCaption"><?php echo $Page->TTD2Jabatan->FldCaption() ?></span>
+		</div>
+<?php } else { ?>
+		<div class="ewTableHeaderBtn ewPointer t07_sekolah_TTD2Jabatan" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->TTD2Jabatan) ?>',2);">
+			<span class="ewTableHeaderCaption"><?php echo $Page->TTD2Jabatan->FldCaption() ?></span>
+			<span class="ewTableHeaderSort"><?php if ($Page->TTD2Jabatan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->TTD2Jabatan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
+		</div>
+<?php } ?>
+	</td>
+<?php } ?>
+<?php } ?>
 	</tr>
 </thead>
 <tbody>
@@ -1637,6 +1817,22 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 <?php if ($Page->NoTelpHp->Visible) { ?>
 		<td data-field="NoTelpHp"<?php echo $Page->NoTelpHp->CellAttributes() ?>>
 <span<?php echo $Page->NoTelpHp->ViewAttributes() ?>><?php echo $Page->NoTelpHp->ListViewValue() ?></span></td>
+<?php } ?>
+<?php if ($Page->TTD1Nama->Visible) { ?>
+		<td data-field="TTD1Nama"<?php echo $Page->TTD1Nama->CellAttributes() ?>>
+<span<?php echo $Page->TTD1Nama->ViewAttributes() ?>><?php echo $Page->TTD1Nama->ListViewValue() ?></span></td>
+<?php } ?>
+<?php if ($Page->TTD1Jabatan->Visible) { ?>
+		<td data-field="TTD1Jabatan"<?php echo $Page->TTD1Jabatan->CellAttributes() ?>>
+<span<?php echo $Page->TTD1Jabatan->ViewAttributes() ?>><?php echo $Page->TTD1Jabatan->ListViewValue() ?></span></td>
+<?php } ?>
+<?php if ($Page->TTD2Nama->Visible) { ?>
+		<td data-field="TTD2Nama"<?php echo $Page->TTD2Nama->CellAttributes() ?>>
+<span<?php echo $Page->TTD2Nama->ViewAttributes() ?>><?php echo $Page->TTD2Nama->ListViewValue() ?></span></td>
+<?php } ?>
+<?php if ($Page->TTD2Jabatan->Visible) { ?>
+		<td data-field="TTD2Jabatan"<?php echo $Page->TTD2Jabatan->CellAttributes() ?>>
+<span<?php echo $Page->TTD2Jabatan->ViewAttributes() ?>><?php echo $Page->TTD2Jabatan->ListViewValue() ?></span></td>
 <?php } ?>
 	</tr>
 <?php

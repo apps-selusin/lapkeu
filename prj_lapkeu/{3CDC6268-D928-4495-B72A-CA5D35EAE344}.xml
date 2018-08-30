@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<configuration date="2018/08/25" author="e.World Technology Ltd.">
-  <project id="{3CDC6268-D928-4495-B72A-CA5D35EAE344}" file="C:\xampp\htdocs\lapkeu\prj_lapkeu.prp" name="prj_lapkeu" product="PHPReportMaker" version="11.0" datetime="2018/08/25 04:01:07" languagefolder="phprptlang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
+<configuration date="2018/08/30" author="e.World Technology Ltd.">
+  <project id="{3CDC6268-D928-4495-B72A-CA5D35EAE344}" file="C:\xampp\htdocs\lapkeu\prj_lapkeu.prp" name="prj_lapkeu" product="PHPReportMaker" version="11.0" datetime="2018/08/30 20:43:01" languagefolder="phprptlang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
     <table id="r01_jenis_pengeluaran" name="r01_jenis_pengeluaran" caption="Jenis Pengeluaran" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="r03_pengeluaran" name="r03_pengeluaran" caption="Laporan Pengeluaran" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="r04_pengeluaranold" name="r04_pengeluaranold" caption="Laporan Pengeluaran (Closed)" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t01_supplier" name="t01_supplier" caption="Supplier" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t02_satuan" name="t02_satuan" caption="Satuan" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t03_barang" name="t03_barang" caption="Barang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -25,6 +26,5 @@
     <table id="v02_terima_keluar" name="v02_terima_keluar" caption="v 02 terima keluar" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v03_pengeluaran" name="v03_pengeluaran" caption="v 03 pengeluaran" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v04_pengeluaranold" name="v04_pengeluaranold" caption="v 04 pengeluaranold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
-    <table id="r04_pengeluaranold" name="r04_pengeluaranold" caption="Laporan Pengeluaran (Closed)" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
   </project>
 </configuration>

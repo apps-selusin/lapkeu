@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/8/25" version="11.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/8/30" version="11.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -493,6 +493,39 @@
         <phrase id="fldcaption" value="Jumlah" />
       </field>
     </table>
+    <table id="r04_pengeluaranold">
+      <phrase id="tblcaption" value="Laporan Pengeluaran (Closed)" />
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="maingroup_nama">
+        <phrase id="fldcaption" value="Jenis Pengeluaran" />
+      </field>
+      <field id="subgroup_nama">
+        <phrase id="fldcaption" value="Sub-Jenis Pengeluaran" />
+      </field>
+      <field id="supplier_nama">
+        <phrase id="fldcaption" value="Supplier" />
+      </field>
+      <field id="nonota">
+        <phrase id="fldcaption" value="No. Nota" />
+      </field>
+      <field id="barang_nama">
+        <phrase id="fldcaption" value="Nama Barang" />
+      </field>
+      <field id="banyaknya">
+        <phrase id="fldcaption" value="Banyaknya" />
+      </field>
+      <field id="barang_satuan">
+        <phrase id="fldcaption" value="Satuan" />
+      </field>
+      <field id="harga">
+        <phrase id="fldcaption" value="Harga" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="Jumlah" />
+      </field>
+    </table>
     <table id="t01_supplier">
       <phrase id="tblcaption" value="Supplier" />
       <field id="id">
@@ -607,7 +640,19 @@
         <phrase id="fldcaption" value="Alamat" />
       </field>
       <field id="notelphp">
-        <phrase id="fldcaption" value="No Telp Hp" />
+        <phrase id="fldcaption" value="No. Telp/Hp" />
+      </field>
+      <field id="ttd1nama">
+        <phrase id="fldcaption" value="Nama TTD #1" />
+      </field>
+      <field id="ttd1jabatan">
+        <phrase id="fldcaption" value="Jabatan TTD #1" />
+      </field>
+      <field id="ttd2nama">
+        <phrase id="fldcaption" value="Nama TTD #2" />
+      </field>
+      <field id="ttd2jabatan">
+        <phrase id="fldcaption" value="Jabatan TTD #2" />
       </field>
     </table>
     <table id="t08_penerimaan">
@@ -989,39 +1034,6 @@
       </field>
       <field id="harga">
         <phrase id="fldcaption" value="harga" />
-      </field>
-      <field id="jumlah">
-        <phrase id="fldcaption" value="Jumlah" />
-      </field>
-    </table>
-    <table id="r04_pengeluaranold">
-      <phrase id="tblcaption" value="Laporan Pengeluaran (Closed)" />
-      <field id="tanggal">
-        <phrase id="fldcaption" value="Tanggal" />
-      </field>
-      <field id="maingroup_nama">
-        <phrase id="fldcaption" value="Jenis Pengeluaran" />
-      </field>
-      <field id="subgroup_nama">
-        <phrase id="fldcaption" value="Sub-Jenis Pengeluaran" />
-      </field>
-      <field id="supplier_nama">
-        <phrase id="fldcaption" value="Supplier" />
-      </field>
-      <field id="nonota">
-        <phrase id="fldcaption" value="No. Nota" />
-      </field>
-      <field id="barang_nama">
-        <phrase id="fldcaption" value="Nama Barang" />
-      </field>
-      <field id="banyaknya">
-        <phrase id="fldcaption" value="Banyaknya" />
-      </field>
-      <field id="barang_satuan">
-        <phrase id="fldcaption" value="Satuan" />
-      </field>
-      <field id="harga">
-        <phrase id="fldcaption" value="Harga" />
       </field>
       <field id="jumlah">
         <phrase id="fldcaption" value="Jumlah" />
