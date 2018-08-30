@@ -345,6 +345,12 @@ Page_Rendering();
 ?>
 <?php include_once "header.php" ?>
 <?php
+// data sekolah
+$q = "select * from t07_sekolah";
+$r = Conn()->Execute($q);
+$sekolah_nama = $r->fields["Nama"];
+$sekolah_alamat = $r->fields["Alamat"];
+
 $q = "select * from t09_periode";
 $r = Conn()->Execute($q);
 $periode_bulan = $r->fields["Bulan"];
@@ -379,6 +385,12 @@ $no = 1;
 			</tr>-->
 			<tr>
 				<th colspan="<?php echo $colspan;?>">Laporan Keuangan</th>
+			</tr>
+			<tr>
+				<th colspan="<?php echo $colspan;?>"><?php echo $sekolah_nama;?></th>
+			</tr>
+			<tr>
+				<th colspan="<?php echo $colspan;?>"><?php echo $sekolah_alamat;?></th>
 			</tr>
 			<tr>
 				<th colspan="<?php echo $colspan;?>">Periode <?php echo $periode_namabulan . " " . $periode_tahun;?></th>
