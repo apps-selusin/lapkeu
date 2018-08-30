@@ -350,7 +350,13 @@ Page_Rendering();
 		<?php
 		if (isset($_GET["ok"])) {
 			if ($_GET["ok"] == 1) {
-			?>				
+			?>
+			<tr>
+				<td><?php echo $_SESSION["response_type"]; ?></td>
+			</tr>
+			<tr>
+				<td><?php echo nl2br($_SESSION["response_message"]); ?></td>
+			</tr>
 			<tr>
 				<td>Proses restore database telah selesai !</td>
 			</tr>
@@ -365,7 +371,18 @@ Page_Rendering();
 		}
 		else {
 		?>
+			<form method="post" action="cf07_restoreproses.php" enctype="multipart/form-data" id="frm-restore">
 			<tr>
+				<td>Choose Backup File</td>
+			</tr>
+			<tr>
+				<td><input type="file" name="backup_file" class="input-file" /></td>
+			</tr>
+			<tr>
+				<td><input type="submit" name="restore" value="Restore" class="btn-action" /></td>
+			</tr>
+			</form>
+			<!--<tr>
 				<td>Mohon klik PROSES untuk memulai restore database !</td>
 			</tr>
 			<tr>
@@ -373,7 +390,7 @@ Page_Rendering();
 			</tr>
 			<tr>
 				<td><a href='cf07_restoreproses.php'><button>Proses</button></a></td>
-			</tr>
+			</tr>-->
 		<?php
 		}
 		?>
