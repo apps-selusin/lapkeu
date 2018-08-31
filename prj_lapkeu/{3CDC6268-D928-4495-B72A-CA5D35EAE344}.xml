@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <configuration date="2018/08/31" author="e.World Technology Ltd.">
-  <project id="{3CDC6268-D928-4495-B72A-CA5D35EAE344}" file="C:\xampp\htdocs\lapkeu\prj_lapkeu.prp" name="prj_lapkeu" product="PHPReportMaker" version="11.0" datetime="2018/08/31 07:06:46" languagefolder="phprptlang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
+  <project id="{3CDC6268-D928-4495-B72A-CA5D35EAE344}" file="C:\xampp\htdocs\lapkeu\prj_lapkeu.prp" name="prj_lapkeu" product="PHPReportMaker" version="11.0" datetime="2018/08/31 08:19:22" languagefolder="phprptlang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
     <table id="r01_jenis_pengeluaran" name="r01_jenis_pengeluaran" caption="Jenis Pengeluaran" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="r03_pengeluaran" name="r03_pengeluaran" caption="Laporan Pengeluaran" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="r04_pengeluaranold" name="r04_pengeluaranold" caption="Laporan Pengeluaran (Closed)" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
