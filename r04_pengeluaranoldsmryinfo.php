@@ -138,8 +138,8 @@ class crr04_pengeluaranold extends crTableBase {
 		return $this->$fldparm->Visible; // Returns original value
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -149,10 +149,22 @@ class crr04_pengeluaranold extends crTableBase {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			if ($ofld->GroupingFieldId == 0)
-				$this->setDetailOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ofld->GroupingFieldId == 0) {
+				if ($ctrl) {
+					$sOrderBy = $this->getDetailOrderBy();
+					if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+						$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+					} else {
+						if ($sOrderBy <> "") $sOrderBy .= ", ";
+						$sOrderBy .= $sSortField . " " . $sThisSort;
+					}
+					$this->setDetailOrderBy($sOrderBy); // Save to Session
+				} else {
+					$this->setDetailOrderBy($sSortField . " " . $sThisSort); // Save to Session
+				}
+			}
 		} else {
-			if ($ofld->GroupingFieldId == 0) $ofld->setSort("");
+			if ($ofld->GroupingFieldId == 0 && !$ctrl) $ofld->setSort("");
 		}
 	}
 
@@ -473,6 +485,7 @@ class crr04_pengeluaranold extends crTableBase {
 	function Page_Selecting(&$filter) {
 
 		// Enter your code here
+		$_SESSION["r04_pengeluaranold_filter"] = $filter; //var_dump($filter);
 	}
 
 	// Page Breaking event
