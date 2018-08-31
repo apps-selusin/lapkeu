@@ -55,18 +55,64 @@ $objPHPExcel = new PHPExcel();
 							 ->setKeywords("office 2007 openxml php")
 							 ->setCategory("Test result file");*/
 
+// data sekolah
+$q = "select * from t07_sekolah";
+$r = Conn()->Execute($q);
+$sekolah_nama = $r->fields["Nama"];
+$sekolah_alamat = $r->fields["Alamat"];
+$sekolah_notelphp = $r->fields["NoTelpHp"];
+$sekolah_ttd1nama = $r->fields["TTD1Nama"];
+$sekolah_ttd1jabatan = $r->fields["TTD1Jabatan"];
+$sekolah_ttd2nama = $r->fields["TTD2Nama"];
+$sekolah_ttd2jabatan = $r->fields["TTD2Jabatan"];
+$Logo = $r->fields["Logo"];
+
+$aBulan = array(
+	"",
+	"Januari",
+	"Februari",
+	"Maret",
+	"April",
+	"Mei",
+	"Juni",
+	"Juli",
+	"Agustus",
+	"September",
+	"Oktober",
+	"November",
+	"Desember"
+	);
+
+$TanggalLaporan  = date("d") . " " . $aBulan[date("n")] . " " . date("Y"); //$rsnew["Tahun"] . "-" . $rsnew["Bulan"] . "-" . "01";
+
+$baris = 1;
+
 // Create a first sheet, representing sales data
-echo date('H:i:s') , " Add some data" , EOL;
+//echo date('H:i:s') , " Add some data" , EOL;
 $objPHPExcel->setActiveSheetIndex(0);
-$objPHPExcel->getActiveSheet()->setCellValue('B1', 'Laporan Pengeluaran'); $objPHPExcel->getActiveSheet()->mergeCells('B1:L1'); $objPHPExcel->getActiveSheet()->getStyle('B1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, 'Laporan Pengeluaran'); $objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':L'.$baris); $objPHPExcel->getActiveSheet()->getStyle('B'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+$baris++;
+
+$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, $sekolah_nama); $objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':L'.$baris); $objPHPExcel->getActiveSheet()->getStyle('B'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+$baris++;
+
+$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, $sekolah_alamat); $objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':L'.$baris); $objPHPExcel->getActiveSheet()->getStyle('B'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+$baris++;
+
 //$objPHPExcel->getActiveSheet()->setCellValue('D1', PHPExcel_Shared_Date::PHPToExcel( gmmktime(0,0,0,date('m'),date('d'),date('Y')) ));
 //$objPHPExcel->getActiveSheet()->getStyle('D1')->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_XLSX15);
 //$objPHPExcel->getActiveSheet()->setCellValue('E1', '#12566');
 
-$objPHPExcel->getActiveSheet()->setCellValue('B2', "Periode ".date("d-m-Y", strtotime($_SESSION["r03_pengeluaran_tglstart"]))." s.d. ".date("d-m-Y", strtotime($_SESSION["r03_pengeluaran_tglend"]))); $objPHPExcel->getActiveSheet()->mergeCells('B2:L2'); $objPHPExcel->getActiveSheet()->getStyle('B2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+$objPHPExcel->getActiveSheet()->setCellValue('B'.$baris, "Periode ".date("d-m-Y", strtotime($_SESSION["r03_pengeluaran_tglstart"]))." s.d. ".date("d-m-Y", strtotime($_SESSION["r03_pengeluaran_tglend"]))); $objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':L'.$baris); $objPHPExcel->getActiveSheet()->getStyle('B'.$baris)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+$baris++;
+
+$objPHPExcel->getActiveSheet()->mergeCells('B'.$baris.':L'.$baris);
+$baris++;
+
 //$objPHPExcel->getActiveSheet()->setCellValue('B3', $_SESSION["r03_pengeluaran_filter"]); $objPHPExcel->getActiveSheet()->mergeCells('B3:L3'); $objPHPExcel->getActiveSheet()->getStyle('B3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-$baris = 4; // baris mulai untuk tampilkan header kolom
+//$baris = 4; // baris mulai untuk tampilkan header kolom
+$baris_mulai_data = $baris;
 
 // header
 $objPHPExcel->getActiveSheet()->setCellValue('A'.$baris, 'Jenis Pengeluaran'); $objPHPExcel->getActiveSheet()->mergeCells('A'.$baris.':B'.$baris.'');
@@ -205,7 +251,19 @@ $styleArray = array(
 		)
 	)
 );
-$objPHPExcel->getActiveSheet()->getStyle('A4:L'.$baris)->applyFromArray($styleArray);
+//$objPHPExcel->getActiveSheet()->getStyle('A4:L'.$baris)->applyFromArray($styleArray);
+$objPHPExcel->getActiveSheet()->getStyle('A'.$baris_mulai_data.':L'.$baris)->applyFromArray($styleArray);
+
+$baris += 3;
+$objPHPExcel->getActiveSheet()->setCellValue('G'.$baris, 'Bojonegoro, '.$TanggalLaporan); $objPHPExcel->getActiveSheet()->mergeCells('G'.$baris.':J'.$baris);
+$baris++;
+
+$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, $sekolah_ttd1jabatan); $objPHPExcel->getActiveSheet()->mergeCells('C'.$baris.':E'.$baris);
+$objPHPExcel->getActiveSheet()->setCellValue('G'.$baris, $sekolah_ttd2jabatan); $objPHPExcel->getActiveSheet()->mergeCells('G'.$baris.':J'.$baris);
+$baris+= 4;
+
+$objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, $sekolah_ttd1nama); $objPHPExcel->getActiveSheet()->mergeCells('C'.$baris.':E'.$baris);
+$objPHPExcel->getActiveSheet()->setCellValue('G'.$baris, $sekolah_ttd2nama); $objPHPExcel->getActiveSheet()->mergeCells('G'.$baris.':J'.$baris);
 
 
 /*$objPHPExcel->getActiveSheet()->setCellValue('A4', '1001');
