@@ -22,6 +22,14 @@ $q = "
     ADD `Logo` VARCHAR(50) NULL";
 Conn()->Execute($q);
 
+// 201808311708
+// update field db
+// untuk penambahan logo
+$q = "
+    ALTER TABLE `t07_sekolah` 
+    ADD `Logo` VARCHAR(50) NULL";
+Conn()->Execute($q);
+
 // kembali ke cf06_updatedb
 header("location: cf06_updatedb.php?ok=1");
 ?>
