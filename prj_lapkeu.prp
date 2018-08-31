@@ -507,6 +507,13 @@ function Page_DataRendering(&$header) {
 	echo "<p><a href='r03_pengeluaranexcel.php'><button>Export to Excel</button></a></p>";
 }
 ]]></CustomScript>
+  <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Page_Selecting" ScriptCtrlID="summary" ScriptL1Key="r04_pengeluaranold" ScriptL2Key=""><![CDATA[// Page Selecting event
+function Page_Selecting(&$filter) {
+	// Enter your code here
+
+	$_SESSION["r04_pengeluaranold_filter"] = $filter; //var_dump($filter);
+}
+]]></CustomScript>
   <Menu MenuID="22" MenuText="t 09 periode" MenuParentID="-1" MenuGroup="0" MenuSource="" MenuExtUrl="" MenuAnonymous="0" MenuSecurity="" MenuUrl="t09_periode" MenuType="Table" MenuCustomUrl="0" MenuLevel="0" MenuShow="0" MenuDisplayOrder="100" MenuIconClass="" />
   <Menu MenuID="23" MenuText="t 10 saldo" MenuParentID="-1" MenuGroup="0" MenuSource="" MenuExtUrl="" MenuAnonymous="0" MenuSecurity="" MenuUrl="t10_saldo" MenuType="Table" MenuCustomUrl="0" MenuLevel="0" MenuShow="0" MenuDisplayOrder="200" MenuIconClass="" />
   <Menu MenuID="24" MenuText="Laporan Saldo (Closed)" MenuParentID="-1" MenuGroup="0" MenuSource="" MenuExtUrl="" MenuAnonymous="0" MenuSecurity="" MenuUrl="t11_saldoold" MenuType="Table" MenuCustomUrl="0" MenuLevel="0" MenuShow="1" MenuDisplayOrder="300" MenuIconClass="" />
