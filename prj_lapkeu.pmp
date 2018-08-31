@@ -970,7 +970,7 @@ function Row_Updating($rsold, &$rsnew) {
 
 
 <!-- log -->
-<div class="panel panel-default">
+<!-- <div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Log</a></strong></div>
 	<div id="log" class="panel-collapse collapse out">
 		<div class="panel-body">
@@ -980,7 +980,7 @@ function Row_Updating($rsold, &$rsnew) {
 			</div>
 		</div>
 	</div>
-</div>
+</div> -->
 ]]></CustomScript>
   <CustomScript ScriptType="Template" ScriptCodeType="Table" ScriptName="Content" ScriptCtrlID="custom" ScriptL1Key="cf02_tutupbuku.php" ScriptL2Key=""><![CDATA[<style>
 .panel-heading a{

@@ -476,7 +476,7 @@ Page_Rendering();
 
 
 <!-- log -->
-<div class="panel panel-default">
+<!-- <div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Log</a></strong></div>
 	<div id="log" class="panel-collapse collapse out">
 		<div class="panel-body">
@@ -486,7 +486,7 @@ Page_Rendering();
 			</div>
 		</div>
 	</div>
-</div>
+</div> -->
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
