@@ -265,6 +265,17 @@ $baris+= 4;
 $objPHPExcel->getActiveSheet()->setCellValue('C'.$baris, $sekolah_ttd1nama); $objPHPExcel->getActiveSheet()->mergeCells('C'.$baris.':E'.$baris);
 $objPHPExcel->getActiveSheet()->setCellValue('G'.$baris, $sekolah_ttd2nama); $objPHPExcel->getActiveSheet()->mergeCells('G'.$baris.':J'.$baris);
 
+// Set page orientation and size
+$objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
+$objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+
+// Add a drawing to the worksheet
+$objDrawing = new PHPExcel_Worksheet_Drawing();
+$objDrawing->setName('Logo');
+$objDrawing->setDescription('Logo');
+$objDrawing->setPath('./images/'.$Logo);
+$objDrawing->setHeight(36);
+$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
 
 /*$objPHPExcel->getActiveSheet()->setCellValue('A4', '1001');
 $objPHPExcel->getActiveSheet()->setCellValue('B4', 'PHP for dummies');
