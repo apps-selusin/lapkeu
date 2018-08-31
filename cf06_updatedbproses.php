@@ -18,8 +18,8 @@ $q = "
     ADD `TTD1Nama` VARCHAR(50) NULL,
     ADD `TTD1Jabatan` VARCHAR(50) NULL,
     ADD `TTD2Nama` VARCHAR(50) NULL,
-    ADD `TTD2Jabatan` VARCHAR(50) NULL;
-";
+    ADD `TTD2Jabatan` VARCHAR(50) NULL,
+    ADD `Logo` VARCHAR(50) NULL";
 Conn()->Execute($q);
 
 // kembali ke cf06_updatedb

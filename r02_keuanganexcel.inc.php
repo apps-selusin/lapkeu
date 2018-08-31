@@ -20,6 +20,7 @@ $sekolah_ttd1nama = $r->fields["TTD1Nama"];
 $sekolah_ttd1jabatan = $r->fields["TTD1Jabatan"];
 $sekolah_ttd2nama = $r->fields["TTD2Nama"];
 $sekolah_ttd2jabatan = $r->fields["TTD2Jabatan"];
+$Logo = $r->fields["Logo"];
 
 $aBulan = array(
 	"",
@@ -311,7 +312,7 @@ $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_
 $objDrawing = new PHPExcel_Worksheet_Drawing();
 $objDrawing->setName('Logo');
 $objDrawing->setDescription('Logo');
-$objDrawing->setPath('./images/officelogo.jpg');
+$objDrawing->setPath('./images/'.$Logo);
 $objDrawing->setHeight(36);
 $objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
 

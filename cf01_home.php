@@ -482,11 +482,8 @@ Page_Rendering();
 		<div class="panel-body">
 			<div>
 <p>to do:<br/>
-1. informasi identitas sekolah; -> noted;<br/>
-2. logo sekolah; -> noted;<br/>
-3. setup halaman excel F4 -> noted;<br/>
-5. pembedaan hak akses tiap2 user -> noted;<br/>
-6. field user dikurangi, hanya yang dibutuhkan saja -> noted;<br/>
+1. pembedaan hak akses tiap2 user -> noted;<br/>
+2. field user dikurangi, hanya yang dibutuhkan saja -> noted;<br/>
 			</div>
 		</div>
 	</div>

@@ -338,6 +338,7 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		$this->TTD1Jabatan->SetVisibility();
 		$this->TTD2Nama->SetVisibility();
 		$this->TTD2Jabatan->SetVisibility();
+		$this->Logo->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -615,6 +616,8 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		global $objForm, $Language;
 
 		// Get upload data
+		$this->Logo->Upload->Index = $objForm->Index;
+		$this->Logo->Upload->UploadFile();
 	}
 
 	// Load form values
@@ -622,6 +625,7 @@ class ct07_sekolah_edit extends ct07_sekolah {
 
 		// Load from form
 		global $objForm;
+		$this->GetUploadFiles(); // Get upload files
 		if (!$this->Nama->FldIsDetailKey) {
 			$this->Nama->setFormValue($objForm->GetValue("x_Nama"));
 		}
@@ -727,6 +731,8 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		$this->TTD1Jabatan->setDbValue($row['TTD1Jabatan']);
 		$this->TTD2Nama->setDbValue($row['TTD2Nama']);
 		$this->TTD2Jabatan->setDbValue($row['TTD2Jabatan']);
+		$this->Logo->Upload->DbValue = $row['Logo'];
+		$this->Logo->setDbValue($this->Logo->Upload->DbValue);
 	}
 
 	// Return a row with default values
@@ -740,6 +746,7 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		$row['TTD1Jabatan'] = NULL;
 		$row['TTD2Nama'] = NULL;
 		$row['TTD2Jabatan'] = NULL;
+		$row['Logo'] = NULL;
 		return $row;
 	}
 
@@ -756,6 +763,7 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		$this->TTD1Jabatan->DbValue = $row['TTD1Jabatan'];
 		$this->TTD2Nama->DbValue = $row['TTD2Nama'];
 		$this->TTD2Jabatan->DbValue = $row['TTD2Jabatan'];
+		$this->Logo->Upload->DbValue = $row['Logo'];
 	}
 
 	// Load old record
@@ -798,6 +806,7 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		// TTD1Jabatan
 		// TTD2Nama
 		// TTD2Jabatan
+		// Logo
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -833,6 +842,15 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		$this->TTD2Jabatan->ViewValue = $this->TTD2Jabatan->CurrentValue;
 		$this->TTD2Jabatan->ViewCustomAttributes = "";
 
+		// Logo
+		$this->Logo->UploadPath = 'images/';
+		if (!ew_Empty($this->Logo->Upload->DbValue)) {
+			$this->Logo->ViewValue = $this->Logo->Upload->DbValue;
+		} else {
+			$this->Logo->ViewValue = "";
+		}
+		$this->Logo->ViewCustomAttributes = "";
+
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
 			$this->Nama->HrefValue = "";
@@ -867,6 +885,19 @@ class ct07_sekolah_edit extends ct07_sekolah {
 			$this->TTD2Jabatan->LinkCustomAttributes = "";
 			$this->TTD2Jabatan->HrefValue = "";
 			$this->TTD2Jabatan->TooltipValue = "";
+
+			// Logo
+			$this->Logo->LinkCustomAttributes = "";
+			$this->Logo->UploadPath = 'images/';
+			if (!ew_Empty($this->Logo->Upload->DbValue)) {
+				$this->Logo->HrefValue = ew_GetFileUploadUrl($this->Logo, $this->Logo->Upload->DbValue); // Add prefix/suffix
+				$this->Logo->LinkAttrs["target"] = ""; // Add target
+				if ($this->Export <> "") $this->Logo->HrefValue = ew_FullUrl($this->Logo->HrefValue, "href");
+			} else {
+				$this->Logo->HrefValue = "";
+			}
+			$this->Logo->HrefValue2 = $this->Logo->UploadPath . $this->Logo->Upload->DbValue;
+			$this->Logo->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// Nama
@@ -911,6 +942,17 @@ class ct07_sekolah_edit extends ct07_sekolah {
 			$this->TTD2Jabatan->EditValue = ew_HtmlEncode($this->TTD2Jabatan->CurrentValue);
 			$this->TTD2Jabatan->PlaceHolder = ew_RemoveHtml($this->TTD2Jabatan->FldCaption());
 
+			// Logo
+			$this->Logo->EditAttrs["class"] = "form-control";
+			$this->Logo->EditCustomAttributes = "";
+			$this->Logo->UploadPath = 'images/';
+			if (!ew_Empty($this->Logo->Upload->DbValue)) {
+				$this->Logo->EditValue = $this->Logo->Upload->DbValue;
+			} else {
+				$this->Logo->EditValue = "";
+			}
+			if ($this->CurrentAction == "I" && !$this->EventCancelled) ew_RenderUploadField($this->Logo);
+
 			// Edit refer script
 			// Nama
 
@@ -940,6 +982,18 @@ class ct07_sekolah_edit extends ct07_sekolah {
 			// TTD2Jabatan
 			$this->TTD2Jabatan->LinkCustomAttributes = "";
 			$this->TTD2Jabatan->HrefValue = "";
+
+			// Logo
+			$this->Logo->LinkCustomAttributes = "";
+			$this->Logo->UploadPath = 'images/';
+			if (!ew_Empty($this->Logo->Upload->DbValue)) {
+				$this->Logo->HrefValue = ew_GetFileUploadUrl($this->Logo, $this->Logo->Upload->DbValue); // Add prefix/suffix
+				$this->Logo->LinkAttrs["target"] = ""; // Add target
+				if ($this->Export <> "") $this->Logo->HrefValue = ew_FullUrl($this->Logo->HrefValue, "href");
+			} else {
+				$this->Logo->HrefValue = "";
+			}
+			$this->Logo->HrefValue2 = $this->Logo->UploadPath . $this->Logo->Upload->DbValue;
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD || $this->RowType == EW_ROWTYPE_EDIT || $this->RowType == EW_ROWTYPE_SEARCH) // Add/Edit/Search row
 			$this->SetupFieldTitles();
@@ -996,6 +1050,8 @@ class ct07_sekolah_edit extends ct07_sekolah {
 			// Save old values
 			$rsold = &$rs->fields;
 			$this->LoadDbValues($rsold);
+			$this->Logo->OldUploadPath = 'images/';
+			$this->Logo->UploadPath = $this->Logo->OldUploadPath;
 			$rsnew = array();
 
 			// Nama
@@ -1019,6 +1075,42 @@ class ct07_sekolah_edit extends ct07_sekolah {
 			// TTD2Jabatan
 			$this->TTD2Jabatan->SetDbValueDef($rsnew, $this->TTD2Jabatan->CurrentValue, NULL, $this->TTD2Jabatan->ReadOnly);
 
+			// Logo
+			if ($this->Logo->Visible && !$this->Logo->ReadOnly && !$this->Logo->Upload->KeepFile) {
+				$this->Logo->Upload->DbValue = $rsold['Logo']; // Get original value
+				if ($this->Logo->Upload->FileName == "") {
+					$rsnew['Logo'] = NULL;
+				} else {
+					$rsnew['Logo'] = $this->Logo->Upload->FileName;
+				}
+			}
+			if ($this->Logo->Visible && !$this->Logo->Upload->KeepFile) {
+				$this->Logo->UploadPath = 'images/';
+				$OldFiles = ew_Empty($this->Logo->Upload->DbValue) ? array() : array($this->Logo->Upload->DbValue);
+				if (!ew_Empty($this->Logo->Upload->FileName)) {
+					$NewFiles = array($this->Logo->Upload->FileName);
+					$NewFileCount = count($NewFiles);
+					for ($i = 0; $i < $NewFileCount; $i++) {
+						$fldvar = ($this->Logo->Upload->Index < 0) ? $this->Logo->FldVar : substr($this->Logo->FldVar, 0, 1) . $this->Logo->Upload->Index . substr($this->Logo->FldVar, 1);
+						if ($NewFiles[$i] <> "") {
+							$file = $NewFiles[$i];
+							if (file_exists(ew_UploadTempPath($fldvar, $this->Logo->TblVar) . $file)) {
+								$file1 = ew_UploadFileNameEx($this->Logo->PhysicalUploadPath(), $file); // Get new file name
+								if ($file1 <> $file) { // Rename temp file
+									while (file_exists(ew_UploadTempPath($fldvar, $this->Logo->TblVar) . $file1) || file_exists($this->Logo->PhysicalUploadPath() . $file1)) // Make sure no file name clash
+										$file1 = ew_UniqueFilename($this->Logo->PhysicalUploadPath(), $file1, TRUE); // Use indexed name
+									rename(ew_UploadTempPath($fldvar, $this->Logo->TblVar) . $file, ew_UploadTempPath($fldvar, $this->Logo->TblVar) . $file1);
+									$NewFiles[$i] = $file1;
+								}
+							}
+						}
+					}
+					$this->Logo->Upload->DbValue = empty($OldFiles) ? "" : implode(EW_MULTIPLE_UPLOAD_SEPARATOR, $OldFiles);
+					$this->Logo->Upload->FileName = implode(EW_MULTIPLE_UPLOAD_SEPARATOR, $NewFiles);
+					$this->Logo->SetDbValueDef($rsnew, $this->Logo->Upload->FileName, NULL, $this->Logo->ReadOnly);
+				}
+			}
+
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
 			if ($bUpdateRow) {
@@ -1029,6 +1121,30 @@ class ct07_sekolah_edit extends ct07_sekolah {
 					$EditRow = TRUE; // No field to update
 				$conn->raiseErrorFn = '';
 				if ($EditRow) {
+					if ($this->Logo->Visible && !$this->Logo->Upload->KeepFile) {
+						$OldFiles = ew_Empty($this->Logo->Upload->DbValue) ? array() : array($this->Logo->Upload->DbValue);
+						if (!ew_Empty($this->Logo->Upload->FileName)) {
+							$NewFiles = array($this->Logo->Upload->FileName);
+							$NewFiles2 = array($rsnew['Logo']);
+							$NewFileCount = count($NewFiles);
+							for ($i = 0; $i < $NewFileCount; $i++) {
+								$fldvar = ($this->Logo->Upload->Index < 0) ? $this->Logo->FldVar : substr($this->Logo->FldVar, 0, 1) . $this->Logo->Upload->Index . substr($this->Logo->FldVar, 1);
+								if ($NewFiles[$i] <> "") {
+									$file = ew_UploadTempPath($fldvar, $this->Logo->TblVar) . $NewFiles[$i];
+									if (file_exists($file)) {
+										if (@$NewFiles2[$i] <> "") // Use correct file name
+											$NewFiles[$i] = $NewFiles2[$i];
+										if (!$this->Logo->Upload->SaveToFile($NewFiles[$i], TRUE, $i)) { // Just replace
+											$this->setFailureMessage($Language->Phrase("UploadErrMsg7"));
+											return FALSE;
+										}
+									}
+								}
+							}
+						} else {
+							$NewFiles = array();
+						}
+					}
 				}
 			} else {
 				if ($this->getSuccessMessage() <> "" || $this->getFailureMessage() <> "") {
@@ -1048,6 +1164,9 @@ class ct07_sekolah_edit extends ct07_sekolah {
 		if ($EditRow)
 			$this->Row_Updated($rsold, $rsnew);
 		$rs->Close();
+
+		// Logo
+		ew_CleanUploadTempPath($this->Logo, $this->Logo->Upload->Index);
 		return $EditRow;
 	}
 
@@ -1349,6 +1468,31 @@ $t07_sekolah_edit->ShowMessage();
 <input type="text" data-table="t07_sekolah" data-field="x_TTD2Jabatan" name="x_TTD2Jabatan" id="x_TTD2Jabatan" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t07_sekolah->TTD2Jabatan->getPlaceHolder()) ?>" value="<?php echo $t07_sekolah->TTD2Jabatan->EditValue ?>"<?php echo $t07_sekolah->TTD2Jabatan->EditAttributes() ?>>
 </span>
 <?php echo $t07_sekolah->TTD2Jabatan->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t07_sekolah->Logo->Visible) { // Logo ?>
+	<div id="r_Logo" class="form-group">
+		<label id="elh_t07_sekolah_Logo" class="<?php echo $t07_sekolah_edit->LeftColumnClass ?>"><?php echo $t07_sekolah->Logo->FldCaption() ?></label>
+		<div class="<?php echo $t07_sekolah_edit->RightColumnClass ?>"><div<?php echo $t07_sekolah->Logo->CellAttributes() ?>>
+<span id="el_t07_sekolah_Logo">
+<div id="fd_x_Logo">
+<span title="<?php echo $t07_sekolah->Logo->FldTitle() ? $t07_sekolah->Logo->FldTitle() : $Language->Phrase("ChooseFile") ?>" class="btn btn-default btn-sm fileinput-button ewTooltip<?php if ($t07_sekolah->Logo->ReadOnly || $t07_sekolah->Logo->Disabled) echo " hide"; ?>" data-trigger="hover">
+	<span><?php echo $Language->Phrase("ChooseFileBtn") ?></span>
+	<input type="file" title=" " data-table="t07_sekolah" data-field="x_Logo" name="x_Logo" id="x_Logo"<?php echo $t07_sekolah->Logo->EditAttributes() ?>>
+</span>
+<input type="hidden" name="fn_x_Logo" id= "fn_x_Logo" value="<?php echo $t07_sekolah->Logo->Upload->FileName ?>">
+<?php if (@$_POST["fa_x_Logo"] == "0") { ?>
+<input type="hidden" name="fa_x_Logo" id= "fa_x_Logo" value="0">
+<?php } else { ?>
+<input type="hidden" name="fa_x_Logo" id= "fa_x_Logo" value="1">
+<?php } ?>
+<input type="hidden" name="fs_x_Logo" id= "fs_x_Logo" value="50">
+<input type="hidden" name="fx_x_Logo" id= "fx_x_Logo" value="<?php echo $t07_sekolah->Logo->UploadAllowedFileExt ?>">
+<input type="hidden" name="fm_x_Logo" id= "fm_x_Logo" value="<?php echo $t07_sekolah->Logo->UploadMaxFileSize ?>">
+</div>
+<table id="ft_x_Logo" class="table table-condensed pull-left ewUploadTable"><tbody class="files"></tbody></table>
+</span>
+<?php echo $t07_sekolah->Logo->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div><!-- /page* -->

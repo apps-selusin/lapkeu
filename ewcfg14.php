@@ -25,7 +25,7 @@ define("EW_CONFIG_FILE_FOLDER", EW_PROJECT_NAME, TRUE); // Config file name
 define("EW_PROJECT_ID", "{239A2A32-109A-412F-A3CB-FF6290C167FC}", TRUE); // Project ID (GUID)
 $EW_RELATED_PROJECT_ID = "";
 $EW_RELATED_LANGUAGE_FOLDER = "";
-define("EW_RANDOM_KEY", '41aGnkugclDXVaTI', TRUE); // Random key for encryption
+define("EW_RANDOM_KEY", 'TUzw6tGSMKuiz4NR', TRUE); // Random key for encryption
 define("EW_PROJECT_STYLESHEET_FILENAME", "phpcss/prj_lapkeu.css", TRUE); // Project stylesheet file name
 define("EW_CHARSET", "utf-8", TRUE); // Project charset
 define("EW_EMAIL_CHARSET", EW_CHARSET, TRUE); // Email charset
@@ -349,7 +349,7 @@ $EW_REMOTE_FILE_PATTERN = '/^((https?\:)?|ftps?\:|s3:)\/\//i';
 $EW_UPLOAD_TYPE = "POST"; // HTTP request method for the file uploads, e.g. "POST", "PUT" //***
 define("EW_UPLOAD_TEMP_PATH", "", TRUE); // Upload temp path (absolute local physical path)
 define("EW_UPLOAD_TEMP_HREF_PATH", "", TRUE); // Upload temp href path (absolute URL path for download)
-define("EW_UPLOAD_DEST_PATH", "", TRUE); // Upload destination path (relative to app root)
+define("EW_UPLOAD_DEST_PATH", "images/", TRUE); // Upload destination path (relative to app root)
 define("EW_UPLOAD_HREF_PATH", "", TRUE); // Upload file href path (for download)
 define("EW_UPLOAD_URL", "ewupload14.php", TRUE); // Upload URL
 define("EW_UPLOAD_TEMP_FOLDER_PREFIX", "temp__", TRUE); // Upload temp folders prefix

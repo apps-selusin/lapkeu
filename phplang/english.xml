@@ -944,6 +944,9 @@
       <field id="ttd2jabatan">
         <phrase id="fldcaption" value="Jabatan TTD #2" />
       </field>
+      <field id="logo">
+        <phrase id="fldcaption" value="Logo" />
+      </field>
     </table>
     <table id="t08_penerimaan">
       <phrase id="tblcaption" value="Penerimaan" />

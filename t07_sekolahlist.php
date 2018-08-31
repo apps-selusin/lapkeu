@@ -1147,6 +1147,8 @@ class ct07_sekolah_list extends ct07_sekolah {
 		$this->TTD1Jabatan->setDbValue($row['TTD1Jabatan']);
 		$this->TTD2Nama->setDbValue($row['TTD2Nama']);
 		$this->TTD2Jabatan->setDbValue($row['TTD2Jabatan']);
+		$this->Logo->Upload->DbValue = $row['Logo'];
+		$this->Logo->setDbValue($this->Logo->Upload->DbValue);
 	}
 
 	// Return a row with default values
@@ -1160,6 +1162,7 @@ class ct07_sekolah_list extends ct07_sekolah {
 		$row['TTD1Jabatan'] = NULL;
 		$row['TTD2Nama'] = NULL;
 		$row['TTD2Jabatan'] = NULL;
+		$row['Logo'] = NULL;
 		return $row;
 	}
 
@@ -1176,6 +1179,7 @@ class ct07_sekolah_list extends ct07_sekolah {
 		$this->TTD1Jabatan->DbValue = $row['TTD1Jabatan'];
 		$this->TTD2Nama->DbValue = $row['TTD2Nama'];
 		$this->TTD2Jabatan->DbValue = $row['TTD2Jabatan'];
+		$this->Logo->Upload->DbValue = $row['Logo'];
 	}
 
 	// Load old record
@@ -1224,6 +1228,7 @@ class ct07_sekolah_list extends ct07_sekolah {
 		// TTD1Jabatan
 		// TTD2Nama
 		// TTD2Jabatan
+		// Logo
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 

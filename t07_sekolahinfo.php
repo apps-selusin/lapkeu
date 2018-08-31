@@ -21,6 +21,7 @@ class ct07_sekolah extends cTable {
 	var $TTD1Jabatan;
 	var $TTD2Nama;
 	var $TTD2Jabatan;
+	var $Logo;
 
 	//
 	// Table class constructor
@@ -94,6 +95,11 @@ class ct07_sekolah extends cTable {
 		$this->TTD2Jabatan = new cField('t07_sekolah', 't07_sekolah', 'x_TTD2Jabatan', 'TTD2Jabatan', '`TTD2Jabatan`', '`TTD2Jabatan`', 200, -1, FALSE, '`TTD2Jabatan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->TTD2Jabatan->Sortable = TRUE; // Allow sort
 		$this->fields['TTD2Jabatan'] = &$this->TTD2Jabatan;
+
+		// Logo
+		$this->Logo = new cField('t07_sekolah', 't07_sekolah', 'x_Logo', 'Logo', '`Logo`', '`Logo`', 200, -1, TRUE, '`Logo`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'FILE');
+		$this->Logo->Sortable = TRUE; // Allow sort
+		$this->fields['Logo'] = &$this->Logo;
 	}
 
 	// Field Visibility
@@ -650,6 +656,7 @@ class ct07_sekolah extends cTable {
 		$this->TTD1Jabatan->setDbValue($rs->fields('TTD1Jabatan'));
 		$this->TTD2Nama->setDbValue($rs->fields('TTD2Nama'));
 		$this->TTD2Jabatan->setDbValue($rs->fields('TTD2Jabatan'));
+		$this->Logo->Upload->DbValue = $rs->fields('Logo');
 	}
 
 	// Render list row values
@@ -668,6 +675,7 @@ class ct07_sekolah extends cTable {
 		// TTD1Jabatan
 		// TTD2Nama
 		// TTD2Jabatan
+		// Logo
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -700,6 +708,15 @@ class ct07_sekolah extends cTable {
 		// TTD2Jabatan
 		$this->TTD2Jabatan->ViewValue = $this->TTD2Jabatan->CurrentValue;
 		$this->TTD2Jabatan->ViewCustomAttributes = "";
+
+		// Logo
+		$this->Logo->UploadPath = 'images/';
+		if (!ew_Empty($this->Logo->Upload->DbValue)) {
+			$this->Logo->ViewValue = $this->Logo->Upload->DbValue;
+		} else {
+			$this->Logo->ViewValue = "";
+		}
+		$this->Logo->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -740,6 +757,19 @@ class ct07_sekolah extends cTable {
 		$this->TTD2Jabatan->LinkCustomAttributes = "";
 		$this->TTD2Jabatan->HrefValue = "";
 		$this->TTD2Jabatan->TooltipValue = "";
+
+		// Logo
+		$this->Logo->LinkCustomAttributes = "";
+		$this->Logo->UploadPath = 'images/';
+		if (!ew_Empty($this->Logo->Upload->DbValue)) {
+			$this->Logo->HrefValue = ew_GetFileUploadUrl($this->Logo, $this->Logo->Upload->DbValue); // Add prefix/suffix
+			$this->Logo->LinkAttrs["target"] = ""; // Add target
+			if ($this->Export <> "") $this->Logo->HrefValue = ew_FullUrl($this->Logo->HrefValue, "href");
+		} else {
+			$this->Logo->HrefValue = "";
+		}
+		$this->Logo->HrefValue2 = $this->Logo->UploadPath . $this->Logo->Upload->DbValue;
+		$this->Logo->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -803,6 +833,16 @@ class ct07_sekolah extends cTable {
 		$this->TTD2Jabatan->EditValue = $this->TTD2Jabatan->CurrentValue;
 		$this->TTD2Jabatan->PlaceHolder = ew_RemoveHtml($this->TTD2Jabatan->FldCaption());
 
+		// Logo
+		$this->Logo->EditAttrs["class"] = "form-control";
+		$this->Logo->EditCustomAttributes = "";
+		$this->Logo->UploadPath = 'images/';
+		if (!ew_Empty($this->Logo->Upload->DbValue)) {
+			$this->Logo->EditValue = $this->Logo->Upload->DbValue;
+		} else {
+			$this->Logo->EditValue = "";
+		}
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -837,6 +877,7 @@ class ct07_sekolah extends cTable {
 					if ($this->TTD1Jabatan->Exportable) $Doc->ExportCaption($this->TTD1Jabatan);
 					if ($this->TTD2Nama->Exportable) $Doc->ExportCaption($this->TTD2Nama);
 					if ($this->TTD2Jabatan->Exportable) $Doc->ExportCaption($this->TTD2Jabatan);
+					if ($this->Logo->Exportable) $Doc->ExportCaption($this->Logo);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->Nama->Exportable) $Doc->ExportCaption($this->Nama);
@@ -884,6 +925,7 @@ class ct07_sekolah extends cTable {
 						if ($this->TTD1Jabatan->Exportable) $Doc->ExportField($this->TTD1Jabatan);
 						if ($this->TTD2Nama->Exportable) $Doc->ExportField($this->TTD2Nama);
 						if ($this->TTD2Jabatan->Exportable) $Doc->ExportField($this->TTD2Jabatan);
+						if ($this->Logo->Exportable) $Doc->ExportField($this->Logo);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->Nama->Exportable) $Doc->ExportField($this->Nama);

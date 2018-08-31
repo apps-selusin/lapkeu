@@ -17,6 +17,7 @@ class crt07_sekolah extends crTableBase {
 	var $TTD1Jabatan;
 	var $TTD2Nama;
 	var $TTD2Jabatan;
+	var $Logo;
 
 	//
 	// Table class constructor
@@ -97,6 +98,15 @@ class crt07_sekolah extends crTableBase {
 		$this->TTD2Jabatan->SqlSelect = "";
 		$this->TTD2Jabatan->SqlOrderBy = "";
 		$this->fields['TTD2Jabatan'] = &$this->TTD2Jabatan;
+
+		// Logo
+		$this->Logo = new crField('t07_sekolah', 't07_sekolah', 'x_Logo', 'Logo', '`Logo`', 200, EWR_DATATYPE_STRING, -1);
+		$this->Logo->Sortable = TRUE; // Allow sort
+		$this->Logo->UploadPath = EWR_UPLOAD_DEST_PATH;
+		$this->Logo->DateFilter = "";
+		$this->Logo->SqlSelect = "";
+		$this->Logo->SqlOrderBy = "";
+		$this->fields['Logo'] = &$this->Logo;
 	}
 
 	// Set Field Visibility

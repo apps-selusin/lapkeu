@@ -805,6 +805,7 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 				$this->FirstRowData['TTD1Jabatan'] = ewr_Conv($rs->fields('TTD1Jabatan'), 200);
 				$this->FirstRowData['TTD2Nama'] = ewr_Conv($rs->fields('TTD2Nama'), 200);
 				$this->FirstRowData['TTD2Jabatan'] = ewr_Conv($rs->fields('TTD2Jabatan'), 200);
+				$this->FirstRowData['Logo'] = ewr_Conv($rs->fields('Logo'), 200);
 		} else { // Get next row
 			$rs->MoveNext();
 		}
@@ -817,6 +818,7 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 			$this->TTD1Jabatan->setDbValue($rs->fields('TTD1Jabatan'));
 			$this->TTD2Nama->setDbValue($rs->fields('TTD2Nama'));
 			$this->TTD2Jabatan->setDbValue($rs->fields('TTD2Jabatan'));
+			$this->Logo->setDbValue($rs->fields('Logo'));
 			$this->Val[1] = $this->Nama->CurrentValue;
 			$this->Val[2] = $this->Alamat->CurrentValue;
 			$this->Val[3] = $this->NoTelpHp->CurrentValue;
@@ -833,6 +835,7 @@ class crt07_sekolah_rpt extends crt07_sekolah {
 			$this->TTD1Jabatan->setDbValue("");
 			$this->TTD2Nama->setDbValue("");
 			$this->TTD2Jabatan->setDbValue("");
+			$this->Logo->setDbValue("");
 		}
 	}
 
