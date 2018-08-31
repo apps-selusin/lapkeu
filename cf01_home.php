@@ -483,7 +483,6 @@ Page_Rendering();
 			<div>
 <p>to do:<br/>
 1. pembedaan hak akses tiap2 user -> noted;<br/>
-2. field user dikurangi, hanya yang dibutuhkan saja -> noted;<br/>
 			</div>
 		</div>
 	</div>

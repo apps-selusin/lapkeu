@@ -1193,14 +1193,14 @@
       <field id="reportsto">
         <phrase id="fldcaption" value="Reports To" />
       </field>
-      <field id="password">
-        <phrase id="fldcaption" value="Password" />
-      </field>
       <field id="userlevel">
         <phrase id="fldcaption" value="User Level" />
       </field>
       <field id="username">
         <phrase id="fldcaption" value="Username" />
+      </field>
+      <field id="password">
+        <phrase id="fldcaption" value="Password" />
       </field>
       <field id="activated">
         <phrase id="fldcaption" value="Activated" />

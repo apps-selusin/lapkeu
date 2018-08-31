@@ -28,7 +28,6 @@ $RootMenu->AddMenuItem(4, "mi_t04_maingroup", $Language->MenuPhrase("4", "MenuTe
 $RootMenu->AddMenuItem(32, "mci_User", $Language->MenuPhrase("32", "MenuText"), "", 22, "", IsLoggedIn(), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(7, "mi_t96_employees", $Language->MenuPhrase("7", "MenuText"), "t96_employeeslist.php", 32, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t96_employees'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(8, "mi_t97_userlevels", $Language->MenuPhrase("8", "MenuText"), "t97_userlevelslist.php", 32, "", IsAdmin(), FALSE, FALSE, "");
-$RootMenu->AddMenuItem(23, "mi_t99_audittrail", $Language->MenuPhrase("23", "MenuText"), "t99_audittraillist.php", 32, "", AllowListMenu('{239A2A32-109A-412F-A3CB-FF6290C167FC}t99_audittrail'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(10118, "mci_List", $Language->MenuPhrase("10118", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "");
 $RootMenu->AddMenuItem(10007, "mri_t075fsekolah", $Language->MenuPhrase("10007", "MenuText"), "t07_sekolahrpt.php", 10118, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}t07_sekolah'), FALSE, FALSE, "");
 $RootMenu->AddMenuItem(10001, "mri_t015fsupplier", $Language->MenuPhrase("10001", "MenuText"), "t01_supplierrpt.php", 10118, "{3CDC6268-D928-4495-B72A-CA5D35EAE344}", AllowListMenu('{3CDC6268-D928-4495-B72A-CA5D35EAE344}t01_supplier'), FALSE, FALSE, "");

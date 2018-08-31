@@ -31,9 +31,9 @@ class ct96_employees extends cTable {
 	var $Photo;
 	var $Notes;
 	var $ReportsTo;
-	var $Password;
 	var $UserLevel;
 	var $Username;
+	var $Password;
 	var $Activated;
 	var $Profile;
 
@@ -163,11 +163,6 @@ class ct96_employees extends cTable {
 		$this->ReportsTo->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['ReportsTo'] = &$this->ReportsTo;
 
-		// Password
-		$this->Password = new cField('t96_employees', 't96_employees', 'x_Password', 'Password', '`Password`', '`Password`', 200, -1, FALSE, '`Password`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Password->Sortable = TRUE; // Allow sort
-		$this->fields['Password'] = &$this->Password;
-
 		// UserLevel
 		$this->UserLevel = new cField('t96_employees', 't96_employees', 'x_UserLevel', 'UserLevel', '`UserLevel`', '`UserLevel`', 3, -1, FALSE, '`UserLevel`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
 		$this->UserLevel->Sortable = TRUE; // Allow sort
@@ -180,6 +175,11 @@ class ct96_employees extends cTable {
 		$this->Username = new cField('t96_employees', 't96_employees', 'x_Username', 'Username', '`Username`', '`Username`', 200, -1, FALSE, '`Username`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->Username->Sortable = TRUE; // Allow sort
 		$this->fields['Username'] = &$this->Username;
+
+		// Password
+		$this->Password = new cField('t96_employees', 't96_employees', 'x_Password', 'Password', '`Password`', '`Password`', 200, -1, FALSE, '`Password`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Password->Sortable = TRUE; // Allow sort
+		$this->fields['Password'] = &$this->Password;
 
 		// Activated
 		$this->Activated = new cField('t96_employees', 't96_employees', 'x_Activated', 'Activated', '`Activated`', '`Activated`', 202, -1, FALSE, '`Activated`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'CHECKBOX');
@@ -773,9 +773,9 @@ class ct96_employees extends cTable {
 		$this->Photo->setDbValue($rs->fields('Photo'));
 		$this->Notes->setDbValue($rs->fields('Notes'));
 		$this->ReportsTo->setDbValue($rs->fields('ReportsTo'));
-		$this->Password->setDbValue($rs->fields('Password'));
 		$this->UserLevel->setDbValue($rs->fields('UserLevel'));
 		$this->Username->setDbValue($rs->fields('Username'));
+		$this->Password->setDbValue($rs->fields('Password'));
 		$this->Activated->setDbValue($rs->fields('Activated'));
 		$this->Profile->setDbValue($rs->fields('Profile'));
 	}
@@ -806,9 +806,9 @@ class ct96_employees extends cTable {
 		// Photo
 		// Notes
 		// ReportsTo
-		// Password
 		// UserLevel
 		// Username
+		// Password
 		// Activated
 		// Profile
 		// EmployeeID
@@ -886,10 +886,6 @@ class ct96_employees extends cTable {
 		$this->ReportsTo->ViewValue = $this->ReportsTo->CurrentValue;
 		$this->ReportsTo->ViewCustomAttributes = "";
 
-		// Password
-		$this->Password->ViewValue = $this->Password->CurrentValue;
-		$this->Password->ViewCustomAttributes = "";
-
 		// UserLevel
 		if ($Security->CanAdmin()) { // System admin
 		if (strval($this->UserLevel->CurrentValue) <> "") {
@@ -920,6 +916,10 @@ class ct96_employees extends cTable {
 		// Username
 		$this->Username->ViewValue = $this->Username->CurrentValue;
 		$this->Username->ViewCustomAttributes = "";
+
+		// Password
+		$this->Password->ViewValue = $this->Password->CurrentValue;
+		$this->Password->ViewCustomAttributes = "";
 
 		// Activated
 		if (ew_ConvertToBool($this->Activated->CurrentValue)) {
@@ -1023,11 +1023,6 @@ class ct96_employees extends cTable {
 		$this->ReportsTo->HrefValue = "";
 		$this->ReportsTo->TooltipValue = "";
 
-		// Password
-		$this->Password->LinkCustomAttributes = "";
-		$this->Password->HrefValue = "";
-		$this->Password->TooltipValue = "";
-
 		// UserLevel
 		$this->UserLevel->LinkCustomAttributes = "";
 		$this->UserLevel->HrefValue = "";
@@ -1037,6 +1032,11 @@ class ct96_employees extends cTable {
 		$this->Username->LinkCustomAttributes = "";
 		$this->Username->HrefValue = "";
 		$this->Username->TooltipValue = "";
+
+		// Password
+		$this->Password->LinkCustomAttributes = "";
+		$this->Password->HrefValue = "";
+		$this->Password->TooltipValue = "";
 
 		// Activated
 		$this->Activated->LinkCustomAttributes = "";
@@ -1170,12 +1170,6 @@ class ct96_employees extends cTable {
 		$this->ReportsTo->EditValue = $this->ReportsTo->CurrentValue;
 		$this->ReportsTo->PlaceHolder = ew_RemoveHtml($this->ReportsTo->FldCaption());
 
-		// Password
-		$this->Password->EditAttrs["class"] = "form-control";
-		$this->Password->EditCustomAttributes = "";
-		$this->Password->EditValue = $this->Password->CurrentValue;
-		$this->Password->PlaceHolder = ew_RemoveHtml($this->Password->FldCaption());
-
 		// UserLevel
 		$this->UserLevel->EditAttrs["class"] = "form-control";
 		$this->UserLevel->EditCustomAttributes = "";
@@ -1189,6 +1183,12 @@ class ct96_employees extends cTable {
 		$this->Username->EditCustomAttributes = "";
 		$this->Username->EditValue = $this->Username->CurrentValue;
 		$this->Username->PlaceHolder = ew_RemoveHtml($this->Username->FldCaption());
+
+		// Password
+		$this->Password->EditAttrs["class"] = "form-control";
+		$this->Password->EditCustomAttributes = "";
+		$this->Password->EditValue = $this->Password->CurrentValue;
+		$this->Password->PlaceHolder = ew_RemoveHtml($this->Password->FldCaption());
 
 		// Activated
 		$this->Activated->EditCustomAttributes = "";
@@ -1227,29 +1227,10 @@ class ct96_employees extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->EmployeeID->Exportable) $Doc->ExportCaption($this->EmployeeID);
 					if ($this->LastName->Exportable) $Doc->ExportCaption($this->LastName);
 					if ($this->FirstName->Exportable) $Doc->ExportCaption($this->FirstName);
-					if ($this->Title->Exportable) $Doc->ExportCaption($this->Title);
-					if ($this->TitleOfCourtesy->Exportable) $Doc->ExportCaption($this->TitleOfCourtesy);
-					if ($this->BirthDate->Exportable) $Doc->ExportCaption($this->BirthDate);
-					if ($this->HireDate->Exportable) $Doc->ExportCaption($this->HireDate);
-					if ($this->Address->Exportable) $Doc->ExportCaption($this->Address);
-					if ($this->City->Exportable) $Doc->ExportCaption($this->City);
-					if ($this->Region->Exportable) $Doc->ExportCaption($this->Region);
-					if ($this->PostalCode->Exportable) $Doc->ExportCaption($this->PostalCode);
-					if ($this->Country->Exportable) $Doc->ExportCaption($this->Country);
-					if ($this->HomePhone->Exportable) $Doc->ExportCaption($this->HomePhone);
-					if ($this->Extension->Exportable) $Doc->ExportCaption($this->Extension);
-					if ($this->_Email->Exportable) $Doc->ExportCaption($this->_Email);
-					if ($this->Photo->Exportable) $Doc->ExportCaption($this->Photo);
-					if ($this->Notes->Exportable) $Doc->ExportCaption($this->Notes);
-					if ($this->ReportsTo->Exportable) $Doc->ExportCaption($this->ReportsTo);
-					if ($this->Password->Exportable) $Doc->ExportCaption($this->Password);
 					if ($this->UserLevel->Exportable) $Doc->ExportCaption($this->UserLevel);
 					if ($this->Username->Exportable) $Doc->ExportCaption($this->Username);
-					if ($this->Activated->Exportable) $Doc->ExportCaption($this->Activated);
-					if ($this->Profile->Exportable) $Doc->ExportCaption($this->Profile);
 				} else {
 					if ($this->EmployeeID->Exportable) $Doc->ExportCaption($this->EmployeeID);
 					if ($this->LastName->Exportable) $Doc->ExportCaption($this->LastName);
@@ -1268,9 +1249,9 @@ class ct96_employees extends cTable {
 					if ($this->_Email->Exportable) $Doc->ExportCaption($this->_Email);
 					if ($this->Photo->Exportable) $Doc->ExportCaption($this->Photo);
 					if ($this->ReportsTo->Exportable) $Doc->ExportCaption($this->ReportsTo);
-					if ($this->Password->Exportable) $Doc->ExportCaption($this->Password);
 					if ($this->UserLevel->Exportable) $Doc->ExportCaption($this->UserLevel);
 					if ($this->Username->Exportable) $Doc->ExportCaption($this->Username);
+					if ($this->Password->Exportable) $Doc->ExportCaption($this->Password);
 					if ($this->Activated->Exportable) $Doc->ExportCaption($this->Activated);
 				}
 				$Doc->EndExportRow();
@@ -1303,29 +1284,10 @@ class ct96_employees extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->EmployeeID->Exportable) $Doc->ExportField($this->EmployeeID);
 						if ($this->LastName->Exportable) $Doc->ExportField($this->LastName);
 						if ($this->FirstName->Exportable) $Doc->ExportField($this->FirstName);
-						if ($this->Title->Exportable) $Doc->ExportField($this->Title);
-						if ($this->TitleOfCourtesy->Exportable) $Doc->ExportField($this->TitleOfCourtesy);
-						if ($this->BirthDate->Exportable) $Doc->ExportField($this->BirthDate);
-						if ($this->HireDate->Exportable) $Doc->ExportField($this->HireDate);
-						if ($this->Address->Exportable) $Doc->ExportField($this->Address);
-						if ($this->City->Exportable) $Doc->ExportField($this->City);
-						if ($this->Region->Exportable) $Doc->ExportField($this->Region);
-						if ($this->PostalCode->Exportable) $Doc->ExportField($this->PostalCode);
-						if ($this->Country->Exportable) $Doc->ExportField($this->Country);
-						if ($this->HomePhone->Exportable) $Doc->ExportField($this->HomePhone);
-						if ($this->Extension->Exportable) $Doc->ExportField($this->Extension);
-						if ($this->_Email->Exportable) $Doc->ExportField($this->_Email);
-						if ($this->Photo->Exportable) $Doc->ExportField($this->Photo);
-						if ($this->Notes->Exportable) $Doc->ExportField($this->Notes);
-						if ($this->ReportsTo->Exportable) $Doc->ExportField($this->ReportsTo);
-						if ($this->Password->Exportable) $Doc->ExportField($this->Password);
 						if ($this->UserLevel->Exportable) $Doc->ExportField($this->UserLevel);
 						if ($this->Username->Exportable) $Doc->ExportField($this->Username);
-						if ($this->Activated->Exportable) $Doc->ExportField($this->Activated);
-						if ($this->Profile->Exportable) $Doc->ExportField($this->Profile);
 					} else {
 						if ($this->EmployeeID->Exportable) $Doc->ExportField($this->EmployeeID);
 						if ($this->LastName->Exportable) $Doc->ExportField($this->LastName);
@@ -1344,9 +1306,9 @@ class ct96_employees extends cTable {
 						if ($this->_Email->Exportable) $Doc->ExportField($this->_Email);
 						if ($this->Photo->Exportable) $Doc->ExportField($this->Photo);
 						if ($this->ReportsTo->Exportable) $Doc->ExportField($this->ReportsTo);
-						if ($this->Password->Exportable) $Doc->ExportField($this->Password);
 						if ($this->UserLevel->Exportable) $Doc->ExportField($this->UserLevel);
 						if ($this->Username->Exportable) $Doc->ExportField($this->Username);
+						if ($this->Password->Exportable) $Doc->ExportField($this->Password);
 						if ($this->Activated->Exportable) $Doc->ExportField($this->Activated);
 					}
 					$Doc->EndExportRow($RowCnt);

@@ -331,31 +331,11 @@ class ct96_employees_edit extends ct96_employees {
 
 		$objForm = new cFormObj();
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->EmployeeID->SetVisibility();
-		if ($this->IsAdd() || $this->IsCopy() || $this->IsGridAdd())
-			$this->EmployeeID->Visible = FALSE;
 		$this->LastName->SetVisibility();
 		$this->FirstName->SetVisibility();
-		$this->Title->SetVisibility();
-		$this->TitleOfCourtesy->SetVisibility();
-		$this->BirthDate->SetVisibility();
-		$this->HireDate->SetVisibility();
-		$this->Address->SetVisibility();
-		$this->City->SetVisibility();
-		$this->Region->SetVisibility();
-		$this->PostalCode->SetVisibility();
-		$this->Country->SetVisibility();
-		$this->HomePhone->SetVisibility();
-		$this->Extension->SetVisibility();
-		$this->_Email->SetVisibility();
-		$this->Photo->SetVisibility();
-		$this->Notes->SetVisibility();
-		$this->ReportsTo->SetVisibility();
-		$this->Password->SetVisibility();
 		$this->UserLevel->SetVisibility();
 		$this->Username->SetVisibility();
-		$this->Activated->SetVisibility();
-		$this->Profile->SetVisibility();
+		$this->Password->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -640,63 +620,11 @@ class ct96_employees_edit extends ct96_employees {
 
 		// Load from form
 		global $objForm;
-		if (!$this->EmployeeID->FldIsDetailKey)
-			$this->EmployeeID->setFormValue($objForm->GetValue("x_EmployeeID"));
 		if (!$this->LastName->FldIsDetailKey) {
 			$this->LastName->setFormValue($objForm->GetValue("x_LastName"));
 		}
 		if (!$this->FirstName->FldIsDetailKey) {
 			$this->FirstName->setFormValue($objForm->GetValue("x_FirstName"));
-		}
-		if (!$this->Title->FldIsDetailKey) {
-			$this->Title->setFormValue($objForm->GetValue("x_Title"));
-		}
-		if (!$this->TitleOfCourtesy->FldIsDetailKey) {
-			$this->TitleOfCourtesy->setFormValue($objForm->GetValue("x_TitleOfCourtesy"));
-		}
-		if (!$this->BirthDate->FldIsDetailKey) {
-			$this->BirthDate->setFormValue($objForm->GetValue("x_BirthDate"));
-			$this->BirthDate->CurrentValue = ew_UnFormatDateTime($this->BirthDate->CurrentValue, 0);
-		}
-		if (!$this->HireDate->FldIsDetailKey) {
-			$this->HireDate->setFormValue($objForm->GetValue("x_HireDate"));
-			$this->HireDate->CurrentValue = ew_UnFormatDateTime($this->HireDate->CurrentValue, 0);
-		}
-		if (!$this->Address->FldIsDetailKey) {
-			$this->Address->setFormValue($objForm->GetValue("x_Address"));
-		}
-		if (!$this->City->FldIsDetailKey) {
-			$this->City->setFormValue($objForm->GetValue("x_City"));
-		}
-		if (!$this->Region->FldIsDetailKey) {
-			$this->Region->setFormValue($objForm->GetValue("x_Region"));
-		}
-		if (!$this->PostalCode->FldIsDetailKey) {
-			$this->PostalCode->setFormValue($objForm->GetValue("x_PostalCode"));
-		}
-		if (!$this->Country->FldIsDetailKey) {
-			$this->Country->setFormValue($objForm->GetValue("x_Country"));
-		}
-		if (!$this->HomePhone->FldIsDetailKey) {
-			$this->HomePhone->setFormValue($objForm->GetValue("x_HomePhone"));
-		}
-		if (!$this->Extension->FldIsDetailKey) {
-			$this->Extension->setFormValue($objForm->GetValue("x_Extension"));
-		}
-		if (!$this->_Email->FldIsDetailKey) {
-			$this->_Email->setFormValue($objForm->GetValue("x__Email"));
-		}
-		if (!$this->Photo->FldIsDetailKey) {
-			$this->Photo->setFormValue($objForm->GetValue("x_Photo"));
-		}
-		if (!$this->Notes->FldIsDetailKey) {
-			$this->Notes->setFormValue($objForm->GetValue("x_Notes"));
-		}
-		if (!$this->ReportsTo->FldIsDetailKey) {
-			$this->ReportsTo->setFormValue($objForm->GetValue("x_ReportsTo"));
-		}
-		if (!$this->Password->FldIsDetailKey) {
-			$this->Password->setFormValue($objForm->GetValue("x_Password"));
 		}
 		if (!$this->UserLevel->FldIsDetailKey) {
 			$this->UserLevel->setFormValue($objForm->GetValue("x_UserLevel"));
@@ -704,12 +632,11 @@ class ct96_employees_edit extends ct96_employees {
 		if (!$this->Username->FldIsDetailKey) {
 			$this->Username->setFormValue($objForm->GetValue("x_Username"));
 		}
-		if (!$this->Activated->FldIsDetailKey) {
-			$this->Activated->setFormValue($objForm->GetValue("x_Activated"));
+		if (!$this->Password->FldIsDetailKey) {
+			$this->Password->setFormValue($objForm->GetValue("x_Password"));
 		}
-		if (!$this->Profile->FldIsDetailKey) {
-			$this->Profile->setFormValue($objForm->GetValue("x_Profile"));
-		}
+		if (!$this->EmployeeID->FldIsDetailKey)
+			$this->EmployeeID->setFormValue($objForm->GetValue("x_EmployeeID"));
 	}
 
 	// Restore form values
@@ -718,28 +645,9 @@ class ct96_employees_edit extends ct96_employees {
 		$this->EmployeeID->CurrentValue = $this->EmployeeID->FormValue;
 		$this->LastName->CurrentValue = $this->LastName->FormValue;
 		$this->FirstName->CurrentValue = $this->FirstName->FormValue;
-		$this->Title->CurrentValue = $this->Title->FormValue;
-		$this->TitleOfCourtesy->CurrentValue = $this->TitleOfCourtesy->FormValue;
-		$this->BirthDate->CurrentValue = $this->BirthDate->FormValue;
-		$this->BirthDate->CurrentValue = ew_UnFormatDateTime($this->BirthDate->CurrentValue, 0);
-		$this->HireDate->CurrentValue = $this->HireDate->FormValue;
-		$this->HireDate->CurrentValue = ew_UnFormatDateTime($this->HireDate->CurrentValue, 0);
-		$this->Address->CurrentValue = $this->Address->FormValue;
-		$this->City->CurrentValue = $this->City->FormValue;
-		$this->Region->CurrentValue = $this->Region->FormValue;
-		$this->PostalCode->CurrentValue = $this->PostalCode->FormValue;
-		$this->Country->CurrentValue = $this->Country->FormValue;
-		$this->HomePhone->CurrentValue = $this->HomePhone->FormValue;
-		$this->Extension->CurrentValue = $this->Extension->FormValue;
-		$this->_Email->CurrentValue = $this->_Email->FormValue;
-		$this->Photo->CurrentValue = $this->Photo->FormValue;
-		$this->Notes->CurrentValue = $this->Notes->FormValue;
-		$this->ReportsTo->CurrentValue = $this->ReportsTo->FormValue;
-		$this->Password->CurrentValue = $this->Password->FormValue;
 		$this->UserLevel->CurrentValue = $this->UserLevel->FormValue;
 		$this->Username->CurrentValue = $this->Username->FormValue;
-		$this->Activated->CurrentValue = $this->Activated->FormValue;
-		$this->Profile->CurrentValue = $this->Profile->FormValue;
+		$this->Password->CurrentValue = $this->Password->FormValue;
 	}
 
 	// Load recordset
@@ -828,9 +736,9 @@ class ct96_employees_edit extends ct96_employees {
 		$this->Photo->setDbValue($row['Photo']);
 		$this->Notes->setDbValue($row['Notes']);
 		$this->ReportsTo->setDbValue($row['ReportsTo']);
-		$this->Password->setDbValue($row['Password']);
 		$this->UserLevel->setDbValue($row['UserLevel']);
 		$this->Username->setDbValue($row['Username']);
+		$this->Password->setDbValue($row['Password']);
 		$this->Activated->setDbValue($row['Activated']);
 		$this->Profile->setDbValue($row['Profile']);
 	}
@@ -856,9 +764,9 @@ class ct96_employees_edit extends ct96_employees {
 		$row['Photo'] = NULL;
 		$row['Notes'] = NULL;
 		$row['ReportsTo'] = NULL;
-		$row['Password'] = NULL;
 		$row['UserLevel'] = NULL;
 		$row['Username'] = NULL;
+		$row['Password'] = NULL;
 		$row['Activated'] = NULL;
 		$row['Profile'] = NULL;
 		return $row;
@@ -887,9 +795,9 @@ class ct96_employees_edit extends ct96_employees {
 		$this->Photo->DbValue = $row['Photo'];
 		$this->Notes->DbValue = $row['Notes'];
 		$this->ReportsTo->DbValue = $row['ReportsTo'];
-		$this->Password->DbValue = $row['Password'];
 		$this->UserLevel->DbValue = $row['UserLevel'];
 		$this->Username->DbValue = $row['Username'];
+		$this->Password->DbValue = $row['Password'];
 		$this->Activated->DbValue = $row['Activated'];
 		$this->Profile->DbValue = $row['Profile'];
 	}
@@ -944,9 +852,9 @@ class ct96_employees_edit extends ct96_employees {
 		// Photo
 		// Notes
 		// ReportsTo
-		// Password
 		// UserLevel
 		// Username
+		// Password
 		// Activated
 		// Profile
 
@@ -1018,17 +926,9 @@ class ct96_employees_edit extends ct96_employees {
 		$this->Photo->ViewValue = $this->Photo->CurrentValue;
 		$this->Photo->ViewCustomAttributes = "";
 
-		// Notes
-		$this->Notes->ViewValue = $this->Notes->CurrentValue;
-		$this->Notes->ViewCustomAttributes = "";
-
 		// ReportsTo
 		$this->ReportsTo->ViewValue = $this->ReportsTo->CurrentValue;
 		$this->ReportsTo->ViewCustomAttributes = "";
-
-		// Password
-		$this->Password->ViewValue = $this->Password->CurrentValue;
-		$this->Password->ViewCustomAttributes = "";
 
 		// UserLevel
 		if ($Security->CanAdmin()) { // System admin
@@ -1061,6 +961,10 @@ class ct96_employees_edit extends ct96_employees {
 		$this->Username->ViewValue = $this->Username->CurrentValue;
 		$this->Username->ViewCustomAttributes = "";
 
+		// Password
+		$this->Password->ViewValue = $this->Password->CurrentValue;
+		$this->Password->ViewCustomAttributes = "";
+
 		// Activated
 		if (ew_ConvertToBool($this->Activated->CurrentValue)) {
 			$this->Activated->ViewValue = $this->Activated->FldTagCaption(1) <> "" ? $this->Activated->FldTagCaption(1) : "Y";
@@ -1068,15 +972,6 @@ class ct96_employees_edit extends ct96_employees {
 			$this->Activated->ViewValue = $this->Activated->FldTagCaption(2) <> "" ? $this->Activated->FldTagCaption(2) : "N";
 		}
 		$this->Activated->ViewCustomAttributes = "";
-
-		// Profile
-		$this->Profile->ViewValue = $this->Profile->CurrentValue;
-		$this->Profile->ViewCustomAttributes = "";
-
-			// EmployeeID
-			$this->EmployeeID->LinkCustomAttributes = "";
-			$this->EmployeeID->HrefValue = "";
-			$this->EmployeeID->TooltipValue = "";
 
 			// LastName
 			$this->LastName->LinkCustomAttributes = "";
@@ -1088,86 +983,6 @@ class ct96_employees_edit extends ct96_employees {
 			$this->FirstName->HrefValue = "";
 			$this->FirstName->TooltipValue = "";
 
-			// Title
-			$this->Title->LinkCustomAttributes = "";
-			$this->Title->HrefValue = "";
-			$this->Title->TooltipValue = "";
-
-			// TitleOfCourtesy
-			$this->TitleOfCourtesy->LinkCustomAttributes = "";
-			$this->TitleOfCourtesy->HrefValue = "";
-			$this->TitleOfCourtesy->TooltipValue = "";
-
-			// BirthDate
-			$this->BirthDate->LinkCustomAttributes = "";
-			$this->BirthDate->HrefValue = "";
-			$this->BirthDate->TooltipValue = "";
-
-			// HireDate
-			$this->HireDate->LinkCustomAttributes = "";
-			$this->HireDate->HrefValue = "";
-			$this->HireDate->TooltipValue = "";
-
-			// Address
-			$this->Address->LinkCustomAttributes = "";
-			$this->Address->HrefValue = "";
-			$this->Address->TooltipValue = "";
-
-			// City
-			$this->City->LinkCustomAttributes = "";
-			$this->City->HrefValue = "";
-			$this->City->TooltipValue = "";
-
-			// Region
-			$this->Region->LinkCustomAttributes = "";
-			$this->Region->HrefValue = "";
-			$this->Region->TooltipValue = "";
-
-			// PostalCode
-			$this->PostalCode->LinkCustomAttributes = "";
-			$this->PostalCode->HrefValue = "";
-			$this->PostalCode->TooltipValue = "";
-
-			// Country
-			$this->Country->LinkCustomAttributes = "";
-			$this->Country->HrefValue = "";
-			$this->Country->TooltipValue = "";
-
-			// HomePhone
-			$this->HomePhone->LinkCustomAttributes = "";
-			$this->HomePhone->HrefValue = "";
-			$this->HomePhone->TooltipValue = "";
-
-			// Extension
-			$this->Extension->LinkCustomAttributes = "";
-			$this->Extension->HrefValue = "";
-			$this->Extension->TooltipValue = "";
-
-			// Email
-			$this->_Email->LinkCustomAttributes = "";
-			$this->_Email->HrefValue = "";
-			$this->_Email->TooltipValue = "";
-
-			// Photo
-			$this->Photo->LinkCustomAttributes = "";
-			$this->Photo->HrefValue = "";
-			$this->Photo->TooltipValue = "";
-
-			// Notes
-			$this->Notes->LinkCustomAttributes = "";
-			$this->Notes->HrefValue = "";
-			$this->Notes->TooltipValue = "";
-
-			// ReportsTo
-			$this->ReportsTo->LinkCustomAttributes = "";
-			$this->ReportsTo->HrefValue = "";
-			$this->ReportsTo->TooltipValue = "";
-
-			// Password
-			$this->Password->LinkCustomAttributes = "";
-			$this->Password->HrefValue = "";
-			$this->Password->TooltipValue = "";
-
 			// UserLevel
 			$this->UserLevel->LinkCustomAttributes = "";
 			$this->UserLevel->HrefValue = "";
@@ -1178,22 +993,11 @@ class ct96_employees_edit extends ct96_employees {
 			$this->Username->HrefValue = "";
 			$this->Username->TooltipValue = "";
 
-			// Activated
-			$this->Activated->LinkCustomAttributes = "";
-			$this->Activated->HrefValue = "";
-			$this->Activated->TooltipValue = "";
-
-			// Profile
-			$this->Profile->LinkCustomAttributes = "";
-			$this->Profile->HrefValue = "";
-			$this->Profile->TooltipValue = "";
+			// Password
+			$this->Password->LinkCustomAttributes = "";
+			$this->Password->HrefValue = "";
+			$this->Password->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
-
-			// EmployeeID
-			$this->EmployeeID->EditAttrs["class"] = "form-control";
-			$this->EmployeeID->EditCustomAttributes = "";
-			$this->EmployeeID->EditValue = $this->EmployeeID->CurrentValue;
-			$this->EmployeeID->ViewCustomAttributes = "";
 
 			// LastName
 			$this->LastName->EditAttrs["class"] = "form-control";
@@ -1206,102 +1010,6 @@ class ct96_employees_edit extends ct96_employees {
 			$this->FirstName->EditCustomAttributes = "";
 			$this->FirstName->EditValue = ew_HtmlEncode($this->FirstName->CurrentValue);
 			$this->FirstName->PlaceHolder = ew_RemoveHtml($this->FirstName->FldCaption());
-
-			// Title
-			$this->Title->EditAttrs["class"] = "form-control";
-			$this->Title->EditCustomAttributes = "";
-			$this->Title->EditValue = ew_HtmlEncode($this->Title->CurrentValue);
-			$this->Title->PlaceHolder = ew_RemoveHtml($this->Title->FldCaption());
-
-			// TitleOfCourtesy
-			$this->TitleOfCourtesy->EditAttrs["class"] = "form-control";
-			$this->TitleOfCourtesy->EditCustomAttributes = "";
-			$this->TitleOfCourtesy->EditValue = ew_HtmlEncode($this->TitleOfCourtesy->CurrentValue);
-			$this->TitleOfCourtesy->PlaceHolder = ew_RemoveHtml($this->TitleOfCourtesy->FldCaption());
-
-			// BirthDate
-			$this->BirthDate->EditAttrs["class"] = "form-control";
-			$this->BirthDate->EditCustomAttributes = "";
-			$this->BirthDate->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->BirthDate->CurrentValue, 8));
-			$this->BirthDate->PlaceHolder = ew_RemoveHtml($this->BirthDate->FldCaption());
-
-			// HireDate
-			$this->HireDate->EditAttrs["class"] = "form-control";
-			$this->HireDate->EditCustomAttributes = "";
-			$this->HireDate->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->HireDate->CurrentValue, 8));
-			$this->HireDate->PlaceHolder = ew_RemoveHtml($this->HireDate->FldCaption());
-
-			// Address
-			$this->Address->EditAttrs["class"] = "form-control";
-			$this->Address->EditCustomAttributes = "";
-			$this->Address->EditValue = ew_HtmlEncode($this->Address->CurrentValue);
-			$this->Address->PlaceHolder = ew_RemoveHtml($this->Address->FldCaption());
-
-			// City
-			$this->City->EditAttrs["class"] = "form-control";
-			$this->City->EditCustomAttributes = "";
-			$this->City->EditValue = ew_HtmlEncode($this->City->CurrentValue);
-			$this->City->PlaceHolder = ew_RemoveHtml($this->City->FldCaption());
-
-			// Region
-			$this->Region->EditAttrs["class"] = "form-control";
-			$this->Region->EditCustomAttributes = "";
-			$this->Region->EditValue = ew_HtmlEncode($this->Region->CurrentValue);
-			$this->Region->PlaceHolder = ew_RemoveHtml($this->Region->FldCaption());
-
-			// PostalCode
-			$this->PostalCode->EditAttrs["class"] = "form-control";
-			$this->PostalCode->EditCustomAttributes = "";
-			$this->PostalCode->EditValue = ew_HtmlEncode($this->PostalCode->CurrentValue);
-			$this->PostalCode->PlaceHolder = ew_RemoveHtml($this->PostalCode->FldCaption());
-
-			// Country
-			$this->Country->EditAttrs["class"] = "form-control";
-			$this->Country->EditCustomAttributes = "";
-			$this->Country->EditValue = ew_HtmlEncode($this->Country->CurrentValue);
-			$this->Country->PlaceHolder = ew_RemoveHtml($this->Country->FldCaption());
-
-			// HomePhone
-			$this->HomePhone->EditAttrs["class"] = "form-control";
-			$this->HomePhone->EditCustomAttributes = "";
-			$this->HomePhone->EditValue = ew_HtmlEncode($this->HomePhone->CurrentValue);
-			$this->HomePhone->PlaceHolder = ew_RemoveHtml($this->HomePhone->FldCaption());
-
-			// Extension
-			$this->Extension->EditAttrs["class"] = "form-control";
-			$this->Extension->EditCustomAttributes = "";
-			$this->Extension->EditValue = ew_HtmlEncode($this->Extension->CurrentValue);
-			$this->Extension->PlaceHolder = ew_RemoveHtml($this->Extension->FldCaption());
-
-			// Email
-			$this->_Email->EditAttrs["class"] = "form-control";
-			$this->_Email->EditCustomAttributes = "";
-			$this->_Email->EditValue = ew_HtmlEncode($this->_Email->CurrentValue);
-			$this->_Email->PlaceHolder = ew_RemoveHtml($this->_Email->FldCaption());
-
-			// Photo
-			$this->Photo->EditAttrs["class"] = "form-control";
-			$this->Photo->EditCustomAttributes = "";
-			$this->Photo->EditValue = ew_HtmlEncode($this->Photo->CurrentValue);
-			$this->Photo->PlaceHolder = ew_RemoveHtml($this->Photo->FldCaption());
-
-			// Notes
-			$this->Notes->EditAttrs["class"] = "form-control";
-			$this->Notes->EditCustomAttributes = "";
-			$this->Notes->EditValue = ew_HtmlEncode($this->Notes->CurrentValue);
-			$this->Notes->PlaceHolder = ew_RemoveHtml($this->Notes->FldCaption());
-
-			// ReportsTo
-			$this->ReportsTo->EditAttrs["class"] = "form-control";
-			$this->ReportsTo->EditCustomAttributes = "";
-			$this->ReportsTo->EditValue = ew_HtmlEncode($this->ReportsTo->CurrentValue);
-			$this->ReportsTo->PlaceHolder = ew_RemoveHtml($this->ReportsTo->FldCaption());
-
-			// Password
-			$this->Password->EditAttrs["class"] = "form-control";
-			$this->Password->EditCustomAttributes = "";
-			$this->Password->EditValue = ew_HtmlEncode($this->Password->CurrentValue);
-			$this->Password->PlaceHolder = ew_RemoveHtml($this->Password->FldCaption());
 
 			// UserLevel
 			$this->UserLevel->EditAttrs["class"] = "form-control";
@@ -1332,93 +1040,21 @@ class ct96_employees_edit extends ct96_employees {
 			$this->Username->EditValue = ew_HtmlEncode($this->Username->CurrentValue);
 			$this->Username->PlaceHolder = ew_RemoveHtml($this->Username->FldCaption());
 
-			// Activated
-			$this->Activated->EditCustomAttributes = "";
-			$this->Activated->EditValue = $this->Activated->Options(FALSE);
-
-			// Profile
-			$this->Profile->EditAttrs["class"] = "form-control";
-			$this->Profile->EditCustomAttributes = "";
-			$this->Profile->EditValue = ew_HtmlEncode($this->Profile->CurrentValue);
-			$this->Profile->PlaceHolder = ew_RemoveHtml($this->Profile->FldCaption());
+			// Password
+			$this->Password->EditAttrs["class"] = "form-control";
+			$this->Password->EditCustomAttributes = "";
+			$this->Password->EditValue = ew_HtmlEncode($this->Password->CurrentValue);
+			$this->Password->PlaceHolder = ew_RemoveHtml($this->Password->FldCaption());
 
 			// Edit refer script
-			// EmployeeID
-
-			$this->EmployeeID->LinkCustomAttributes = "";
-			$this->EmployeeID->HrefValue = "";
-
 			// LastName
+
 			$this->LastName->LinkCustomAttributes = "";
 			$this->LastName->HrefValue = "";
 
 			// FirstName
 			$this->FirstName->LinkCustomAttributes = "";
 			$this->FirstName->HrefValue = "";
-
-			// Title
-			$this->Title->LinkCustomAttributes = "";
-			$this->Title->HrefValue = "";
-
-			// TitleOfCourtesy
-			$this->TitleOfCourtesy->LinkCustomAttributes = "";
-			$this->TitleOfCourtesy->HrefValue = "";
-
-			// BirthDate
-			$this->BirthDate->LinkCustomAttributes = "";
-			$this->BirthDate->HrefValue = "";
-
-			// HireDate
-			$this->HireDate->LinkCustomAttributes = "";
-			$this->HireDate->HrefValue = "";
-
-			// Address
-			$this->Address->LinkCustomAttributes = "";
-			$this->Address->HrefValue = "";
-
-			// City
-			$this->City->LinkCustomAttributes = "";
-			$this->City->HrefValue = "";
-
-			// Region
-			$this->Region->LinkCustomAttributes = "";
-			$this->Region->HrefValue = "";
-
-			// PostalCode
-			$this->PostalCode->LinkCustomAttributes = "";
-			$this->PostalCode->HrefValue = "";
-
-			// Country
-			$this->Country->LinkCustomAttributes = "";
-			$this->Country->HrefValue = "";
-
-			// HomePhone
-			$this->HomePhone->LinkCustomAttributes = "";
-			$this->HomePhone->HrefValue = "";
-
-			// Extension
-			$this->Extension->LinkCustomAttributes = "";
-			$this->Extension->HrefValue = "";
-
-			// Email
-			$this->_Email->LinkCustomAttributes = "";
-			$this->_Email->HrefValue = "";
-
-			// Photo
-			$this->Photo->LinkCustomAttributes = "";
-			$this->Photo->HrefValue = "";
-
-			// Notes
-			$this->Notes->LinkCustomAttributes = "";
-			$this->Notes->HrefValue = "";
-
-			// ReportsTo
-			$this->ReportsTo->LinkCustomAttributes = "";
-			$this->ReportsTo->HrefValue = "";
-
-			// Password
-			$this->Password->LinkCustomAttributes = "";
-			$this->Password->HrefValue = "";
 
 			// UserLevel
 			$this->UserLevel->LinkCustomAttributes = "";
@@ -1428,13 +1064,9 @@ class ct96_employees_edit extends ct96_employees {
 			$this->Username->LinkCustomAttributes = "";
 			$this->Username->HrefValue = "";
 
-			// Activated
-			$this->Activated->LinkCustomAttributes = "";
-			$this->Activated->HrefValue = "";
-
-			// Profile
-			$this->Profile->LinkCustomAttributes = "";
-			$this->Profile->HrefValue = "";
+			// Password
+			$this->Password->LinkCustomAttributes = "";
+			$this->Password->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD || $this->RowType == EW_ROWTYPE_EDIT || $this->RowType == EW_ROWTYPE_SEARCH) // Add/Edit/Search row
 			$this->SetupFieldTitles();
@@ -1454,20 +1086,11 @@ class ct96_employees_edit extends ct96_employees {
 		// Check if validation required
 		if (!EW_SERVER_VALIDATE)
 			return ($gsFormError == "");
-		if (!ew_CheckDateDef($this->BirthDate->FormValue)) {
-			ew_AddMessage($gsFormError, $this->BirthDate->FldErrMsg());
-		}
-		if (!ew_CheckDateDef($this->HireDate->FormValue)) {
-			ew_AddMessage($gsFormError, $this->HireDate->FldErrMsg());
-		}
-		if (!ew_CheckInteger($this->ReportsTo->FormValue)) {
-			ew_AddMessage($gsFormError, $this->ReportsTo->FldErrMsg());
+		if (!$this->Username->FldIsDetailKey && !is_null($this->Username->FormValue) && $this->Username->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Username->FldCaption(), $this->Username->ReqErrMsg));
 		}
 		if (!$this->Password->FldIsDetailKey && !is_null($this->Password->FormValue) && $this->Password->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Password->FldCaption(), $this->Password->ReqErrMsg));
-		}
-		if (!$this->Username->FldIsDetailKey && !is_null($this->Username->FormValue) && $this->Username->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Username->FldCaption(), $this->Username->ReqErrMsg));
 		}
 
 		// Return validate result
@@ -1530,54 +1153,6 @@ class ct96_employees_edit extends ct96_employees {
 			// FirstName
 			$this->FirstName->SetDbValueDef($rsnew, $this->FirstName->CurrentValue, NULL, $this->FirstName->ReadOnly);
 
-			// Title
-			$this->Title->SetDbValueDef($rsnew, $this->Title->CurrentValue, NULL, $this->Title->ReadOnly);
-
-			// TitleOfCourtesy
-			$this->TitleOfCourtesy->SetDbValueDef($rsnew, $this->TitleOfCourtesy->CurrentValue, NULL, $this->TitleOfCourtesy->ReadOnly);
-
-			// BirthDate
-			$this->BirthDate->SetDbValueDef($rsnew, ew_UnFormatDateTime($this->BirthDate->CurrentValue, 0), NULL, $this->BirthDate->ReadOnly);
-
-			// HireDate
-			$this->HireDate->SetDbValueDef($rsnew, ew_UnFormatDateTime($this->HireDate->CurrentValue, 0), NULL, $this->HireDate->ReadOnly);
-
-			// Address
-			$this->Address->SetDbValueDef($rsnew, $this->Address->CurrentValue, NULL, $this->Address->ReadOnly);
-
-			// City
-			$this->City->SetDbValueDef($rsnew, $this->City->CurrentValue, NULL, $this->City->ReadOnly);
-
-			// Region
-			$this->Region->SetDbValueDef($rsnew, $this->Region->CurrentValue, NULL, $this->Region->ReadOnly);
-
-			// PostalCode
-			$this->PostalCode->SetDbValueDef($rsnew, $this->PostalCode->CurrentValue, NULL, $this->PostalCode->ReadOnly);
-
-			// Country
-			$this->Country->SetDbValueDef($rsnew, $this->Country->CurrentValue, NULL, $this->Country->ReadOnly);
-
-			// HomePhone
-			$this->HomePhone->SetDbValueDef($rsnew, $this->HomePhone->CurrentValue, NULL, $this->HomePhone->ReadOnly);
-
-			// Extension
-			$this->Extension->SetDbValueDef($rsnew, $this->Extension->CurrentValue, NULL, $this->Extension->ReadOnly);
-
-			// Email
-			$this->_Email->SetDbValueDef($rsnew, $this->_Email->CurrentValue, NULL, $this->_Email->ReadOnly);
-
-			// Photo
-			$this->Photo->SetDbValueDef($rsnew, $this->Photo->CurrentValue, NULL, $this->Photo->ReadOnly);
-
-			// Notes
-			$this->Notes->SetDbValueDef($rsnew, $this->Notes->CurrentValue, NULL, $this->Notes->ReadOnly);
-
-			// ReportsTo
-			$this->ReportsTo->SetDbValueDef($rsnew, $this->ReportsTo->CurrentValue, NULL, $this->ReportsTo->ReadOnly);
-
-			// Password
-			$this->Password->SetDbValueDef($rsnew, $this->Password->CurrentValue, "", $this->Password->ReadOnly || (EW_ENCRYPTED_PASSWORD && $rs->fields('Password') == $this->Password->CurrentValue));
-
 			// UserLevel
 			if ($Security->CanAdmin()) { // System admin
 			$this->UserLevel->SetDbValueDef($rsnew, $this->UserLevel->CurrentValue, NULL, $this->UserLevel->ReadOnly);
@@ -1586,14 +1161,8 @@ class ct96_employees_edit extends ct96_employees {
 			// Username
 			$this->Username->SetDbValueDef($rsnew, $this->Username->CurrentValue, "", $this->Username->ReadOnly);
 
-			// Activated
-			$tmpBool = $this->Activated->CurrentValue;
-			if ($tmpBool <> "Y" && $tmpBool <> "N")
-				$tmpBool = (!empty($tmpBool)) ? "Y" : "N";
-			$this->Activated->SetDbValueDef($rsnew, $tmpBool, "N", $this->Activated->ReadOnly);
-
-			// Profile
-			$this->Profile->SetDbValueDef($rsnew, $this->Profile->CurrentValue, NULL, $this->Profile->ReadOnly);
+			// Password
+			$this->Password->SetDbValueDef($rsnew, $this->Password->CurrentValue, "", $this->Password->ReadOnly || (EW_ENCRYPTED_PASSWORD && $rs->fields('Password') == $this->Password->CurrentValue));
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -1781,21 +1350,12 @@ ft96_employeesedit.Validate = function() {
 	for (var i = startcnt; i <= rowcnt; i++) {
 		var infix = ($k[0]) ? String(i) : "";
 		$fobj.data("rowindex", infix);
-			elm = this.GetElements("x" + infix + "_BirthDate");
-			if (elm && !ew_CheckDateDef(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t96_employees->BirthDate->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_HireDate");
-			if (elm && !ew_CheckDateDef(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t96_employees->HireDate->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_ReportsTo");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t96_employees->ReportsTo->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_Password");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t96_employees->Password->FldCaption(), $t96_employees->Password->ReqErrMsg)) ?>");
 			elm = this.GetElements("x" + infix + "_Username");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t96_employees->Username->FldCaption(), $t96_employees->Username->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Password");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t96_employees->Password->FldCaption(), $t96_employees->Password->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1827,8 +1387,6 @@ ft96_employeesedit.ValidateRequired = <?php echo json_encode(EW_CLIENT_VALIDATE)
 // Dynamic selection lists
 ft96_employeesedit.Lists["x_UserLevel"] = {"LinkField":"x_userlevelid","Ajax":true,"AutoFill":false,"DisplayFields":["x_userlevelname","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t97_userlevels"};
 ft96_employeesedit.Lists["x_UserLevel"].Data = "<?php echo $t96_employees_edit->UserLevel->LookupFilterQuery(FALSE, "edit") ?>";
-ft96_employeesedit.Lists["x_Activated[]"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft96_employeesedit.Lists["x_Activated[]"].Options = <?php echo json_encode($t96_employees_edit->Activated->Options()) ?>;
 
 // Form object for search
 </script>
@@ -1896,18 +1454,6 @@ $t96_employees_edit->ShowMessage();
 <input class="hidden" type="text" name="<?php echo ew_Encrypt(ew_Random()) ?>">
 <input class="hidden" type="password" name="<?php echo ew_Encrypt(ew_Random()) ?>">
 <div class="ewEditDiv"><!-- page* -->
-<?php if ($t96_employees->EmployeeID->Visible) { // EmployeeID ?>
-	<div id="r_EmployeeID" class="form-group">
-		<label id="elh_t96_employees_EmployeeID" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->EmployeeID->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->EmployeeID->CellAttributes() ?>>
-<span id="el_t96_employees_EmployeeID">
-<span<?php echo $t96_employees->EmployeeID->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t96_employees->EmployeeID->EditValue ?></p></span>
-</span>
-<input type="hidden" data-table="t96_employees" data-field="x_EmployeeID" name="x_EmployeeID" id="x_EmployeeID" value="<?php echo ew_HtmlEncode($t96_employees->EmployeeID->CurrentValue) ?>">
-<?php echo $t96_employees->EmployeeID->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
 <?php if ($t96_employees->LastName->Visible) { // LastName ?>
 	<div id="r_LastName" class="form-group">
 		<label id="elh_t96_employees_LastName" for="x_LastName" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->LastName->FldCaption() ?></label>
@@ -1926,166 +1472,6 @@ $t96_employees_edit->ShowMessage();
 <input type="text" data-table="t96_employees" data-field="x_FirstName" name="x_FirstName" id="x_FirstName" size="30" maxlength="10" placeholder="<?php echo ew_HtmlEncode($t96_employees->FirstName->getPlaceHolder()) ?>" value="<?php echo $t96_employees->FirstName->EditValue ?>"<?php echo $t96_employees->FirstName->EditAttributes() ?>>
 </span>
 <?php echo $t96_employees->FirstName->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Title->Visible) { // Title ?>
-	<div id="r_Title" class="form-group">
-		<label id="elh_t96_employees_Title" for="x_Title" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->Title->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->Title->CellAttributes() ?>>
-<span id="el_t96_employees_Title">
-<input type="text" data-table="t96_employees" data-field="x_Title" name="x_Title" id="x_Title" size="30" maxlength="30" placeholder="<?php echo ew_HtmlEncode($t96_employees->Title->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Title->EditValue ?>"<?php echo $t96_employees->Title->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->Title->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->TitleOfCourtesy->Visible) { // TitleOfCourtesy ?>
-	<div id="r_TitleOfCourtesy" class="form-group">
-		<label id="elh_t96_employees_TitleOfCourtesy" for="x_TitleOfCourtesy" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->TitleOfCourtesy->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->TitleOfCourtesy->CellAttributes() ?>>
-<span id="el_t96_employees_TitleOfCourtesy">
-<input type="text" data-table="t96_employees" data-field="x_TitleOfCourtesy" name="x_TitleOfCourtesy" id="x_TitleOfCourtesy" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t96_employees->TitleOfCourtesy->getPlaceHolder()) ?>" value="<?php echo $t96_employees->TitleOfCourtesy->EditValue ?>"<?php echo $t96_employees->TitleOfCourtesy->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->TitleOfCourtesy->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->BirthDate->Visible) { // BirthDate ?>
-	<div id="r_BirthDate" class="form-group">
-		<label id="elh_t96_employees_BirthDate" for="x_BirthDate" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->BirthDate->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->BirthDate->CellAttributes() ?>>
-<span id="el_t96_employees_BirthDate">
-<input type="text" data-table="t96_employees" data-field="x_BirthDate" name="x_BirthDate" id="x_BirthDate" placeholder="<?php echo ew_HtmlEncode($t96_employees->BirthDate->getPlaceHolder()) ?>" value="<?php echo $t96_employees->BirthDate->EditValue ?>"<?php echo $t96_employees->BirthDate->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->BirthDate->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->HireDate->Visible) { // HireDate ?>
-	<div id="r_HireDate" class="form-group">
-		<label id="elh_t96_employees_HireDate" for="x_HireDate" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->HireDate->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->HireDate->CellAttributes() ?>>
-<span id="el_t96_employees_HireDate">
-<input type="text" data-table="t96_employees" data-field="x_HireDate" name="x_HireDate" id="x_HireDate" placeholder="<?php echo ew_HtmlEncode($t96_employees->HireDate->getPlaceHolder()) ?>" value="<?php echo $t96_employees->HireDate->EditValue ?>"<?php echo $t96_employees->HireDate->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->HireDate->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Address->Visible) { // Address ?>
-	<div id="r_Address" class="form-group">
-		<label id="elh_t96_employees_Address" for="x_Address" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->Address->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->Address->CellAttributes() ?>>
-<span id="el_t96_employees_Address">
-<input type="text" data-table="t96_employees" data-field="x_Address" name="x_Address" id="x_Address" size="30" maxlength="60" placeholder="<?php echo ew_HtmlEncode($t96_employees->Address->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Address->EditValue ?>"<?php echo $t96_employees->Address->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->Address->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->City->Visible) { // City ?>
-	<div id="r_City" class="form-group">
-		<label id="elh_t96_employees_City" for="x_City" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->City->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->City->CellAttributes() ?>>
-<span id="el_t96_employees_City">
-<input type="text" data-table="t96_employees" data-field="x_City" name="x_City" id="x_City" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t96_employees->City->getPlaceHolder()) ?>" value="<?php echo $t96_employees->City->EditValue ?>"<?php echo $t96_employees->City->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->City->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Region->Visible) { // Region ?>
-	<div id="r_Region" class="form-group">
-		<label id="elh_t96_employees_Region" for="x_Region" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->Region->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->Region->CellAttributes() ?>>
-<span id="el_t96_employees_Region">
-<input type="text" data-table="t96_employees" data-field="x_Region" name="x_Region" id="x_Region" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t96_employees->Region->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Region->EditValue ?>"<?php echo $t96_employees->Region->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->Region->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->PostalCode->Visible) { // PostalCode ?>
-	<div id="r_PostalCode" class="form-group">
-		<label id="elh_t96_employees_PostalCode" for="x_PostalCode" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->PostalCode->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->PostalCode->CellAttributes() ?>>
-<span id="el_t96_employees_PostalCode">
-<input type="text" data-table="t96_employees" data-field="x_PostalCode" name="x_PostalCode" id="x_PostalCode" size="30" maxlength="10" placeholder="<?php echo ew_HtmlEncode($t96_employees->PostalCode->getPlaceHolder()) ?>" value="<?php echo $t96_employees->PostalCode->EditValue ?>"<?php echo $t96_employees->PostalCode->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->PostalCode->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Country->Visible) { // Country ?>
-	<div id="r_Country" class="form-group">
-		<label id="elh_t96_employees_Country" for="x_Country" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->Country->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->Country->CellAttributes() ?>>
-<span id="el_t96_employees_Country">
-<input type="text" data-table="t96_employees" data-field="x_Country" name="x_Country" id="x_Country" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t96_employees->Country->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Country->EditValue ?>"<?php echo $t96_employees->Country->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->Country->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->HomePhone->Visible) { // HomePhone ?>
-	<div id="r_HomePhone" class="form-group">
-		<label id="elh_t96_employees_HomePhone" for="x_HomePhone" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->HomePhone->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->HomePhone->CellAttributes() ?>>
-<span id="el_t96_employees_HomePhone">
-<input type="text" data-table="t96_employees" data-field="x_HomePhone" name="x_HomePhone" id="x_HomePhone" size="30" maxlength="24" placeholder="<?php echo ew_HtmlEncode($t96_employees->HomePhone->getPlaceHolder()) ?>" value="<?php echo $t96_employees->HomePhone->EditValue ?>"<?php echo $t96_employees->HomePhone->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->HomePhone->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Extension->Visible) { // Extension ?>
-	<div id="r_Extension" class="form-group">
-		<label id="elh_t96_employees_Extension" for="x_Extension" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->Extension->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->Extension->CellAttributes() ?>>
-<span id="el_t96_employees_Extension">
-<input type="text" data-table="t96_employees" data-field="x_Extension" name="x_Extension" id="x_Extension" size="30" maxlength="4" placeholder="<?php echo ew_HtmlEncode($t96_employees->Extension->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Extension->EditValue ?>"<?php echo $t96_employees->Extension->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->Extension->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->_Email->Visible) { // Email ?>
-	<div id="r__Email" class="form-group">
-		<label id="elh_t96_employees__Email" for="x__Email" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->_Email->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->_Email->CellAttributes() ?>>
-<span id="el_t96_employees__Email">
-<input type="text" data-table="t96_employees" data-field="x__Email" name="x__Email" id="x__Email" size="30" maxlength="30" placeholder="<?php echo ew_HtmlEncode($t96_employees->_Email->getPlaceHolder()) ?>" value="<?php echo $t96_employees->_Email->EditValue ?>"<?php echo $t96_employees->_Email->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->_Email->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Photo->Visible) { // Photo ?>
-	<div id="r_Photo" class="form-group">
-		<label id="elh_t96_employees_Photo" for="x_Photo" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->Photo->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->Photo->CellAttributes() ?>>
-<span id="el_t96_employees_Photo">
-<input type="text" data-table="t96_employees" data-field="x_Photo" name="x_Photo" id="x_Photo" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t96_employees->Photo->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Photo->EditValue ?>"<?php echo $t96_employees->Photo->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->Photo->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Notes->Visible) { // Notes ?>
-	<div id="r_Notes" class="form-group">
-		<label id="elh_t96_employees_Notes" for="x_Notes" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->Notes->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->Notes->CellAttributes() ?>>
-<span id="el_t96_employees_Notes">
-<textarea data-table="t96_employees" data-field="x_Notes" name="x_Notes" id="x_Notes" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t96_employees->Notes->getPlaceHolder()) ?>"<?php echo $t96_employees->Notes->EditAttributes() ?>><?php echo $t96_employees->Notes->EditValue ?></textarea>
-</span>
-<?php echo $t96_employees->Notes->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->ReportsTo->Visible) { // ReportsTo ?>
-	<div id="r_ReportsTo" class="form-group">
-		<label id="elh_t96_employees_ReportsTo" for="x_ReportsTo" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->ReportsTo->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->ReportsTo->CellAttributes() ?>>
-<span id="el_t96_employees_ReportsTo">
-<input type="text" data-table="t96_employees" data-field="x_ReportsTo" name="x_ReportsTo" id="x_ReportsTo" size="30" placeholder="<?php echo ew_HtmlEncode($t96_employees->ReportsTo->getPlaceHolder()) ?>" value="<?php echo $t96_employees->ReportsTo->EditValue ?>"<?php echo $t96_employees->ReportsTo->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->ReportsTo->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Password->Visible) { // Password ?>
-	<div id="r_Password" class="form-group">
-		<label id="elh_t96_employees_Password" for="x_Password" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->Password->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->Password->CellAttributes() ?>>
-<span id="el_t96_employees_Password">
-<input type="text" data-table="t96_employees" data-field="x_Password" name="x_Password" id="x_Password" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t96_employees->Password->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Password->EditValue ?>"<?php echo $t96_employees->Password->EditAttributes() ?>>
-</span>
-<?php echo $t96_employees->Password->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 <?php if ($t96_employees->UserLevel->Visible) { // UserLevel ?>
@@ -2116,30 +1502,18 @@ $t96_employees_edit->ShowMessage();
 <?php echo $t96_employees->Username->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
-<?php if ($t96_employees->Activated->Visible) { // Activated ?>
-	<div id="r_Activated" class="form-group">
-		<label id="elh_t96_employees_Activated" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->Activated->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->Activated->CellAttributes() ?>>
-<span id="el_t96_employees_Activated">
-<?php
-$selwrk = (ew_ConvertToBool($t96_employees->Activated->CurrentValue)) ? " checked" : "";
-?>
-<input type="checkbox" data-table="t96_employees" data-field="x_Activated" name="x_Activated[]" id="x_Activated[]" value="1"<?php echo $selwrk ?><?php echo $t96_employees->Activated->EditAttributes() ?>>
+<?php if ($t96_employees->Password->Visible) { // Password ?>
+	<div id="r_Password" class="form-group">
+		<label id="elh_t96_employees_Password" for="x_Password" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->Password->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->Password->CellAttributes() ?>>
+<span id="el_t96_employees_Password">
+<input type="text" data-table="t96_employees" data-field="x_Password" name="x_Password" id="x_Password" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t96_employees->Password->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Password->EditValue ?>"<?php echo $t96_employees->Password->EditAttributes() ?>>
 </span>
-<?php echo $t96_employees->Activated->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t96_employees->Profile->Visible) { // Profile ?>
-	<div id="r_Profile" class="form-group">
-		<label id="elh_t96_employees_Profile" for="x_Profile" class="<?php echo $t96_employees_edit->LeftColumnClass ?>"><?php echo $t96_employees->Profile->FldCaption() ?></label>
-		<div class="<?php echo $t96_employees_edit->RightColumnClass ?>"><div<?php echo $t96_employees->Profile->CellAttributes() ?>>
-<span id="el_t96_employees_Profile">
-<textarea data-table="t96_employees" data-field="x_Profile" name="x_Profile" id="x_Profile" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t96_employees->Profile->getPlaceHolder()) ?>"<?php echo $t96_employees->Profile->EditAttributes() ?>><?php echo $t96_employees->Profile->EditValue ?></textarea>
-</span>
-<?php echo $t96_employees->Profile->CustomMsg ?></div></div>
+<?php echo $t96_employees->Password->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div><!-- /page* -->
+<input type="hidden" data-table="t96_employees" data-field="x_EmployeeID" name="x_EmployeeID" id="x_EmployeeID" value="<?php echo ew_HtmlEncode($t96_employees->EmployeeID->CurrentValue) ?>">
 <?php if (!$t96_employees_edit->IsModal) { ?>
 <div class="form-group"><!-- buttons .form-group -->
 	<div class="<?php echo $t96_employees_edit->OffsetColumnClass ?>"><!-- buttons offset -->
